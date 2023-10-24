@@ -29,7 +29,6 @@ class Rugbyman:
             and self.posx == other.posx
             and self.posy == other.posy
         ):
-            print("Tackle !")
             return True
         else:
             return False
@@ -41,14 +40,12 @@ class Rugbyman:
             and self.posx == other.posx
             and self.posy == other.posy
         ):
-            print("Push through !")
             return True
         else:
             return False
 
-    def grubber_kick(self, other):
+    def grubber_kick(self, throw):
         if self.possesion == True:
-            print("Grubber kick !")
             return True
         else:
             return False
