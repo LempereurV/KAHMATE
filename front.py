@@ -1,17 +1,16 @@
 import pygame
 import sys
 
-# Initialisation de Pygame
 pygame.init()
 
+# Chargement de l'image
+image = pygame.image.load("Images/plateau.png")
+
 # Définition de la taille de la fenêtre
-size = (800, 600)
+size = image.get_size()
 
 # Création de la fenêtre
 screen = pygame.display.set_mode(size)
-
-# Chargement de l'image
-image = pygame.image.load("Documents/KAHMATE/Images/plateau.png")
 
 # Affichage de l'image dans la fenêtre
 screen.blit(image, (0, 0))
@@ -25,8 +24,11 @@ pygame.draw.circle(screen, (0, 0, 255), (92, 107), 2)
 # Rafraîchissement de la fenêtre
 pygame.display.flip()
 
-# Boucle principale
 while True:
+    """
+    Main loop that waits for events and handles them.
+    If the event is the closing of the window, the program quits.
+    """
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
