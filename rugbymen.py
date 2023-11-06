@@ -11,7 +11,7 @@ class Rugbyman:
         self.active = True  # False if the player is KO
 
 
-class Strong_rugbyman(Rugbyman):
+class StrongRugbyman(Rugbyman):
     def __init__(self, attack_bonus, defense_bonus, moove_points):
         super().__init__(attack_bonus, defense_bonus, moove_points)
         self.attack_bonus = 2
@@ -19,19 +19,19 @@ class Strong_rugbyman(Rugbyman):
         self.moove_points = 2
 
 
-class Hard_rugbyman(Rugbyman):
+class HardRugbyman(Rugbyman):
     def __init__(self, attack_bonus, defense_bonus, moove_points):
         super().__init__(attack_bonus, defense_bonus, moove_points)
         self.attack_bonus = 1
 
 
-class Smart_rugbyman(Rugbyman):
+class SmartRugbyman(Rugbyman):
     def __init__(self, attack_bonus, defense_bonus, moove_points):
         super().__init__(attack_bonus, defense_bonus, moove_points)
         self.defense_bonus = 1
 
 
-class Fast_rugbyman(Rugbyman):
+class FastRugbyman(Rugbyman):
     def __init__(self, attack_bonus, defense_bonus, moove_points):
         super().__init__(attack_bonus, defense_bonus, moove_points)
         self.attack_bonus = -1

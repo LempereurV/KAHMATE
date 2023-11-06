@@ -1,16 +1,26 @@
 import rugbymen
 import actions
 
+
 class Player:
-    def __init__(self, rugbyman1, rugbyman2, strong_rugbyman, hard_rugbyman, smart_rugbyman, fast_rugbyman):
-        self._unplaced_men = [rugbyman1, 
-                              rugbyman2, 
-                              strong_rugbyman, 
-                              hard_rugbyman, 
-                              smart_rugbyman, 
-                              fast_rugbyman
-                              ]
-        self._cards = ["1","2","3","4","5","6"]
+    def __init__(
+        self,
+        rugbyman1,
+        rugbyman2,
+        strong_rugbyman,
+        hard_rugbyman,
+        smart_rugbyman,
+        fast_rugbyman,
+    ):
+        self._unplaced_men = [
+            rugbyman1,
+            rugbyman2,
+            strong_rugbyman,
+            hard_rugbyman,
+            smart_rugbyman,
+            fast_rugbyman,
+        ]
+        self._cards = ["1", "2", "3", "4", "5", "6"]
 
     def action(self):
         print("To move a player, write 1")
@@ -41,7 +51,7 @@ class Player:
                 if picked_card == self._cards[i]:
                     self._cards.pop(i)
                     if len(self._cards) == 0:
-                        self._cards = ["1","2","3","4","5","6"]
+                        self._cards = ["1", "2", "3", "4", "5", "6"]
                     return
 
 
@@ -49,13 +59,13 @@ class Ball:
     def __init__(self, init_position):
         self._position = init_position
         self._carrier = None
-    
+
     def is_carried(self):
         return self._carrier != None
-    
+
     def new_carrier(self, player):
         self._carrier = player
-    
+
     def left(self):
         self._carrier = None
 
