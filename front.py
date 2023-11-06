@@ -1,6 +1,5 @@
 import pygame
 import sys
-import os
 
 pygame.init()
 
@@ -9,19 +8,21 @@ image = pygame.image.load("Images/plateau.png")
 
 # Définition de la taille de la fenêtre
 size = image.get_size()
+# Chargement de l'image
+image = pygame.image.load("Images/plateau.png")
 
+# Définition de la taille de la fenêtre
+size = image.get_size()
+
+# Création de la fenêtre
 # Création de la fenêtre
 screen = pygame.display.set_mode(size)
 
-#Chargement de l'image
-image_path = "C:/Users/Ponts/Documents/KAHMATE/Images/plateau.png"
-image = pygame.image.load(image_path)
-
-#Affichage de l'image dans la fenêtre
+# Affichage de l'image dans la fenêtre
 screen.blit(image, (0, 0))
 
-#Dessiner un point rouge
-#pygame.draw.circle(screen, (255, 0, 0), (92,62), 2)
+# Dessiner un point rouge
+pygame.draw.circle(screen, (255, 0, 0), (92, 62), 2)
 
 #Dessiner un point bleu
 #pygame.draw.circle(screen, (0, 0, 255), (92, 107), 2)
@@ -62,9 +63,6 @@ while True:
     If the event is the closing of the window, the program quits.
     """
     for event in pygame.event.get():
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            display_number(hitbox)
-            display_point()
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
