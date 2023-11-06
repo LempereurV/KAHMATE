@@ -29,9 +29,12 @@ class Rugbyman:
             and self.posx == other.posx
             and self.posy == other.posy
         ):
-            return True
-        else:
-            return False
+            if (self.attack_bonus + card_self.point) > (
+                other.defense_bonus + card_other.point
+            ):
+                other.active = False
+                return True
+        return False
 
     def push_through(self, card_self, other, card_other):
         if (
@@ -40,15 +43,22 @@ class Rugbyman:
             and self.posx == other.posx
             and self.posy == other.posy
         ):
-            return True
-        else:
-            return False
+            if (self.attack_bonus + card_self.point) > (
+                other.defense_bonus + card_other.point
+            ):
+                other.active = False
+                return True
+        return False
 
     def grubber_kick(self, throw):
         if self.possesion == True:
             return True
         else:
             return False
+
+    def place_rugbyman(self, x, y):
+        self.posx = x
+        self.posy = y
 
 
 class Strong_rugbyman(Rugbyman):
