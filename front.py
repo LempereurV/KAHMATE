@@ -6,23 +6,22 @@ import os
 pygame.init()
 
 #Chargement de l'image, chemin relatif
-image_path = "images/plateau.png"
+image_path = "Images/plateau.png"
 image = pygame.image.load(image_path)
 #Définition de la taille de la fenêtre
 size = image.get_size()
 
 #Création de la fenêtre
 screen = pygame.display.set_mode(size)
+#surf = pygame.surface.Surface(size)
 
-#Chargement de l'image
-image_path = "Images/plateau.png"
-image = pygame.image.load(image_path)
-
+print(type(screen))
 #Affichage de l'image dans la fenêtre
 screen.blit(image, (0, 0))
 
 image_costaud_rouge = pygame.image.load("Images/Costaud_bleu.png")
 screen.blit(image_costaud_rouge, (10, 10))
+#surf.blit(image_costaud_rouge, (10, 10))
 
 #Dessiner un point rouge
 #pygame.draw.circle(screen, (255, 0, 0), (92,62), 5)
@@ -46,7 +45,7 @@ def display_number(hitbox):
     for i in range(88):
         if hitbox[i].collidepoint(pygame.mouse.get_pos()):
             print(i)
-            font = pygame.font.Font(None, 250)
+            return i
 
 #Affiche un point rouge pour 5s quand on clique quelque part
 def display_point():
@@ -56,6 +55,7 @@ def display_point():
     screen.blit(image, (0, 0))
     pygame.display.flip()
 
+#Affiche un menu correspondant à la hitbox cliquée
 
 #Rafraîchissement de la fenêtre
 pygame.display.flip()
@@ -64,8 +64,8 @@ pygame.display.flip()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:
-            display_number(hitbox)
             display_point()
+            display_number(hitbox)
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
