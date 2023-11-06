@@ -12,14 +12,17 @@ size = (800, 600)
 screen = pygame.display.set_mode(size)
 
 #Chargement de l'image
-image_path = "C:/Users/Ponts/Documents/KAHMATE/Images/plateau.png"
+image_path = "Images/plateau.png"
 image = pygame.image.load(image_path)
 
 #Affichage de l'image dans la fenêtre
 screen.blit(image, (0, 0))
 
+image_costaud_rouge = pygame.image.load("Images/Costaud_bleu.png")
+screen.blit(image_costaud_rouge, (10, 10))
+
 #Dessiner un point rouge
-#pygame.draw.circle(screen, (255, 0, 0), (92,62), 2)
+#pygame.draw.circle(screen, (255, 0, 0), (92,62), 5)
 
 #Dessiner un point bleu
 #pygame.draw.circle(screen, (0, 0, 255), (92, 107), 2)
