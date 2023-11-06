@@ -55,25 +55,27 @@ class Player:
         """
         Discard the card chosen by the player and reinitialize the deck if all cards have been played
         """
-        for i in range(len(self._cards)):
-            if picked_card == self._cards[i]:
-                self._cards.pop(i)
-                if len(self._cards) == 0:
-                    self._cards = ["1","2","3","4","5","6"]
-                return
+        while True:
+            picked_card = input("Which card do you pick ?")
+            for i in range(len(self._cards)):
+                if picked_card == self._cards[i]:
+                    self._cards.pop(i)
+                    if len(self._cards) == 0:
+                        self._cards = ["1", "2", "3", "4", "5", "6"]
+                    return
 
 
 class Ball:
     def __init__(self, init_position):
         self._position = init_position
         self._carrier = None
-    
+
     def is_carried(self):
         return self._carrier != None
-    
+
     def new_carrier(self, player):
         self._carrier = player
-    
+
     def left(self):
         self._carrier = None
 

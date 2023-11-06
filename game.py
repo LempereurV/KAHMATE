@@ -20,5 +20,3 @@ class Game:
     def play(self):
         while not self.is_over:
             pass
-
-
