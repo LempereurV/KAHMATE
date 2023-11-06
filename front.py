@@ -63,11 +63,8 @@ def affiche_joueur(n_hit, path):
 #Met en surbrillance les cases où le joueur peut se déplacer
 def highlight_move(list_move):
     for i in range(len(list_move)):
-        #Ajoute un rectangle blanc transparent (alpha=50%) sur les cases où le joueur peut se déplacer
-        pygame.draw.circle(screen, (126, 126, 126), (coords[list_move[i]][0]+46.8/2,coords[list_move[i]][1]+46.5/2),10)
+        pygame.draw.circle(screen, (20, 255, 167), (coords[list_move[i]][0]+46.8/2,coords[list_move[i]][1]+46.5/2),10)
     pygame.display.flip()
-
-highlight_move([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14])
 
 #Rafraîchissement de la fenêtre
 pygame.display.flip()
@@ -79,8 +76,6 @@ while True:
             display_number()
             display_point()
             i=get_hitbox()[0]
-            affiche_joueur(i, "images/Rapide_bleu.png")
-            affiche_joueur(i+1, "images/Rapide_rouge.png")
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
