@@ -5,16 +5,14 @@ import os
 #Initialisation de Pygame
 pygame.init()
 
+#Chargement de l'image, chemin relatif
+image_path = "images/plateau.png"
+image = pygame.image.load(image_path)
 #Définition de la taille de la fenêtre
-size = (800, 600)
+size = image.get_size()
 
 #Création de la fenêtre
 screen = pygame.display.set_mode(size)
-
-#Chargement de l'image
-image_path = "C:/Users/Ponts/Documents/KAHMATE/Images/plateau.png"
-image = pygame.image.load(image_path)
-
 #Affichage de l'image dans la fenêtre
 screen.blit(image, (0, 0))
 
