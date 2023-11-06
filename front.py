@@ -16,13 +16,6 @@ screen = pygame.display.set_mode(size)
 #Affichage de l'image dans la fenêtre
 screen.blit(image, (0, 0))
 
-#Dessiner un point rouge
-#pygame.draw.circle(screen, (255, 0, 0), (92,62), 2)
-
-#Dessiner un point bleu
-#pygame.draw.circle(screen, (0, 0, 255), (92, 107), 2)
-
-
 coords=[]
 for j in range(8):
     for i in range(11):
@@ -47,7 +40,10 @@ def display_number():
 def get_hitbox():
     for i in range(len(hitbox)):
         if hitbox[i].collidepoint(pygame.mouse.get_pos()):
-            return i
+            if i<88:
+                return [i,(i%11, i//11)]
+            else:
+                return [i]
 
 #Affiche un point rouge pour 5s quand on clique quelque part
 def display_point():
@@ -64,6 +60,14 @@ def affiche_joueur(n_hit, path):
     screen.blit(joueur, coords[n_hit])
     pygame.display.flip()
 
+#Met en surbrillance les cases où le joueur peut se déplacer
+def highlight_move(list_move):
+    for i in range(len(list_move)):
+        #Ajoute un rectangle blanc transparent (alpha=50%) sur les cases où le joueur peut se déplacer
+        pygame.draw.circle(screen, (126, 126, 126), (coords[list_move[i]][0]+46.8/2,coords[list_move[i]][1]+46.5/2),10)
+    pygame.display.flip()
+
+highlight_move([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14])
 
 #Rafraîchissement de la fenêtre
 pygame.display.flip()
@@ -74,7 +78,9 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             display_number()
             display_point()
-            i=get_hitbox()
+            i=get_hitbox()[0]
+            affiche_joueur(i, "images/Rapide_bleu.png")
+            affiche_joueur(i+1, "images/Rapide_rouge.png")
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
