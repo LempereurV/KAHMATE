@@ -11,6 +11,35 @@ image = pygame.image.load(image_path)
 #Définition de la taille de la fenêtre
 size = image.get_size()
 
+##### TEST SPRITE #####
+class Block(pygame.sprite.Sprite):
+
+    # Constructor. Pass in the color of the block,
+    # and its x and y position
+    def __init__(self, color, width, height, x, y):
+       # Call the parent class (Sprite) constructor
+       pygame.sprite.Sprite.__init__(self)
+
+       # Create an image of the block, and fill it with a color.
+       # This could also be an image loaded from the disk.
+       self.image = pygame.Surface([width, height])
+       self.image.fill(color)
+
+       # Fetch the rectangle object that has the dimensions of the image
+       # Update the position of this object by setting the values of rect.x and rect.y
+       self.rect = self.image.get_rect()
+       self.rect.center = (x, y)
+sc=50
+test_block1=Block((255,0,0),10,10,sc,sc)
+test_block2=Block((0,250,0),10,10,sc,sc+20)
+test_block3=Block((0,0,255),10,10,sc,sc+40)
+test_group=pygame.sprite.Group()
+test_group.add(test_block1)
+test_group.add(test_block2)
+test_group.add(test_block3)
+
+##### #####
+
 #Création de la fenêtre
 screen = pygame.display.set_mode(size)
 #surf = pygame.surface.Surface(size)
@@ -59,9 +88,14 @@ def get_hitbox():
 #Affiche un point rouge pour 5s quand on clique quelque part
 def display_point():
     pygame.draw.circle(screen, (255, 0, 0), pygame.mouse.get_pos(), 2)
+    #
+    test_group.draw(screen)
+    #
     pygame.display.flip()
-    pygame.time.wait(500)
+    
     screen.blit(image, (0, 0))
+    pygame.time.wait(500)
+
     pygame.display.flip()
 
 #Affiche un joueur au centre de la hitbox
