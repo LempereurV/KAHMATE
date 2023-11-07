@@ -1,4 +1,13 @@
 # Classe de base Player
+import enum
+
+class Spec(enum.Enum):
+    STRONG = "strong"
+    SMART = "smart"
+    FAST = "fast"
+    HARD = "hard"
+    NORMAL = "normal"
+
 class Rugbyman:
     def __init__(self, color):
         self.color = color
@@ -7,6 +16,7 @@ class Rugbyman:
         self.moove_points = 3
         self.posx = 0
         self.posy = 0
+        self.spec = Spec.NORMAL
         self.possesion = False  # True if the player has the ball
         self.active = True  # False if the player is KO
 
@@ -17,18 +27,20 @@ class StrongRugbyman(Rugbyman):
         self.attack_bonus = 2
         self.defense_bonus = 1
         self.moove_points = 2
+        self.spec = Spec.STRONG
 
 
 class HardRugbyman(Rugbyman):
     def __init__(self, attack_bonus, defense_bonus, moove_points):
         super().__init__(attack_bonus, defense_bonus, moove_points)
         self.attack_bonus = 1
-
+        self.spec = Spec.HARD
 
 class SmartRugbyman(Rugbyman):
     def __init__(self, attack_bonus, defense_bonus, moove_points):
         super().__init__(attack_bonus, defense_bonus, moove_points)
         self.defense_bonus = 1
+        self.spec = Spec.SMART
 
 
 class FastRugbyman(Rugbyman):
@@ -37,3 +49,4 @@ class FastRugbyman(Rugbyman):
         self.attack_bonus = -1
         self.defense_bonus = -1
         self.moove_points = 4
+        self.spec = Spec.FAST
