@@ -1,6 +1,7 @@
 import rugbymen
 import players
 import random
+import actions
 
 
 number_of_columns = 8
@@ -20,3 +21,6 @@ class Game:
     def play(self):
         while not self.is_over:
             pass
+    
+    def ball(self):
+        return self.ball

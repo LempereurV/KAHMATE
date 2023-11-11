@@ -21,7 +21,7 @@ class Player:
                         cards.SIX
                         ]
         self._color = color
-    
+
     def players(self):
         return self._players
     
@@ -61,7 +61,13 @@ class Player:
                 if picked_card == self._cards[i]:
                     self._cards.pop(i)
                     if len(self._cards) == 0:
-                        self._cards = ["1", "2", "3", "4", "5", "6"]
+                        self._cards = [cards.ONE,
+                                    cards.TWO, 
+                                    cards.THREE, 
+                                    cards.FOUR, 
+                                    cards.FIVE, 
+                                    cards.SIX
+                                    ]
                     return
 
 
@@ -75,6 +81,9 @@ class Ball:
 
     def new_carrier(self, player):
         self._carrier = player
+
+    def is_carried_by_rugbyman(self, rugbyman):
+        return (self.is_carried() and self._carrier() == rugbyman)
 
     def left(self):
         self._carrier = None

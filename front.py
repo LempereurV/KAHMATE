@@ -20,7 +20,7 @@ class Graphique:
         pygame.init()
 
         # Chargement de l'image, chemin relatif
-        image_path = "images/plateau.png"
+        image_path = "Images/plateau.png"
         self.plateau = pygame.image.load(image_path)
         # Définition de la taille de la fenêtre
         self.size = self.plateau.get_size()
