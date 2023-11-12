@@ -23,6 +23,21 @@ class Rugbyman:
     def color(self):
         return self.color
     
+    def has_partners_in_front(self, game):
+        """
+        Renvoie la présence ou non de joueurs alliés devant le joueur.
+        Utilisé pour la passe en-avant
+        """
+        if self.color is "blue":
+            for rugbyman in game.blue_player():
+                if rugbyman.posx() < self.posx():
+                    return True
+        if self.color is "red":
+            for rugbyman in game.red_player():
+                if rugbyman.posx() > self.posx():
+                    return True
+        return False
+    
     def moove_points(self):
         return self.moove_points
 

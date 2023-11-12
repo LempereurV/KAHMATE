@@ -47,7 +47,7 @@ class Player:
             if chosen_action == "3":
                 return tackle(self, game)
             if chosen_action == "4":
-                return forward_pass(self, game)
+                return forward_pass(self, game) #ne pas oublier rugbyman.has_partners_in_front()
             if chosen_action == "5":
                 return score(self, game)
 
