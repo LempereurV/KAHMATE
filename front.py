@@ -155,11 +155,11 @@ class Graphique:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-        pygame.display.flip()
-        screen.blit(image, (0, 0))
-        tokens_group.draw(screen)
-        tokens_group.update() # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
-        clock.tick(60)
+            pygame.display.flip()
+            screen.blit(image, (0, 0))
+            tokens_group.draw(screen)
+            tokens_group.update() # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
+            clock.tick(60)
 
 if __name__ == "__main__":
     graph = Graphique()
