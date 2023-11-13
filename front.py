@@ -24,8 +24,21 @@ class PlayerTokens(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
     def update(self):
         self.rect.center = pygame.mouse.get_pos()
-
-
+        # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
+    def select(self, tokens_group):
+        if self.rect.collidepoint(pygame.mouse.get_pos()):
+            while True:
+                self.rect.center = pygame.mouse.get_pos()
+                tokens_group.draw(screen)
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        self.update()
+                        for box in hitbox:
+                            if box.collidepoint(pygame.mouse.get_pos()):
+                                self.rect.center = box.center
+                        return
+                    
+              
 
 ##### #####
 
@@ -84,6 +97,8 @@ class Graphique:
                     print(i % 11, i // 11)
                 else:
                     print(i)
+            else:
+                pass
 
     def get_hitbox(self):
         for i in range(len(hitbox)):
@@ -92,6 +107,8 @@ class Graphique:
                     return [i,(i%11, i//11)]
                 else:
                     return [i]
+            else:
+                return None
 
     # Affiche un point rouge pour 5s quand on clique quelque part
     def display_point(self):
@@ -143,22 +160,28 @@ class Graphique:
     def main_loop(self):
         # Players tokens sprites initialisation
 
-        playertoken = PlayerTokens("Images/Costaud_bleu.png")
+        playertoken1 = PlayerTokens("Images/Costaud_bleu.png")
+        playertoken2 = PlayerTokens("Images/Costaud_rouge.png")
         tokens_group = pygame.sprite.Group()
-        tokens_group.add(playertoken)
+        tokens_group.add(playertoken1)
+        tokens_group.add(playertoken2)
+        i=0
+        for tokens in tokens_group:
+            tokens.rect.center = hitbox[i].center
+            i+=1
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.display_number()
                     self.display_point()
-                    i=self.get_hitbox()[0]
+                    for token in tokens_group:
+                        token.select(tokens_group)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
             pygame.display.flip()
             screen.blit(image, (0, 0))
-            tokens_group.draw(screen)
-            tokens_group.update() # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
+            tokens_group.draw(screen) 
             clock.tick(60)
 
 if __name__ == "__main__":
