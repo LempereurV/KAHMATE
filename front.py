@@ -1,3 +1,4 @@
+from typing import Any
 import pygame
 import sys
 import os
@@ -5,67 +6,27 @@ import os
 # Initialisation de Pygame
 pygame.init()
 
+clock = pygame.time.Clock()
+
 #Chargement de l'image, chemin relatif
 image_path = "Images/plateau.png"
 image = pygame.image.load(image_path)
 # Définition de la taille de la fenêtre
 size = image.get_size()
 
-##### TEST SPRITE #####
-class Block(pygame.sprite.Sprite):
-
-    # Constructor. Pass in the color of the block,
-    # and its x and y position
-    def __init__(self, color, width, height, x, y):
-       # Call the parent class (Sprite) constructor
-       pygame.sprite.Sprite.__init__(self)
-
-       # Create an image of the block, and fill it with a color.
-       # This could also be an image loaded from the disk.
-       self.image = pygame.Surface([width, height])
-       self.image.fill(color)
-
-       # Fetch the rectangle object that has the dimensions of the image
-       # Update the position of this object by setting the values of rect.x and rect.y
-       self.rect = self.image.get_rect()
-       self.rect.center = (x, y)
-sc=50
-test_block1=Block((255,0,0),10,10,sc,sc)
-test_block2=Block((0,250,0),10,10,sc,sc+20)
-test_block3=Block((0,0,255),10,10,sc,sc+40)
-test_group=pygame.sprite.Group()
-test_group.add(test_block1)
-test_group.add(test_block2)
-test_group.add(test_block3)
-
-##### #####
 
 ##### TEST SPRITE #####
-class Block(pygame.sprite.Sprite):
 
-    # Constructor. Pass in the color of the block,
-    # and its x and y position
-    def __init__(self, color, width, height, x, y):
-       # Call the parent class (Sprite) constructor
-       pygame.sprite.Sprite.__init__(self)
+class PlayerTokens(pygame.sprite.Sprite):
+    def __init__(self, picture_path, scale_x=46.8, scale_y=46.5):
+        super().__init__()
+        self.image = pygame.image.load(picture_path)
+        self.image = pygame.transform.scale(self.image, (scale_x, scale_y))
+        self.rect = self.image.get_rect()
+    def update(self):
+        self.rect.center = pygame.mouse.get_pos()
 
-       # Create an image of the block, and fill it with a color.
-       # This could also be an image loaded from the disk.
-       self.image = pygame.Surface([width, height])
-       self.image.fill(color)
 
-       # Fetch the rectangle object that has the dimensions of the image
-       # Update the position of this object by setting the values of rect.x and rect.y
-       self.rect = self.image.get_rect()
-       self.rect.center = (x, y)
-sc=50
-test_block1=Block((255,0,0),10,10,sc,sc)
-test_block2=Block((0,250,0),10,10,sc,sc+20)
-test_block3=Block((0,0,255),10,10,sc,sc+40)
-test_group=pygame.sprite.Group()
-test_group.add(test_block1)
-test_group.add(test_block2)
-test_group.add(test_block3)
 
 ##### #####
 
@@ -131,24 +92,26 @@ def display_point():
     screen.blit(image, (0, 0))
     pygame.time.wait(500)
 
-    pygame.display.flip()
-
 
 # Affiche un joueur au centre de la hitbox
 def affiche_joueur(n_hit, path):
     joueur = pygame.image.load(path)
     joueur = pygame.transform.scale(joueur, (46.8, 46.5))
     screen.blit(joueur, coords[n_hit])
-    pygame.display.flip()
 
 #Met en surbrillance les cases où le joueur peut se déplacer
 def highlight_move(list_move):
     for i in range(len(list_move)):
         pygame.draw.circle(screen, (20, 255, 167), (coords[list_move[i]][0]+46.8/2,coords[list_move[i]][1]+46.5/2),10)
-    pygame.display.flip()
 
 # Rafraîchissement de la fenêtre
 pygame.display.flip()
+
+# Players tokens sprites initialisation
+
+playertoken = PlayerTokens("Images/Costaud_bleu.png")
+tokens_group = pygame.sprite.Group()
+tokens_group.add(playertoken)
 
 # Boucle principale
 while True:
@@ -160,3 +123,8 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+    pygame.display.flip()
+    screen.blit(image, (0, 0))
+    tokens_group.draw(screen)
+    tokens_group.update() # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
+    clock.tick(60)
