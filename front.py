@@ -22,17 +22,19 @@ class PlayerTokens(pygame.sprite.Sprite):
         self.image = pygame.image.load(picture_path)
         self.image = pygame.transform.scale(self.image, (scale_x, scale_y))
         self.rect = self.image.get_rect()
-    def update(self):
+    def update(self, tokens_group):
+        screen.blit(image, (0, 0))
         self.rect.center = pygame.mouse.get_pos()
+        tokens_group.draw(screen)
+        pygame.display.flip()
         # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
     def select(self, tokens_group):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             while True:
-                self.rect.center = pygame.mouse.get_pos()
-                tokens_group.draw(screen)
+                self.update(tokens_group)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        self.update()
+                        self.update(tokens_group)
                         for box in hitbox:
                             if box.collidepoint(pygame.mouse.get_pos()):
                                 self.rect.center = box.center
