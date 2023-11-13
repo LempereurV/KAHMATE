@@ -15,6 +15,7 @@ def score(rugbyman, game):
 class Actions: 
 
     def moove_up(self):
+            print("")
             self.posy += 1
 
         def moove_down(self):

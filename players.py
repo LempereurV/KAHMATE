@@ -21,10 +21,10 @@ class Player:
                         cards.SIX
                         ]
         self._color = color
-    
+
     def players(self):
         return self._players
-    
+
     def place_rugbyman(self):
         try:
             rugbyman = self._unplaced_men.pop()
@@ -61,7 +61,12 @@ class Player:
                 if picked_card == self._cards[i]:
                     self._cards.pop(i)
                     if len(self._cards) == 0:
-                        self._cards = ["1", "2", "3", "4", "5", "6"]
+                        self._cards = [cards.ONE,
+                                    cards.TWO, 
+                                    cards.THREE, 
+                                    cards.FOUR, 
+                                    cards.FIVE, 
+                                    cards.SIX]
                     return
 
 
