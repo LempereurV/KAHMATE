@@ -25,7 +25,57 @@ class PlayerTokens(pygame.sprite.Sprite):
     def update(self):
         self.rect.center = pygame.mouse.get_pos()
 
+class FloatingMenu(pygame.sprite.Sprite):
+    def __init__(self, rows, pos=(0,0), font_size=15, font_type = 'Comic Sans MS', color_bg = (255, 255, 255), color_font = (0,0,0)):
+        super().__init__()
+        self.nb_menu=len(rows)
 
+        self.interline=2
+        self.font_size=font_size
+        width=int(font_size*max([len(x) for x in rows])/1.5)
+        self.border=5
+        height= 2*self.border + (font_size+self.interline)*self.nb_menu
+
+        self.image = pygame.Surface([width, height])
+        self.image.fill(color_bg)
+        self.rect = self.image.get_rect()
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+
+        self.rows = [None for i in range(self.nb_menu)]
+        self.rows_rect = [None for i in range(self.nb_menu)]
+        menu_font = pygame.font.SysFont(font_type, font_size)
+        for i in range(self.nb_menu):
+            self.rows[i]=menu_font.render(rows[i], False, color_font)
+            self.rows_rect[i] = self.rows[i].get_rect()
+            self.rows_rect[i].x = self.border + self.rect.x
+            self.rows_rect[i].y = self.rect.y + self.border + (self.font_size)*i
+    
+    def update_rows_pos(self):
+        for i in range(self.nb_menu):
+            self.rows_rect[i].x = self.border + self.rect.x
+            self.rows_rect[i].y = self.rect.y + self.border + (self.font_size)*i
+
+    def draw(self, screen):
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+        for i in range(self.nb_menu):
+            screen.blit(self.rows[i], (self.rows_rect[i].x, self.rows_rect[i].y))
+            
+    def move(self, pos):
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+        self.update_rows_pos()
+    
+    def print_collision(self):
+        for i in range(self.nb_menu):
+            if self.rows_rect[i].collidepoint(pygame.mouse.get_pos()):
+                print(i)
+                return(i)
+        print(None)
+        
+        return None
+
+        
 
 ##### #####
 
@@ -146,20 +196,31 @@ class Graphique:
         playertoken = PlayerTokens("Images/Costaud_bleu.png")
         tokens_group = pygame.sprite.Group()
         tokens_group.add(playertoken)
+
+        test_menu=FloatingMenu(["Coucou", "Rugby", "Move", "Pass", "Francois"], (30, 40))
+        flag_menu=0
+    
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.display_number()
                     self.display_point()
                     i=self.get_hitbox()[0]
+                    flag_menu=0
+                    if test_menu.print_collision()==None:
+                        test_menu.move(pygame.mouse.get_pos())
+                        flag_menu=1
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
             pygame.display.flip()
             screen.blit(image, (0, 0))
+            if flag_menu:
+                test_menu.draw(screen)
             tokens_group.draw(screen)
             tokens_group.update() # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
             clock.tick(60)
+
 
 if __name__ == "__main__":
     graph = Graphique()
