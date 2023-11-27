@@ -3,7 +3,7 @@ import pygame
 import sys
 from actions import *
 from rugbymen import *
-from game import *
+import game
 
 # Initialisation de Pygame
 pygame.init()
@@ -24,6 +24,7 @@ def path_to_player_type(path):
         color = "blue"
     elif path.endswith("rouge.png"):
         color = "red"
+
     if path == "Images/Costaud_bleu.png" or path == "Images/Costaud_rouge.png":
         return StrongRugbyman(color)
     elif path == "Images/Dur_bleu.png" or path == "Images/Dur_rouge.png":
@@ -72,12 +73,14 @@ class PlayerTokens(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (scale_x, scale_y))
         self.rect = self.image.get_rect()
         self.player_type = path_to_player_type(picture_path)
+    
     def update(self, tokens_group):
         screen.blit(image, (0, 0))
         self.rect.center = pygame.mouse.get_pos()
         tokens_group.draw(screen)
         pygame.display.flip()
         # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
+
     def get_hitbox(self):
         for i in range(len(hitbox)):
             if hitbox[i].collidepoint(self.rect.center):
@@ -85,6 +88,7 @@ class PlayerTokens(pygame.sprite.Sprite):
                     return [i,(i%11, i//11)]
                 else:
                     return [i]
+                
     def select(self, tokens_group, game):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             list_move = actions.available_forward_pass(self.get_hitbox[1](0),self.get_hitbox[1](1),self.player_type.moove_points,game) #moves_left

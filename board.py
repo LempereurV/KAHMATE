@@ -26,8 +26,11 @@ def placement_orders(color):
     }
     return R
 
+def get_hitbox_board():
+    
 
 def positions_rugbymen_player(color,graphique_board):
+    #Ne pas utiliser gethitbox recupérer directement les positions des rugbymen
     placement_order = placement_orders(color)
     i = 0
     R = np.zeros((n_rugbymen, 2))
@@ -62,7 +65,9 @@ def positions_rugbymen_player(color,graphique_board):
 
 
 class Board:
-    def __init__(self, blue_position, red_position):
+    def __init__(self):
+        blue_position=positions_rugbymen_player(Color.BLUE) #Attention, il faut le graphique board soit créé avant les joueurs
+        red_position=positions_rugbymen_player(Color.RED)
         self._board = np.zeros((n_row, n_column))
         assert len(red_position) == n_rugbymen
         assert len(blue_position) == n_rugbymen

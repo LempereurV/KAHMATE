@@ -1,6 +1,7 @@
 from rugbymen import *
 from game import *
 
+
 def available_move_positions(current_x,current_y, scope, game):
     """ 
     Returns the list of admissible new positions for a rugbyman in position (current_x, current_y).
