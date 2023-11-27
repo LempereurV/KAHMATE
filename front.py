@@ -22,9 +22,24 @@ class PlayerTokens(pygame.sprite.Sprite):
         self.image = pygame.image.load(picture_path)
         self.image = pygame.transform.scale(self.image, (scale_x, scale_y))
         self.rect = self.image.get_rect()
-    def update(self):
+    def update(self, tokens_group):
+        screen.blit(image, (0, 0))
         self.rect.center = pygame.mouse.get_pos()
-
+        tokens_group.draw(screen)
+        pygame.display.flip()
+        # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
+    def select(self, tokens_group):
+        if self.rect.collidepoint(pygame.mouse.get_pos()):
+            while True:
+                self.update(tokens_group)
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        self.update(tokens_group)
+                        for box in hitbox:
+                            if box.collidepoint(pygame.mouse.get_pos()):
+                                self.rect.center = box.center
+                        return
+                    
 class FloatingMenu(pygame.sprite.Sprite):
     def __init__(self, rows, pos=(0,0), font_size=15, font_type = 'Comic Sans MS', color_bg = (255, 255, 255), color_font = (0,0,0)):
         super().__init__()
@@ -75,7 +90,7 @@ class FloatingMenu(pygame.sprite.Sprite):
         
         return None
 
-        
+                      
 
 ##### #####
 
@@ -134,6 +149,8 @@ class Graphique:
                     print(i % 11, i // 11)
                 else:
                     print(i)
+            else:
+                pass
 
     def get_hitbox(self):
         for i in range(len(hitbox)):
@@ -142,12 +159,14 @@ class Graphique:
                     return [i,(i%11, i//11)]
                 else:
                     return [i]
+            else:
+                return None
 
     # Affiche un point rouge pour 5s quand on clique quelque part
     def display_point(self):
         pygame.draw.circle(self.screen, (255, 0, 0), pygame.mouse.get_pos(), 2)
         pygame.display.flip()
-        pygame.time.wait(500)
+        pygame.time.wait(100)
         self.screen.blit(self.plateau, (0, 0))
         pygame.display.flip()
 
@@ -189,13 +208,25 @@ class Graphique:
     def refresh(self):
         pygame.display.flip()
 
+    def test_initialisation_board(self):
+        token_ord1_p1 = PlayerTokens("Images/Ordinaire_rouge.png")
+        token_ord2_p1 = PlayerTokens("Images/Ordinaire_rouge.png")
+        token_costaud_p1 = PlayerTokens("Images/Costaud_rouge.png")
+        token_dur_p1 = PlayerTokens("Images/Costaud_rouge.png")
+
     # Boucle principale
     def main_loop(self):
         # Players tokens sprites initialisation
 
-        playertoken = PlayerTokens("Images/Costaud_bleu.png")
+        playertoken1 = PlayerTokens("Images/Costaud_bleu.png")
+        playertoken2 = PlayerTokens("Images/Costaud_rouge.png")
         tokens_group = pygame.sprite.Group()
-        tokens_group.add(playertoken)
+        tokens_group.add(playertoken1)
+        tokens_group.add(playertoken2)
+        i=0
+        for tokens in tokens_group:
+            tokens.rect.center = hitbox[i].center
+            i+=1
 
         test_menu=FloatingMenu(["Coucou", "Rugby", "Move", "Pass", "Francois"], (30, 40))
         flag_menu=0
@@ -205,7 +236,8 @@ class Graphique:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.display_number()
                     self.display_point()
-                    i=self.get_hitbox()[0]
+                    for token in tokens_group:
+                        token.select(tokens_group)
                     flag_menu=0
                     if test_menu.print_collision()==None:
                         test_menu.move(pygame.mouse.get_pos())
@@ -217,8 +249,7 @@ class Graphique:
             screen.blit(image, (0, 0))
             if flag_menu:
                 test_menu.draw(screen)
-            tokens_group.draw(screen)
-            tokens_group.update() # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
+            tokens_group.draw(screen) 
             clock.tick(60)
 
 
