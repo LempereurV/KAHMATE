@@ -41,7 +41,7 @@ def move_rugbyman(rugbyman, game, moves_executed): #prendre en compte le moves_e
     "Moves rugbyman to an available position chosen by player"
     current_x = rugbyman.posx()
     current_y = rugbyman.posy()
-    scope = rugbyman.moove_points() - moves_executed
+    scope = rugbyman.move_points() - moves_executed
     rugbymen_positions_list = game.positions()
     #Ne pas oublier de prendre en compte la 3e coordonnée
     available_positions = available_move_positions(current_x, current_y, scope - moves_executed, rugbymen_positions_list) + [current_x, current_y] #Current position should be available
@@ -240,12 +240,31 @@ def score(rugbyman, game):
         def grubber_kick(self, throw):
             if self.possesion == True:
                 return True
-            else:
-                return False
+        return False
 
-        def place_rugbyman(self, x, y):
-            self.posx = x
-            sel#Fonction qui traduit coordonnées en numéro de hitbox
+    def push_through(self, card_self, other, card_other):
+        if (
+            self.active == True
+            and self.possesion == True
+            and self.posx == other.posx
+            and self.posy == other.posy
+        ):
+            if (self.attack_bonus + card_self.point) > (
+                other.defense_bonus + card_other.point
+            ):
+                other.active = False
+                return True
+        return False
+
+    def grubber_kick(self, throw):
+        if self.possesion == True:
+            return True
+        else:
+            return False
+
+    def place_rugbyman(self, x, y):
+        self.posx = x
+        #Fonction qui traduit coordonnées en numéro de hitbox
 def coord_to_hitbox(coord):
     return coord[0]+11*coord[1]
 

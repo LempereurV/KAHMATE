@@ -1,6 +1,9 @@
 from typing import Any
 import pygame
 import sys
+from actions import *
+from rugbymen import *
+from game import *
 
 # Initialisation de Pygame
 pygame.init()
@@ -15,6 +18,52 @@ size = image.get_size()
 
 
 ##### TEST SPRITE #####
+#A function that translates a path into a object of rugbyman
+def path_to_player_type(path):
+    if path.endswith("bleu.png"):
+        color = "blue"
+    elif path.endswith("rouge.png"):
+        color = "red"
+    if path == "Images/Costaud_bleu.png" or path == "Images/Costaud_rouge.png":
+        return StrongRugbyman(color)
+    elif path == "Images/Dur_bleu.png" or path == "Images/Dur_rouge.png":
+        return HardRugbyman(color)
+    elif path == "Images/Fute_bleu.png" or path == "Images/Fute_rouge.png":
+        return SmartRugbyman(color)
+    elif path == "Images/Rapide_bleu.png" or path == "Images/Rapide_rouge.png":
+        return FastRugbyman(color)
+    elif path == "Ordinaire_bleu.png" or path == "Ordinaire_rouge.png":
+        return Rugbyman(color)
+    
+    
+#A function that translates a type of player into a path
+def player_type_to_path(player_type):
+    if player_type.spec() == Spec.STRONG:
+        if player_type.color() == "blue":
+            return "Images/Costaud_bleu.png"
+        elif player_type.color() == "red":
+            return "Images/Costaud_rouge.png"
+    elif player_type.spec() == Spec.SMART:
+        if player_type.color() == "blue":
+            return "Images/Intelligent_bleu.png"
+        elif player_type.color() == "red":
+            return "Images/Intelligent_rouge.png"
+    elif player_type.spec() == Spec.FAST:
+        if player_type.color() == "blue":
+            return "Images/Rapide_bleu.png"
+        elif player_type.color() == "red":
+            return "Images/Rapide_rouge.png"
+    elif player_type.spec() == Spec.HARD:
+        if player_type.color() == "blue":
+            return "Images/Dur_bleu.png"
+        elif player_type.color() == "red": 
+            return "Images/Dur_rouge.png"
+    elif player_type.spec() == Spec.ORDINARY:
+        if player_type.color() == "blue":
+            return "Images/Ordinaire_bleu.png"
+        elif player_type.color() == "red":
+            return "Images/Ordinaire_rouge.png"
+
 
 class PlayerTokens(pygame.sprite.Sprite):
     def __init__(self, picture_path, scale_x=46.8, scale_y=46.5):
@@ -22,16 +71,26 @@ class PlayerTokens(pygame.sprite.Sprite):
         self.image = pygame.image.load(picture_path)
         self.image = pygame.transform.scale(self.image, (scale_x, scale_y))
         self.rect = self.image.get_rect()
+        self.player_type = path_to_player_type(picture_path)
     def update(self, tokens_group):
         screen.blit(image, (0, 0))
         self.rect.center = pygame.mouse.get_pos()
         tokens_group.draw(screen)
         pygame.display.flip()
         # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
+    def get_hitbox(self):
+        for i in range(len(hitbox)):
+            if hitbox[i].collidepoint(self.rect.center):
+                if i<88:
+                    return [i,(i%11, i//11)]
+                else:
+                    return [i]
     def select(self, tokens_group):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
+            #list_move = actions.available_forward_pass(self.get_hitbox[1](0),self.get_hitbox[1](1),self.player_type.moove_points,game) #moves_left
             while True:
                 self.update(tokens_group)
+                #self.highlight_move(list_move)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         self.update(tokens_group)
@@ -40,7 +99,57 @@ class PlayerTokens(pygame.sprite.Sprite):
                                 self.rect.center = box.center
                         return
                     
-              
+class FloatingMenu(pygame.sprite.Sprite):
+    def __init__(self, rows, pos=(0,0), font_size=15, font_type = 'Comic Sans MS', color_bg = (255, 255, 255), color_font = (0,0,0)):
+        super().__init__()
+        self.nb_menu=len(rows)
+
+        self.interline=2
+        self.font_size=font_size
+        width=int(font_size*max([len(x) for x in rows])/1.5)
+        self.border=5
+        height= 2*self.border + (font_size+self.interline)*self.nb_menu
+
+        self.image = pygame.Surface([width, height])
+        self.image.fill(color_bg)
+        self.rect = self.image.get_rect()
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+
+        self.rows = [None for i in range(self.nb_menu)]
+        self.rows_rect = [None for i in range(self.nb_menu)]
+        menu_font = pygame.font.SysFont(font_type, font_size)
+        for i in range(self.nb_menu):
+            self.rows[i]=menu_font.render(rows[i], False, color_font)
+            self.rows_rect[i] = self.rows[i].get_rect()
+            self.rows_rect[i].x = self.border + self.rect.x
+            self.rows_rect[i].y = self.rect.y + self.border + (self.font_size)*i
+    
+    def update_rows_pos(self):
+        for i in range(self.nb_menu):
+            self.rows_rect[i].x = self.border + self.rect.x
+            self.rows_rect[i].y = self.rect.y + self.border + (self.font_size)*i
+
+    def draw(self, screen):
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+        for i in range(self.nb_menu):
+            screen.blit(self.rows[i], (self.rows_rect[i].x, self.rows_rect[i].y))
+            
+    def move(self, pos):
+        self.rect.x=pos[0]
+        self.rect.y=pos[1]
+        self.update_rows_pos()
+    
+    def print_collision(self):
+        for i in range(self.nb_menu):
+            if self.rows_rect[i].collidepoint(pygame.mouse.get_pos()):
+                print(i)
+                return(i)
+        print(None)
+        
+        return None
+
+                      
 
 ##### #####
 
@@ -79,7 +188,6 @@ class Graphique:
     def __init__(self):
         # Initialisation de Pygame
         pygame.init()
-
         # Chargement de l'image, chemin relatif
         image_path = "Images/plateau.png"
         self.plateau = pygame.image.load(image_path)
@@ -108,7 +216,7 @@ class Graphique:
                 if i<88:
                     return [i,(i%11, i//11)]
                 else:
-                    return [i]
+                    return [i,i]
             else:
                 return None
 
@@ -116,7 +224,7 @@ class Graphique:
     def display_point(self):
         pygame.draw.circle(self.screen, (255, 0, 0), pygame.mouse.get_pos(), 2)
         pygame.display.flip()
-        pygame.time.wait(500)
+        pygame.time.wait(100)
         self.screen.blit(self.plateau, (0, 0))
         pygame.display.flip()
 
@@ -158,10 +266,15 @@ class Graphique:
     def refresh(self):
         pygame.display.flip()
 
+    def test_initialisation_board(self):
+        token_ord1_p1 = PlayerTokens("Images/Ordinaire_rouge.png")
+        token_ord2_p1 = PlayerTokens("Images/Ordinaire_rouge.png")
+        token_costaud_p1 = PlayerTokens("Images/Costaud_rouge.png")
+        token_dur_p1 = PlayerTokens("Images/Costaud_rouge.png")
+
     # Boucle principale
     def main_loop(self):
         # Players tokens sprites initialisation
-
         playertoken1 = PlayerTokens("Images/Costaud_bleu.png")
         playertoken2 = PlayerTokens("Images/Costaud_rouge.png")
         tokens_group = pygame.sprite.Group()
@@ -171,6 +284,10 @@ class Graphique:
         for tokens in tokens_group:
             tokens.rect.center = hitbox[i].center
             i+=1
+
+        test_menu=FloatingMenu(["Coucou", "Rugby", "Move", "Pass", "Francois"], (30, 40))
+        flag_menu=0
+    
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -178,13 +295,20 @@ class Graphique:
                     self.display_point()
                     for token in tokens_group:
                         token.select(tokens_group)
+                    flag_menu=0
+                    if test_menu.print_collision()==None:
+                        test_menu.move(pygame.mouse.get_pos())
+                        flag_menu=1
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
             pygame.display.flip()
             screen.blit(image, (0, 0))
+            if flag_menu:
+                test_menu.draw(screen)
             tokens_group.draw(screen) 
             clock.tick(60)
+
 
 if __name__ == "__main__":
     graph = Graphique()
