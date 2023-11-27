@@ -1,0 +1,8 @@
+PRESENTATION DU BACK
+Idée générale:
+- game.py est le fichier le plus macroscopique du back: il permet d'instancier une partie, il contient toutes les variables générales (tailles du tableau de jeu, portée d'une passe en-avant pour tous les joueurs...). Une fois la partie lancée, il attribue le début et la fin de tour de chaque joueur. Afin que le joueur puisse jouer, on s'intéresse au fichier players.py
+- player.py est le fichier intermédiaire du back: il permet au joueur dont c'est le tour de placer en début de partie ses joueurs et de choisir ses deux actions à réaliser pendant chaque tour de la partie. Afin de réaliser les actions, on s'intéresse au fichier actions.py
+- actions.py  est le fichier le plus bas du back: il permet de réaliser toutes les actions pouvant être choisies par le joueur. Il contient la plupart des interactions front-back: affichage sur le tableau de jeu (back -> front), prise en compte des inputs sur le tableau de jeu (front -> back) afin de déplacer effectivement les joueurs...
+
+
+
