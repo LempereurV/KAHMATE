@@ -1,6 +1,15 @@
 from rugbymen import *
 from board import Color
 
+
+def ask_if_action_finished():
+    while True:
+        finished_move = input("Type 'no' if you haven't finished the action of this rugbyman, type 'yes' if you have finished")
+        if finished_move is "yes":
+            return True
+        if finished_move is "no":
+            return False
+
 def available_move_positions(current_x,current_y, scope, game):
     """ 
     Returns the list of admissible new positions for a rugbyman in position (current_x, current_y).
@@ -28,14 +37,6 @@ def input_move_rugbyman(available_positions):
         input_y = input("Choisis la nouvelle ordonnée de ton joueur parmi celles proposées: par exemple tape 5")
         if [input_x, input_y] in available_positions:
             return [input_x, input_y]
-
-def ask_if_action_finished():
-    while True:
-        finished_move = input("Type 'no' if you haven't finished the action of this rugbyman, type 'yes' if you have finished")
-        if finished_move is "yes":
-            return True
-        if finished_move is "no":
-            return False
 
 def move_rugbyman(rugbyman, game, moves_executed): #prendre en compte le moves_executed choisi (3e coordonnée)
     "Moves rugbyman to an available position chosen by player"
