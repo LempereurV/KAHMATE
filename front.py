@@ -88,13 +88,12 @@ class PlayerTokens(pygame.sprite.Sprite):
                     return [i,(i%11, i//11)]
                 else:
                     return [i]
-                
-    def select(self, tokens_group, game):
+    def select(self, tokens_group):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
-            list_move = actions.available_forward_pass(self.get_hitbox[1](0),self.get_hitbox[1](1),self.player_type.moove_points,game) #moves_left
+            #list_move = actions.available_forward_pass(self.get_hitbox[1](0),self.get_hitbox[1](1),self.player_type.moove_points,game) #moves_left
             while True:
                 self.update(tokens_group)
-                self.highlight_move(list_move)
+                #self.highlight_move(list_move)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         self.update(tokens_group)
@@ -192,7 +191,6 @@ class Graphique:
     def __init__(self):
         # Initialisation de Pygame
         pygame.init()
-
         # Chargement de l'image, chemin relatif
         image_path = "Images/plateau.png"
         self.plateau = pygame.image.load(image_path)
@@ -221,7 +219,7 @@ class Graphique:
                 if i<88:
                     return [i,(i%11, i//11)]
                 else:
-                    return [i]
+                    return [i,i]
             else:
                 return None
 
@@ -278,7 +276,7 @@ class Graphique:
         token_dur_p1 = PlayerTokens("Images/Costaud_rouge.png")
 
     # Boucle principale
-    def main_loop(self, Game):
+    def main_loop(self):
         # Players tokens sprites initialisation
         playertoken1 = PlayerTokens("Images/Costaud_bleu.png")
         playertoken2 = PlayerTokens("Images/Costaud_rouge.png")
@@ -316,6 +314,5 @@ class Graphique:
 
 
 if __name__ == "__main__":
-    Game = Game()
     graph = Graphique()
-    graph.main_loop(Game)
+    graph.main_loop()
