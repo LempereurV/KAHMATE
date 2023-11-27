@@ -1,4 +1,5 @@
 from rugbymen import *
+from game import *
 
 def available_move_positions(current_x,current_y, scope, game):
     """ 
@@ -22,7 +23,7 @@ def move_rugbyman(rugbyman, game, moves_executed): #prendre en compte le moves_e
     "Moves rugbyman to an available position chosen by player"
     current_x = rugbyman.posx()
     current_y = rugbyman.posy()
-    scope = rugbyman.moove_points() - moves_executed
+    scope = rugbyman.move_points() - moves_executed
     rugbymen_positions_list = game.positions()
     available_positions = available_move_positions(current_x, current_y, scope - moves_executed, rugbymen_positions_list) + [current_x, current_y] #Current position should be available
     while True:
@@ -30,7 +31,7 @@ def move_rugbyman(rugbyman, game, moves_executed): #prendre en compte le moves_e
         cancel = input("If you don't want to move, type 'cancel'")
         if cancel is 'cancel':
             return False
-        input_x = ("Choisis la nouvelle abcisse de ton joueur parmi celles proposées: par exemple tape 3")
+        input_x = ("Choisis la nouvelle abscisse de ton joueur parmi celles proposées: par exemple tape 3")
         input_y = ("Choisis la nouvelle ordonnée de ton joueur parmi celles proposées: par exemple tape 5")
         if [input_x, input_y] in available_positions:
             moves_executed += abs(current_x - input_x) + abs(current_y - input_y)
@@ -126,43 +127,55 @@ def score(rugbyman, game):
     pass
 class Actions: 
 
-        def tackle(self, card_self, other, card_other):
-            if (
-                self.active == True
-                and self.possesion == False
-                and self.posx == other.posx
-                and self.posy == other.posy
-            ):
-                if (self.attack_bonus + card_self.point) > (
-                    other.defense_bonus + card_other.point
-                ):
-                    other.active = False
-                    return True
-            return False
+    def moove_up(self):
+            self.posy += 1
 
-        def push_through(self, card_self, other, card_other):
-            if (
-                self.active == True
-                and self.possesion == True
-                and self.posx == other.posx
-                and self.posy == other.posy
-            ):
-                if (self.attack_bonus + card_self.point) > (
-                    other.defense_bonus + card_other.point
-                ):
-                    other.active = False
-                    return True
-            return False
+    def moove_down(self):
+        self.posy -= 1
 
-        def grubber_kick(self, throw):
-            if self.possesion == True:
+    def moove_left(self):
+        self.posx -= 1
+
+    def moove_right(self):
+        self.posx += 1
+
+    def tackle(self, card_self, other, card_other):
+        if (
+            self.active == True
+            and self.possesion == False
+            and self.posx == other.posx
+            and self.posy == other.posy
+        ):
+            if (self.attack_bonus + card_self.point) > (
+                other.defense_bonus + card_other.point
+            ):
+                other.active = False
                 return True
-            else:
-                return False
+        return False
 
-        def place_rugbyman(self, x, y):
-            self.posx = x
-            sel#Fonction qui traduit coordonnées en numéro de hitbox
+    def push_through(self, card_self, other, card_other):
+        if (
+            self.active == True
+            and self.possesion == True
+            and self.posx == other.posx
+            and self.posy == other.posy
+        ):
+            if (self.attack_bonus + card_self.point) > (
+                other.defense_bonus + card_other.point
+            ):
+                other.active = False
+                return True
+        return False
+
+    def grubber_kick(self, throw):
+        if self.possesion == True:
+            return True
+        else:
+            return False
+
+    def place_rugbyman(self, x, y):
+        self.posx = x
+        #Fonction qui traduit coordonnées en numéro de hitbox
 def coord_to_hitbox(coord):
     return coord[0]+11*coord[1]
 
