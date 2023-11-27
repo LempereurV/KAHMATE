@@ -85,7 +85,7 @@ class PlayerTokens(pygame.sprite.Sprite):
                     return [i,(i%11, i//11)]
                 else:
                     return [i]
-    def select(self, tokens_group, game):
+    def select(self, tokens_group):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             #list_move = actions.available_forward_pass(self.get_hitbox[1](0),self.get_hitbox[1](1),self.player_type.moove_points,game) #moves_left
             while True:
@@ -273,7 +273,7 @@ class Graphique:
         token_dur_p1 = PlayerTokens("Images/Costaud_rouge.png")
 
     # Boucle principale
-    def main_loop(self, Game):
+    def main_loop(self):
         # Players tokens sprites initialisation
         playertoken1 = PlayerTokens("Images/Costaud_bleu.png")
         playertoken2 = PlayerTokens("Images/Costaud_rouge.png")
@@ -312,4 +312,4 @@ class Graphique:
 
 if __name__ == "__main__":
     graph = Graphique()
-    graph.main_loop(Game)
+    graph.main_loop()
