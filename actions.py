@@ -180,20 +180,21 @@ def forward_pass(rugbyman, game):
         game.ball.moved([input_x, input_y])
         game.ball.left()
 
+def available_score(color, current_x, game):
+    available = []
+    if color is Color.RED:
+        if current_x == game.max_x():
+            available.append([89, 89])
+    if color is Color.BLUE:
+        if current_x == 0:
+            available.append([88, 88])
+    return available
+
 def score(rugbyman, game):
     color = rugbyman.color()
     current_x = rugbyman.posx()
-    current_y = rugbyman.posy()
-    if game.ball.is_carried_by_rugbyman(rugbyman):
-        if ((color is Color.RED) and (current_x == game.max_x())):
-            rugbyman.new_posx(game.max_x() + 1)
-            game.ball.moved([current_x + 1, current_y])
-        if ((color is Color.BLUE) and (current_x == 0)):
-             rugbyman.new_posx(-1)
-             game.ball.moved([current_x + 1, current_y])
-    else: 
-         print("Rugbyman not allowed to score")
-    return True
+    if available_score(color, current_x, game) != []:
+        return True
 
 """class Actions: 
 
