@@ -5,14 +5,14 @@ import cards
 
 class Player:
     def __init__(self, color):
-        self._unplaced_men = [rugbymen.Rugbyman(color), 
+        self._unplaced_rugbymen = [rugbymen.Rugbyman(color), 
                               rugbymen.Rugbyman(color), 
-                              rugbymen.Strong_rugbyman(color), 
-                              rugbymen.Hard_rugbyman(color), 
-                              rugbymen.Smart_rugbyman(color), 
-                              rugbymen.Fast_rugbyman(color)
+                              rugbymen.StrongRugbyman(color), 
+                              rugbymen.HardRugbyman(color), 
+                              rugbymen.SmartRugbyman(color), 
+                              rugbymen.FastRugbyman(color)
                               ]
-        self._players = []
+        self._rugbymen = []
         self._cards = [cards.ONE,
                         cards.TWO, 
                         cards.THREE, 
@@ -22,12 +22,12 @@ class Player:
                         ]
         self._color = color
 
-    def players(self):
-        return self._players
+    def rugbymen(self):
+        return self._rugbymen
 
     def place_rugbyman(self):
         try:
-            rugbyman = self._unplaced_men.pop()
+            rugbyman = self._unplaced_rugbymen.pop()
             pass
         except IndexError:
             raise("No rugbyman to place")
@@ -47,11 +47,11 @@ class Player:
             if chosen_action == "3":
                 return tackle(self, game)
             if chosen_action == "4":
-                return forward_pass(self, game)
+                return forward_pass(self, game) #ne pas oublier rugbyman.has_partners_in_front()
             if chosen_action == "5":
                 return score(self, game)
 
-    def pick_card(self, picked_card):
+    def pick_card(self):
         """
         Discard the card chosen by the player and reinitialize the deck if all cards have been played
         """
@@ -80,6 +80,9 @@ class Ball:
 
     def new_carrier(self, player):
         self._carrier = player
+
+    def is_carried_by_rugbyman(self, rugbyman):
+        return (self.is_carried() and self._carrier() == rugbyman)
 
     def left(self):
         self._carrier = None
