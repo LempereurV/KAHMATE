@@ -1,7 +1,68 @@
+from typing import Any
 import pygame
 import sys
 
-# Coordonnées de chaque point
+# Initialisation de Pygame
+pygame.init()
+
+clock = pygame.time.Clock()
+
+#Chargement de l'image, chemin relatif
+image_path = "Images/plateau.png"
+image = pygame.image.load(image_path)
+# Définition de la taille de la fenêtre
+size = image.get_size()
+
+
+##### TEST SPRITE #####
+
+class PlayerTokens(pygame.sprite.Sprite):
+    def __init__(self, picture_path, scale_x=46.8, scale_y=46.5):
+        super().__init__()
+        self.image = pygame.image.load(picture_path)
+        self.image = pygame.transform.scale(self.image, (scale_x, scale_y))
+        self.rect = self.image.get_rect()
+    def update(self, tokens_group):
+        screen.blit(image, (0, 0))
+        self.rect.center = pygame.mouse.get_pos()
+        tokens_group.draw(screen)
+        pygame.display.flip()
+        # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
+    def select(self, tokens_group):
+        if self.rect.collidepoint(pygame.mouse.get_pos()):
+            while True:
+                self.update(tokens_group)
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        self.update(tokens_group)
+                        for box in hitbox:
+                            if box.collidepoint(pygame.mouse.get_pos()):
+                                self.rect.center = box.center
+                        return
+                    
+              
+
+##### #####
+
+# Création de la fenêtre
+screen = pygame.display.set_mode(size)
+#surf = pygame.surface.Surface(size)
+
+print(type(screen))
+#Affichage de l'image dans la fenêtre
+screen.blit(image, (0, 0))
+
+image_costaud_rouge = pygame.image.load("Images/Costaud_bleu.png")
+screen.blit(image_costaud_rouge, (10, 10))
+#surf.blit(image_costaud_rouge, (10, 10))
+
+# Dessiner un point rouge
+# pygame.draw.circle(screen, (255, 0, 0), (92,62), 2)
+
+# Dessiner un point bleu
+# pygame.draw.circle(screen, (0, 0, 255), (92, 107), 2)
+
+
 coords = []
 for j in range(8):
     for i in range(11):
@@ -38,6 +99,8 @@ class Graphique:
                     print(i % 11, i // 11)
                 else:
                     print(i)
+            else:
+                pass
 
     def get_hitbox(self):
         for i in range(len(hitbox)):
@@ -46,6 +109,8 @@ class Graphique:
                     return [i,(i%11, i//11)]
                 else:
                     return [i]
+            else:
+                return None
 
     # Affiche un point rouge pour 5s quand on clique quelque part
     def display_point(self):
@@ -95,15 +160,31 @@ class Graphique:
 
     # Boucle principale
     def main_loop(self):
+        # Players tokens sprites initialisation
+
+        playertoken1 = PlayerTokens("Images/Costaud_bleu.png")
+        playertoken2 = PlayerTokens("Images/Costaud_rouge.png")
+        tokens_group = pygame.sprite.Group()
+        tokens_group.add(playertoken1)
+        tokens_group.add(playertoken2)
+        i=0
+        for tokens in tokens_group:
+            tokens.rect.center = hitbox[i].center
+            i+=1
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.display_number()
                     self.display_point()
-                    i=self.get_hitbox()[0]
+                    for token in tokens_group:
+                        token.select(tokens_group)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+            pygame.display.flip()
+            screen.blit(image, (0, 0))
+            tokens_group.draw(screen) 
+            clock.tick(60)
 
 if __name__ == "__main__":
     graph = Graphique()
