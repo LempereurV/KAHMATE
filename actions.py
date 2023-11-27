@@ -126,18 +126,6 @@ def score(rugbyman, game):
     pass
 class Actions: 
 
-    def moove_up(self):
-            self.posy += 1
-
-        def moove_down(self):
-            self.posy -= 1
-
-        def moove_left(self):
-            self.posx -= 1
-
-        def moove_right(self):
-            self.posx += 1
-
         def tackle(self, card_self, other, card_other):
             if (
                 self.active == True
