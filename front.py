@@ -1,8 +1,6 @@
 from typing import Any
 import pygame
 import sys
-from actions import *
-from rugbymen import *
 from game import *
 
 # Initialisation de Pygame
@@ -19,50 +17,10 @@ size = image.get_size()
 
 ##### TEST SPRITE #####
 #A function that translates a path into a object of rugbyman
-def path_to_player_type(path):
-    if path.endswith("bleu.png"):
-        color = "blue"
-    elif path.endswith("rouge.png"):
-        color = "red"
-    if path == "Images/Costaud_bleu.png" or path == "Images/Costaud_rouge.png":
-        return StrongRugbyman(color)
-    elif path == "Images/Dur_bleu.png" or path == "Images/Dur_rouge.png":
-        return HardRugbyman(color)
-    elif path == "Images/Fute_bleu.png" or path == "Images/Fute_rouge.png":
-        return SmartRugbyman(color)
-    elif path == "Images/Rapide_bleu.png" or path == "Images/Rapide_rouge.png":
-        return FastRugbyman(color)
-    elif path == "Ordinaire_bleu.png" or path == "Ordinaire_rouge.png":
-        return Rugbyman(color)
     
     
 #A function that translates a type of player into a path
-def player_type_to_path(player_type):
-    if player_type.spec() == Spec.STRONG:
-        if player_type.color() == "blue":
-            return "Images/Costaud_bleu.png"
-        elif player_type.color() == "red":
-            return "Images/Costaud_rouge.png"
-    elif player_type.spec() == Spec.SMART:
-        if player_type.color() == "blue":
-            return "Images/Intelligent_bleu.png"
-        elif player_type.color() == "red":
-            return "Images/Intelligent_rouge.png"
-    elif player_type.spec() == Spec.FAST:
-        if player_type.color() == "blue":
-            return "Images/Rapide_bleu.png"
-        elif player_type.color() == "red":
-            return "Images/Rapide_rouge.png"
-    elif player_type.spec() == Spec.HARD:
-        if player_type.color() == "blue":
-            return "Images/Dur_bleu.png"
-        elif player_type.color() == "red": 
-            return "Images/Dur_rouge.png"
-    elif player_type.spec() == Spec.ORDINARY:
-        if player_type.color() == "blue":
-            return "Images/Ordinaire_bleu.png"
-        elif player_type.color() == "red":
-            return "Images/Ordinaire_rouge.png"
+
 
 
 class PlayerTokens(pygame.sprite.Sprite):
@@ -87,7 +45,6 @@ class PlayerTokens(pygame.sprite.Sprite):
                     return [i]
     def select(self, tokens_group, game):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
-            list_move = actions.available_forward_pass(self.get_hitbox[1](0),self.get_hitbox[1](1),self.player_type.moove_points,game) #moves_left
             while True:
                 self.update(tokens_group)
                 self.highlight_move(list_move)
@@ -312,6 +269,5 @@ class Graphique:
 
 
 if __name__ == "__main__":
-    Game = Game()
     graph = Graphique()
     graph.main_loop(Game)
