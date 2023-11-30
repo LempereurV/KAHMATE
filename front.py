@@ -32,7 +32,7 @@ def path_to_player_type(path):
         return SmartRugbyman(color)
     elif path == "Images/Rapide_bleu.png" or path == "Images/Rapide_rouge.png":
         return FastRugbyman(color)
-    elif path == "Ordinaire_bleu.png" or path == "Ordinaire_rouge.png":
+    elif path == "Images/Ordinaire_bleu.png" or path == "Images/Ordinaire_rouge.png":
         return Rugbyman(color)
     
     
@@ -239,7 +239,7 @@ class Graphique:
     #Met en surbrillance les cases où le joueur peut se déplacer
     def highlight_move(self, list_move):
         for i in range(len(list_move)):
-            pygame.draw.circle(self.screen, (20, 255, 167), (coords[list_move[i]][0]+46.8/2,coords[list_move[i]][1]+46.5/2),10)
+            pygame.draw.circle(self.screen, (20, 255, 167), (92+46.8/2+list_move[i][0]*46.8, 62+46.5/2+list_move[i][1]*46.5),10)
         pygame.display.flip()
 
     def create_dropdown_menu(self, options, menu_pos, menu_size):

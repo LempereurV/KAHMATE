@@ -14,6 +14,7 @@ class Rugbyman:
         self.attack_bonus = 0
         self.defense_bonus = 0
         self.moove_points = 3
+        self.moves_left = self.moove_points
         self.posx = 0
         self.posy = 0
         self.spec = Spec.NORMAL

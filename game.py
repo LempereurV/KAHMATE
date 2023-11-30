@@ -36,8 +36,8 @@ class Game:
     def red_player(self):
         return self.player2
 
-    def players(self):
-        return self.player1.players() + self.player2.players()
+    def rugbymen(self):
+        return self.player1.rugbymen() + self.player2.rugbymen()
 
     def is_position_valid(self, position):
         return ((position[0] >= 0) 
@@ -50,6 +50,19 @@ class Game:
             if [rugbyman.posx(), rugbyman.posy()] == position:  # Fixed: Use '==' for comparison
                 return False
         return True
+    
+    def is_position_occupied_by_team(self, color, position, game):
+        for rugbyman in game.rugbymen():
+            if (color is rugbyman.color()
+                and position[0] == rugbyman.posx()
+                and position[1] == rugbyman.posy()
+                ):
+                return True
+        return False
+
+        
+    
+
 
     def play(self):
         while not self.is_over:
