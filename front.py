@@ -85,19 +85,20 @@ class PlayerTokens(pygame.sprite.Sprite):
                     return [i,(i%11, i//11)]
                 else:
                     return [i]
-    def select(self, tokens_group):
+    def select(self, tokens_group, game, graphique):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
-            #list_move = actions.available_forward_pass(self.get_hitbox[1](0),self.get_hitbox[1](1),self.player_type.moove_points,game) #moves_left
+            list_move = actions.available_move_positions(self.get_hitbox()[1][0],self.get_hitbox()[1][1], game, self.player_type.moove_points) #moves_left
             while True:
+                graphique.highlight_move(list_move)
                 self.update(tokens_group)
-                #self.highlight_move(list_move)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        self.update(tokens_group)
                         for box in hitbox:
-                            if box.collidepoint(pygame.mouse.get_pos()):
+                            if box.collidepoint(pygame.mouse.get_pos()) and hitbox_to_coord(hitbox.index(box)) in list_move:
                                 self.rect.center = box.center
-                        return
+                                return False
+        else:
+            return True
                     
 class FloatingMenu(pygame.sprite.Sprite):
     def __init__(self, rows, pos=(0,0), font_size=15, font_type = 'Comic Sans MS', color_bg = (255, 255, 255), color_font = (0,0,0)):
@@ -273,10 +274,10 @@ class Graphique:
         token_dur_p1 = PlayerTokens("Images/Costaud_rouge.png")
 
     # Boucle principale
-    def main_loop(self):
+    def main_loop(self, game):
         # Players tokens sprites initialisation
         playertoken1 = PlayerTokens("Images/Costaud_bleu.png")
-        playertoken2 = PlayerTokens("Images/Costaud_rouge.png")
+        playertoken2 = PlayerTokens("Images/Ordinaire_rouge.png")
         tokens_group = pygame.sprite.Group()
         tokens_group.add(playertoken1)
         tokens_group.add(playertoken2)
@@ -284,19 +285,23 @@ class Graphique:
         for tokens in tokens_group:
             tokens.rect.center = hitbox[i].center
             i+=1
+            print(tokens.player_type.spec)
 
         test_menu=FloatingMenu(["Coucou", "Rugby", "Move", "Pass", "Francois"], (30, 40))
         flag_menu=0
     
         while True:
+            a = True
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.display_number()
                     self.display_point()
-                    for token in tokens_group:
-                        token.select(tokens_group)
                     flag_menu=0
-                    if test_menu.print_collision()==None:
+                    for token in tokens_group:
+                        a = token.select(tokens_group, game, self)
+                        if not a:
+                            break
+                    if test_menu.print_collision()==None and a:
                         test_menu.move(pygame.mouse.get_pos())
                         flag_menu=1
                 if event.type == pygame.QUIT:
@@ -312,4 +317,5 @@ class Graphique:
 
 if __name__ == "__main__":
     graph = Graphique()
-    graph.main_loop()
+    Game = Game()
+    graph.main_loop(Game)

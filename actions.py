@@ -1,22 +1,19 @@
 from rugbymen import *
 from game import *
 
-def available_move_positions(current_x,current_y, scope, game):
+def available_move_positions(current_x, current_y, game, scope):
     """ 
     Returns the list of admissible new positions for a rugbyman in position (current_x, current_y).
     Used in move_rugbyman(rugbyman, game).
-    """    
-    available = [[current_x, current_y, 0]] #la troisième coordonnée correspond à la distance nouvellement parcourue
-    moves_executed = 0
-    while moves_executed < scope:
-        for intermediate_position in available:
-            for delta in [[-1, 0], [1, 0], [0, -1], [0, 1]]:
-                new_position = [intermediate_position[0] + delta[0], intermediate_position[1] + delta[1], moves_executed]
-                if not ((new_position[:2] in [position[:2] for position in available]) 
-                        and game.is_position_correct(new_position) 
-                        and game.is_position_unoccupied(new_position)):
-                     available.append(intermediate_position)
-        moves_executed +=1
+    """ 
+    current_x = int(current_x)
+    current_y = int(current_y)
+    scope = int(scope)
+    available = []
+    for x in range(current_x-scope, current_x+scope+1):
+        for y in range(current_y-scope, current_y+scope+1):
+            if game.is_position_valid([x, y]) and (abs(current_x-x)+abs(current_y-y))<=scope: # and game.is_position_unoccupied([x, y])
+                available.append([x, y])
     return available
 
 def move_rugbyman(rugbyman, game, moves_executed): #prendre en compte le moves_executed choisi (3e coordonnée)
@@ -180,4 +177,4 @@ def coord_to_hitbox(coord):
     return coord[0]+11*coord[1]
 
 def hitbox_to_coord(n_hit):
-    return (n_hit%11, n_hit//11)
+    return [n_hit%11, n_hit//11]
