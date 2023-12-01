@@ -92,12 +92,12 @@ class RugbymanToken(pygame.sprite.Sprite):
                     return [i,(i%11, i//11)]
                 else:
                     return [i]
-    def select(self, tokens_group, game, graphique):
+    def select(self, tokens_group, background_image, game, graphique):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             list_move = actions.available_move_positions(self.get_hitbox()[1][0],self.get_hitbox()[1][1], game, self.player_type.moove_points) #moves_left
             while True:
-                graphique.highlight_move(list_move)
-                self.follow_cursor(tokens_group)
+                # graphique.highlight_move(list_move)
+                self.follow_cursor(tokens_group, background_image)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         self.follow_cursor(tokens_group, background_image)
@@ -360,7 +360,7 @@ class Graphique:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     None
 
-    def test_initialisation_board(self):
+    def test_initialisation_board(self, game):
         token_normal1_red = RugbymanToken("Images/Ordinaire_rouge.png")
         token_normal2_red = RugbymanToken("Images/Ordinaire_rouge.png")
         token_strong_red = RugbymanToken("Images/Costaud_rouge.png")
@@ -413,9 +413,9 @@ class Graphique:
                     self.display_number()
                     self.display_point()
                     for token in red_tokens_group:
-                        token.select(red_tokens_group, image)
+                        token.select(red_tokens_group, image, game, self)
                     for token in blue_tokens_group:
-                        token.select(blue_tokens_group, image)
+                        token.select(blue_tokens_group, image, game, self)
                     flag_menu = 0
                     if test_menu.print_collision() == None:
                         test_menu.move(pygame.mouse.get_pos())
@@ -459,7 +459,7 @@ class Graphique:
                     self.display_point()
                     flag_menu=0
                     for token in tokens_group:
-                        a = token.select(tokens_group, game, self)
+                        a = token.select(tokens_group, image, game, self)
                         if not a:
                             break
                     if test_menu.print_collision()==None and a:
@@ -478,7 +478,8 @@ class Graphique:
 
 if __name__ == "__main__":
     graph = Graphique()
-    graph.test_initialisation_board()
+    
 
-    Game = Game()
-    graph.main_loop(Game)
+    game = Game()
+    graph.test_initialisation_board(game)
+    #graph.main_loop(game)
