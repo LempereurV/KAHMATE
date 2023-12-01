@@ -1,2 +1,2 @@
 # KAHMATE
-Vive le jambon
+Vive le jambon (et la bière)
