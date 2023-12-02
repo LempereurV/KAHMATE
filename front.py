@@ -1,9 +1,9 @@
 from typing import Any
 import pygame
 import sys
-from actions import *
-from rugbymen import *
 from game import *
+from rugbymen import *
+from actions import *
 
 # Initialisation de Pygame
 pygame.init()
@@ -35,7 +35,7 @@ def path_to_player_type(path):
     
     
 #A function that translates a type of player into a path
-def player_type_to_path(player_type):
+def player_type_to_path(player_type): 
     if player_type.spec() == Spec.STRONG:
         if player_type.color() == "blue":
             return "Images/Costaud_bleu.png"
@@ -96,6 +96,7 @@ class RugbymanToken(pygame.sprite.Sprite):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             list_move = actions.available_move_positions(self.get_hitbox()[1][0],self.get_hitbox()[1][1], game, self.player_type.moove_points) #moves_left
             while True:
+                graphique.highlight_move(list_move)
                 graphique.highlight_move(list_move)
                 self.follow_cursor(tokens_group, background_image)
                 for event in pygame.event.get():
@@ -212,7 +213,6 @@ screen.blit(image_costaud_rouge, (10, 10))
 # Dessiner un point bleu
 # pygame.draw.circle(screen, (0, 0, 255), (92, 107), 2)
 
-
 coords = []
 for j in range(8):
     for i in range(11):
@@ -284,8 +284,8 @@ class Graphique:
                 self.screen,
                 (20, 255, 167),
                 (
-                    (92+46.8/2+list_move[i][0]*46.8, 
-                     62+46.5/2+list_move[i][1]*46.5)
+                    coords[list_move[i][1]][0] + 46.8 / 2,
+                    coords[list_move[i][0]][1] + 46.5 / 2
                 ),
                 10,
             )
