@@ -1,9 +1,9 @@
 from typing import Any
 import pygame
 import sys
-from actions import *
-from rugbymen import *
 from game import *
+from rugbymen import *
+from actions import *
 
 # Initialisation de Pygame
 pygame.init()
@@ -35,7 +35,7 @@ def path_to_player_type(path):
     
     
 #A function that translates a type of player into a path
-def player_type_to_path(player_type):
+def player_type_to_path(player_type): 
     if player_type.spec() == Spec.STRONG:
         if player_type.color() == "blue":
             return "Images/Costaud_bleu.png"
