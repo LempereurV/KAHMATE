@@ -96,7 +96,7 @@ class RugbymanToken(pygame.sprite.Sprite):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             list_move = actions.available_move_positions(self.get_hitbox()[1][0],self.get_hitbox()[1][1], game, self.player_type.moove_points) #moves_left
             while True:
-                # graphique.highlight_move(list_move)
+                graphique.highlight_move(list_move)
                 self.follow_cursor(tokens_group, background_image)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -211,7 +211,6 @@ screen.blit(image_costaud_rouge, (10, 10))
 # Dessiner un point bleu
 # pygame.draw.circle(screen, (0, 0, 255), (92, 107), 2)
 
-
 coords = []
 for j in range(8):
     for i in range(11):
@@ -282,10 +281,7 @@ class Graphique:
             pygame.draw.circle(
                 self.screen,
                 (20, 255, 167),
-                (
-                    coords[list_move[i]][0] + 46.8 / 2,
-                    coords[list_move[i]][1] + 46.5 / 2,
-                ),
+                (coords[list_move[i][0]][0] + 46.8 / 2, coords[list_move[i][1]][1] + 46.5 / 2),
                 10,
             )
         pygame.display.flip()
