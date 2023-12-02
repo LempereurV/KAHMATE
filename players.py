@@ -75,7 +75,7 @@ class Player:
             rugbyman = self._unplaced_rugbymen.pop()
             pass
         except IndexError:
-            raise("No rugbyman to place")
+            raise ("No rugbyman to place")
 
     def pick_card(self):
         """
@@ -108,7 +108,7 @@ class Ball:
         self._carrier = player
 
     def is_carried_by_rugbyman(self, rugbyman):
-        return (self.is_carried() and self._carrier() == rugbyman)
+        return self.is_carried() and self._carrier() == rugbyman
 
     def left(self):
         self._carrier = None
