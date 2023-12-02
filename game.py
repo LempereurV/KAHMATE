@@ -8,6 +8,7 @@ number_of_rows = 8
 number_of_columns = 11
 forward_pass_scope = 3
 
+
 class Game:
     def __init__(self):
         self.max_x_value = number_of_columns - 1
@@ -29,10 +30,10 @@ class Game:
 
     def forward_pass_scope(self):
         return self.forward_pass_scope
-    
+
     def blue_player(self):
         return self.player1
-    
+
     def red_player(self):
         return self.player2
 
@@ -67,6 +68,6 @@ class Game:
     def play(self):
         while not self.is_over:
             pass
-    
+
     def ball(self):
         return self.ball
