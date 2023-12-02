@@ -284,8 +284,8 @@ class Graphique:
                 self.screen,
                 (20, 255, 167),
                 (
-                    coords[list_move[i]][0] + 46.8 / 2,
-                    coords[list_move[i]][1] + 46.5 / 2,
+                    coords[list_move[i][1]][0] + 46.8 / 2,
+                    coords[list_move[i][0]][1] + 46.5 / 2
                 ),
                 10,
             )
