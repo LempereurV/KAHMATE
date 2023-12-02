@@ -97,6 +97,7 @@ class RugbymanToken(pygame.sprite.Sprite):
             list_move = actions.available_move_positions(self.get_hitbox()[1][0],self.get_hitbox()[1][1], game, self.player_type.moove_points) #moves_left
             while True:
                 graphique.highlight_move(list_move)
+                graphique.highlight_move(list_move)
                 self.follow_cursor(tokens_group, background_image)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -104,9 +105,10 @@ class RugbymanToken(pygame.sprite.Sprite):
                         for box in hitbox:
                             if box.collidepoint(pygame.mouse.get_pos()) and hitbox_to_coord(hitbox.index(box)) in list_move:
                                 self.rect.center = box.center
+                                print(False)
                                 return False
         else:
-            return True #Why does it return true if no token is selected ?
+            return True 
                     
 class FloatingMenu(pygame.sprite.Sprite):
     # Class of floating menus, from which token actions can be selected
@@ -281,7 +283,10 @@ class Graphique:
             pygame.draw.circle(
                 self.screen,
                 (20, 255, 167),
-                (coords[list_move[i][0]][0] + 46.8 / 2, coords[list_move[i][1]][1] + 46.5 / 2),
+                (
+                    coords[list_move[i]][0] + 46.8 / 2,
+                    coords[list_move[i]][1] + 46.5 / 2,
+                ),
                 10,
             )
         pygame.display.flip()
@@ -404,16 +409,22 @@ class Graphique:
         flag_menu = 0
 
         while True:
+            a = True
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.display_number()
                     self.display_point()
                     for token in red_tokens_group:
-                        token.select(red_tokens_group, image, game, self)
-                    for token in blue_tokens_group:
-                        token.select(blue_tokens_group, image, game, self)
+                        a = token.select(red_tokens_group, image, game, self)
+                        if not a:
+                            break
+                    if a:
+                        for token in blue_tokens_group:
+                            a = token.select(blue_tokens_group, image, game, self)
+                            if not a:
+                                break
                     flag_menu = 0
-                    if test_menu.print_collision() == None:
+                    if test_menu.print_collision() == None and a:
                         test_menu.move(pygame.mouse.get_pos())
                         flag_menu = 1
                 if event.type == pygame.QUIT:
@@ -458,6 +469,7 @@ class Graphique:
                         a = token.select(tokens_group, image, game, self)
                         if not a:
                             break
+                    print(a)
                     if test_menu.print_collision()==None and a:
                         test_menu.move(pygame.mouse.get_pos())
                         flag_menu = 1
