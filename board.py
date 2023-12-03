@@ -3,8 +3,8 @@ import rugbymen
 import front
 import enum
 
-n_row = 11
-n_column = 8
+n_row = 9
+n_column = 11
 n_case = n_row * n_column
 n_rugbymen = 6
 
@@ -13,6 +13,7 @@ n_rugbymen = 6
 class Color(enum.Enum):
     RED = "red"
     BLUE = "blue"
+
 
 
 def placement_orders(color):
@@ -26,58 +27,73 @@ def placement_orders(color):
     }
     return R
 
-def get_hitbox_board():
-    
 
-def positions_rugbymen_player(color,graphique_board):
-    #Ne pas utiliser gethitbox recupérer directement les positions des rugbymen
+
+
+def positions_rugbymen_player(color,Graphique):
     placement_order = placement_orders(color)
     i = 0
-    R = np.zeros((n_rugbymen, 2))
-    # The  player chooses his rugbymen positions
-    Noms=list(placement_order.keys())
+    R = [None] * n_rugbymen #R is the list of the positions of the rugbymen
+    Noms=list(placement_order.keys()) #List of the names of the rugbymen
     while i < n_rugbymen:
-        print("Choose the position of the " + Noms[i])
-        pos = graphique_board.get_hitbox()
-        if pos is None:
-            print("You must click on the board")
-            return 0
-        while (len(pos)<2):
-            print("You must click on the board")
+        print(str(color).split(".")[-1]+ " Player, Choose the position of the " + Noms[i]) # Changer Color.split(".")[-1] for the color to display as intended
+        pos = front.Graphique.get_hitbox_for_back(Graphique) #Fonction de la classe graphique qui renvoie une liste de la forme [i,j] avec i et j les colonnes et lignes de la case cliquée
+        if pos in R:
+            cond_pos_already_taken=True
+            while cond_pos_already_taken:
+                print("The position chosen is already taken, re choose the position")
+                pos = front.Graphique.get_hitbox_for_back(Graphique)
+                if not pos in R:
+                    cond_pos_already_taken=False
+        if color == Color.RED and pos[1] >= n_column // 2: #Red characters should be placed on the left 
+            cond_RED=True
+            while cond_RED:
+                print(
+                    "The position isn't correct, the red team is suppose to be on the left, re choose the position"
+                )
+                pos = front.Graphique.get_hitbox_for_back(Graphique)
+                if pos[1] < n_column // 2:
+                    cond_RED=False
 
-            pos = graphique_board.get_hitbox()
-        
-        if color == Color.RED:
-            while pos[1][0] > 4:
+        if color == Color.BLUE and pos[1] <= n_column // 2 :
+            cond_Blue=True
+            while cond_Blue:
                 print(
-                    "The position isn't correct, the red team is suppose to be on the left "
+                    "The position isn't correct, the blue team is suppose to be on the right, re choose the position"
                 )
-                pos = graphique_board.get_hitbox()
-        if color == Color.BLUE:
-            while pos[1][0] < 6:
-                print(
-                    "The position isn't correct, the blue team is suppose to be on the right "
-                )
-                pos = graphique_board.get_hitbox()
+                pos = front.Graphique.get_hitbox_for_back(Graphique)
+                if pos[1] > n_column // 2 :
+                    cond_Blue=False
+        front.Graphique.affiche_joueur(Graphique,pos[0]*n_column+pos[1],front.path_convertor(placement_order[Noms[i]]))#Display the newly placed rugbymen on the board
+        R[i] = [pos[0], pos[1]]
         i += 1
-        R[i] = pos[1]
-    return R
+    R_with_rugbymen = []
+    # R_with_rugbymen is the list of the positions of the rugbymen with the type of the rugbymen
+    for i in range(n_rugbymen):
+        R_with_rugbymen.append(R[i] + [placement_order[Noms[i]]])
+
+    return R_with_rugbymen
 
 
 class Board:
-    def __init__(self):
-        blue_position=positions_rugbymen_player(Color.BLUE) #Attention, il faut le graphique board soit créé avant les joueurs
-        red_position=positions_rugbymen_player(Color.RED)
-        self._board = np.zeros((n_row, n_column))
+    def __init__(self,Graphique ):
+        red_position=positions_rugbymen_player(Color.RED,Graphique)
+        blue_position=positions_rugbymen_player(Color.BLUE,Graphique) #Attention, il faut le graphique board soit créé avant les joueurs
+        self._board = [[None for j in range(n_column)] for i in range (n_row)]
         assert len(red_position) == n_rugbymen
         assert len(blue_position) == n_rugbymen
         for p in blue_position:
-            self._board[p[0]][p[1]] = 1
+            self._board[p[0]][p[1]] = p[2]
         for p in red_position:
-            self._board[p[0]][p[1]] = 2
+            self._board[p[0]][p[1]] = p[2]
+        print(self._board)
 
-    def is_square_free(self, x, y):
-        return self._board[x][y] == 0
+    def is_square_free(self, pos):
+        return self._board[pos[0]][pos[1]] == None
     
+    def which_rugbyman(self,pos):
+        if not self.is_square_free(pos):
+            return self._board[pos[0]][pos[1]]
+        else:
+            return None
 
-placement_orders(Color.RED)

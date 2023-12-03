@@ -4,6 +4,7 @@ import sys
 from actions import *
 from rugbymen import *
 import game
+import board
 
 # Initialisation de Pygame
 pygame.init()
@@ -213,7 +214,7 @@ class Graphique:
             else:
                 pass
 
-    def get_hitbox(self):
+    def get_hitbox(self):#n'attends pas le clique du joueur 
         for i in range(len(hitbox)):
             if hitbox[i].collidepoint(pygame.mouse.get_pos()):
                 if i<88:
@@ -222,7 +223,19 @@ class Graphique:
                     return [i,i]
             else:
                 return None
-
+    def get_hitbox_for_back(self):
+        cond = True 
+        while cond:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    cond = False
+                    for i in range(len(hitbox)):
+                        if hitbox[i].collidepoint(pygame.mouse.get_pos()):
+                            return [i//11, i%11]
+                    cond= True
+        return None
     # Affiche un point rouge pour 5s quand on clique quelque part
     def display_point(self):
         pygame.draw.circle(self.screen, (255, 0, 0), pygame.mouse.get_pos(), 2)
@@ -290,6 +303,7 @@ class Graphique:
 
         test_menu=FloatingMenu(["Coucou", "Rugby", "Move", "Pass", "Francois"], (30, 40))
         flag_menu=0
+
     
         while True:
             for event in pygame.event.get():
@@ -311,6 +325,36 @@ class Graphique:
                 test_menu.draw(screen)
             tokens_group.draw(screen) 
             clock.tick(60)
+
+
+#Fonction qui renvoit la position de l'image correspondant au rugbyman (surement à merge avec path_to_player_type)
+def path_convertor(Rugbyman):
+    if Rugbyman.spec == rugbymen.Spec.NORMAL:
+        if Rugbyman.color == board.Color.RED:
+            return "Images/Ordinaire_rouge.png"
+        if Rugbyman.color == board.Color.BLUE:
+            return "Images/Ordinaire_bleu.png"
+    if Rugbyman.spec == rugbymen.Spec.STRONG:
+        if Rugbyman.color == board.Color.RED:
+            return "Images/Costaud_rouge.png"
+        if Rugbyman.color == board.Color.BLUE:
+            return "Images/Costaud_bleu.png"
+    if Rugbyman.spec == rugbymen.Spec.HARD:
+        if Rugbyman.color == board.Color.RED:
+            return "Images/Dur_rouge.png"
+        if Rugbyman.color == board.Color.BLUE:
+            return "Images/Dur_bleu.png"
+    if Rugbyman.spec == rugbymen.Spec.SMART:
+        if Rugbyman.color == board.Color.RED:
+            return "Images/Fute_rouge.png"
+        if Rugbyman.color == board.Color.BLUE:
+            return "Images/Fute_bleu.png"
+    if Rugbyman.spec == rugbymen.Spec.FAST:
+        if Rugbyman.color == board.Color.RED:
+            return "Images/Rapide_rouge.png"
+        if Rugbyman.color == board.Color.BLUE:
+            return "Images/Rapide_bleu.png"
+
 
 
 if __name__ == "__main__":

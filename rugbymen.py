@@ -1,5 +1,6 @@
 # Classe de base Player
 import enum
+import board
 
 class Spec(enum.Enum):
     STRONG = "strong"
@@ -19,7 +20,10 @@ class Rugbyman:
         self.spec = Spec.NORMAL
         self.possesion = False  # True if the player has the ball
         self.active = True  # False if the player is KO
-
+    
+    def __str__(self): #Possibilité de la changer 
+        return f"{self.color} Rugbyman ({self.spec})"
+    
     def spec(self):
         return self.spec
 
@@ -31,11 +35,11 @@ class Rugbyman:
         Renvoie la présence ou non de joueurs alliés devant le joueur.
         Utilisé pour la passe en-avant
         """
-        if self.color is "blue":
+        if self.color == board.Color.BLUE:
             for rugbyman in game.blue_player():
                 if rugbyman.posx() < self.posx():
                     return True
-        if self.color is "red":
+        if self.color is board.Color.RED:
             for rugbyman in game.red_player():
                 if rugbyman.posx() > self.posx():
                     return True

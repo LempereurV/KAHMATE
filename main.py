@@ -2,26 +2,35 @@ import board
 import front 
 
 
-G=front.Graphique()
 
-"""
-PosRedRlayers=board.positions_rugbymen_player(board.Color.RED,G)
-PosBluePlayers=board.positions_rugbymen_player(board.Color.BLUE,G)                          
 
-board.Board(PosBluePlayers,PosRedRlayers)
 
-"""
+Initialisation=True
+Game_ON=True
 
-while True:
+while Game_ON:
     for event in front.pygame.event.get():
-        if event.type == front.pygame.MOUSEBUTTONDOWN:
-            G.display_number()
-            G.display_point()
-            PosRedRlayers=board.positions_rugbymen_player(board.Color.RED,G)
-            i=G.get_hitbox()
+        ### Partie Initialisation ###
+        if Initialisation:
+            G=front.Graphique()
+            front.pygame.display.flip() 
+            B=board.Board(G)
+            Initialisation=False
+
+        ### Partie Essai ###
+        pos=front.Graphique.get_hitbox_for_back(G)
+        print(board.Board.which_rugbyman(B,pos))
+
+        
         if event.type == front.pygame.QUIT:
             front.pygame.quit()
             front.sys.exit()
+            Game_ON=False
+print("Fin du jeu")
+    
+            
+
+
 
 
             
