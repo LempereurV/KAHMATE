@@ -29,7 +29,10 @@ class Rugbyman:
     
     def spec(self):
         return self.spec
-
+    
+    def get_moove_points(self):
+        return self.moove_points
+    
     def color(self):
         return self.color
 

@@ -1,6 +1,6 @@
 import rugbymen
 from actions import *
-import cards
+from cards import Card
 
 
 class Player:
@@ -13,12 +13,12 @@ class Player:
                               rugbymen.FastRugbyman(color)
                               ]
         self._rugbymen = []
-        self._cards = [cards.ONE,
-                        cards.TWO, 
-                        cards.THREE, 
-                        cards.FOUR, 
-                        cards.FIVE, 
-                        cards.SIX
+        self._cards = [Card.ONE,
+                        Card.TWO, 
+                        Card.THREE, 
+                        Card.FOUR, 
+                        Card.FIVE, 
+                        Card.SIX
                         ]
         self._color = color
 

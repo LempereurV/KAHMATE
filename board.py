@@ -1,18 +1,15 @@
 import numpy as np
 import rugbymen
 import front
-import enum
+from color import Color
 
-n_row = 9
+n_row = 8
 n_column = 11
 n_case = n_row * n_column
 n_rugbymen = 6
 
 
 
-class Color(enum.Enum):
-    RED = "red"
-    BLUE = "blue"
 
 
 
@@ -32,9 +29,21 @@ def placement_orders(color):
 
 def positions_rugbymen_player(color,Graphique):
     placement_order = placement_orders(color)
+    
     i = 0
     R = [None] * n_rugbymen #R is the list of the positions of the rugbymen
     Noms=list(placement_order.keys()) #List of the names of the rugbymen
+
+    ### A enlever ####
+    for i in range(n_rugbymen):
+        if color==Color.RED:
+            R[i] = [i, 0,placement_order[Noms[i]]]
+        else:
+            R[i] = [i, 6,placement_order[Noms[i]]]
+        front.Graphique.affiche_joueur(Graphique,11*R[i][0]+int(color==Color.BLUE)*6,front.path_convertor(placement_order[Noms[i]]))
+    return R
+    ####    FIn a enlever
+
     while i < n_rugbymen:
         print(str(color).split(".")[-1]+ " Player, Choose the position of the " + Noms[i]) # Changer Color.split(".")[-1] for the color to display as intended
         pos = front.Graphique.get_hitbox_for_back(Graphique) #Fonction de la classe graphique qui renvoie une liste de la forme [i,j] avec i et j les colonnes et lignes de la case cliquée
@@ -89,11 +98,45 @@ class Board:
         print(self._board)
 
     def is_square_free(self, pos):
+        #print(pos)
         return self._board[pos[0]][pos[1]] == None
     
     def which_rugbyman(self,pos):
         if not self.is_square_free(pos):
             return self._board[pos[0]][pos[1]]
         else:
-            return None
+            return False
+    
+    def available_moove_position_recursif(self,pos,scope, cond_first_layer):
+        if scope<0:
+            return []
+        else :
+            if cond_first_layer:
+                R=[]
+                cond_first_layer=False 
+            else :
+                R=[pos]
+            if pos[0]+1<n_row and self.is_square_free([pos[0]+1,pos[1]]) :
+                R=R+self.available_moove_position_recursif([pos[0]+1,pos[1]],scope-1,cond_first_layer)
+            if pos[0]-1>=0 and self.is_square_free([pos[0]-1,pos[1]])  :
+                R=R+self.available_moove_position_recursif([pos[0]-1,pos[1]],scope-1,cond_first_layer)
+            if pos[1]+1<n_column and self.is_square_free([pos[0],pos[1]+1])  :
+                R=R+self.available_moove_position_recursif([pos[0],pos[1]+1],scope-1,cond_first_layer)
+            if pos[1]-1>=0 and self.is_square_free([pos[0],pos[1]-1]) :
+                R=R+self.available_moove_position_recursif([pos[0],pos[1]-1],scope-1,cond_first_layer)
+            return R
+        
+        
+
+
+    
+    def available_moove_position(self,pos):
+        cond_first_layer=True
+        rubgyman=self.which_rugbyman(pos)
+        scope=rubgyman.moove_points
+        return self.available_moove_position_recursif(pos,scope,cond_first_layer)
+        
+        
+
+
 

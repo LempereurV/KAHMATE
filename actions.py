@@ -1,10 +1,7 @@
 from rugbymen import *
-from board import Color
+from color import Color
 
 
-<<<<<<< HEAD
-def available_move_positions(current_x,current_y, scope, game):
-=======
 def ask_if_action_finished():
     while True:
         finished_move = input("Type 'no' if you haven't finished the action of this rugbyman, type 'yes' if you have finished")
@@ -14,7 +11,6 @@ def ask_if_action_finished():
             return False
 
 def available_move_positions(current_x, current_y, game, scope):
->>>>>>> 7f7adf44df7044cd05f164c443a62ac067d20344
     """ 
     Returns the list of admissible new positions for a rugbyman in position (current_x, current_y).
     Used in move_rugbyman(rugbyman, game).

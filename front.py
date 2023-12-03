@@ -1,16 +1,10 @@
 from typing import Any
 import pygame
 import sys
-<<<<<<< HEAD
-from actions import *
-from rugbymen import *
-import game
-import board
-=======
 from game import *
 from rugbymen import *
-from actions import *
->>>>>>> 7f7adf44df7044cd05f164c443a62ac067d20344
+import actions
+import board
 
 # Initialisation de Pygame
 pygame.init()
@@ -83,18 +77,12 @@ class RugbymanToken(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (scale_x, scale_y))
         self.rect = self.image.get_rect()
         self.player_type = path_to_player_type(picture_path)
-<<<<<<< HEAD
-    
-    def update(self, tokens_group):
-        screen.blit(image, (0, 0))
-=======
 
 
     def follow_cursor(self, tokens_group, background_image):
         # Make the token follow the cursor
         # tokens_group must contains all sprites that should be drawn
         screen.blit(background_image, (0, 0))
->>>>>>> 7f7adf44df7044cd05f164c443a62ac067d20344
         self.rect.center = pygame.mouse.get_pos()
         tokens_group.draw(screen)
         pygame.display.flip()
@@ -276,7 +264,6 @@ class Graphique:
                     return [i,i]
             else:
                 return None
-<<<<<<< HEAD
     def get_hitbox_for_back(self):
         cond = True 
         while cond:
@@ -287,14 +274,11 @@ class Graphique:
                     cond = False
                     for i in range(len(hitbox)):
                         if hitbox[i].collidepoint(pygame.mouse.get_pos()):
-                            return [i//11, i%11]
+                            if i<88:
+                                return [i//11, i%11]
                     cond= True
         return None
     # Affiche un point rouge pour 5s quand on clique quelque part
-=======
-
-    # Affiche un point rouge pour 100ms quand on clique quelque part
->>>>>>> 7f7adf44df7044cd05f164c443a62ac067d20344
     def display_point(self):
         pygame.draw.circle(self.screen, (255, 0, 0), pygame.mouse.get_pos(), 2)
         pygame.display.flip()
@@ -311,6 +295,7 @@ class Graphique:
 
     # Met en surbrillance les cases où le joueur peut se déplacer
     def highlight_move(self, list_move):
+        """
         for i in range(len(list_move)):
             pygame.draw.circle(
                 self.screen,
@@ -321,8 +306,20 @@ class Graphique:
                 ),
                 10,
             )
+            """
+        for moove in list_move:
+            pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[moove[0]*11+moove[1]] )
+
         pygame.display.flip()
 
+    def draw_board(self,board):
+        self.screen.blit(self.plateau, (0, 0))
+        for i in range(len(board._board)):
+            for j in range(len(board._board[0])):
+                if board._board[i][j] != None:
+                    self.affiche_joueur(i*11+j,path_convertor(board._board[i][j]))
+        pygame.display.flip()
+        
     def create_dropdown_menu(self, options, menu_pos, menu_size):
         self.menu_options = options
         self.menu_rect = pygame.Rect(menu_pos, menu_size)
@@ -387,14 +384,7 @@ class Graphique:
             ["Move the player", "Pass the ball", "Tackle an opponent", "Kick the ball", "Score"], (30, 40)
         )
 
-<<<<<<< HEAD
-        test_menu=FloatingMenu(["Coucou", "Rugby", "Move", "Pass", "Francois"], (30, 40))
-        flag_menu=0
-
-    
-=======
         #WIP
->>>>>>> 7f7adf44df7044cd05f164c443a62ac067d20344
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
