@@ -1,4 +1,4 @@
-import rugbymen
+"""import rugbymen"""
 from actions import *
 import cards
 
@@ -40,34 +40,34 @@ class Player:
     def available_actions(self, rugbyman, game):
         available = []
         if available_move_positions(rugbyman.posx(), rugbyman.posy(), rugbyman.scope(), game) != []: #définir rugbyman.scope()
-            available.append(1)
-            print("To move a player, write 1")
+            available.append(Actions.MOVE)
+            print("To move a player, write "+ Actions.MOVE)
         if available_pass_positions(self.color(), rugbyman.posx(), rugbyman.posy(), rugbyman.pass_scope(), game) != []: #définir rugbyman.pass_scope()
-            available.append(2)
-            print("To pass the ball to a player, write 2")
+            available.append(Actions.PASS)
+            print("To pass the ball to a player, write "+ Actions.PASS)
         if available_tackle_positions(self.color(), rugbyman.posx(), rugbyman.posy(), rugbyman.tackle_scope(), game) != []: #définir rugbyman.tackle_scope()
-            available.append(3)
-            print("To tackle a player, write 3")
+            available.append(Actions.TACKLE)
+            print("To tackle a player, write "+ Actions.TACKLE)
         if available_forward_pass(self.color(), rugbyman.posx(), rugbyman.posy(), rugbyman.forward_pass_scope(), game) != []: #définir rugbyman.forward_pass_scope()
-            available.append(4)
-            print("To realize a forward pass, write 4")
+            available.append(Actions.FORWARD)
+            print("To realize a forward pass, write " + Actions.FORWARD)
         if available_score(self.color(), rugbyman.posx(), game) != []:
-            available.append(5)
-            print("To score a try, write 5")
+            available.append(Actions.SCORE)
+            print("To score a try, write " + Actions.SCORE)
 
     def input_action(self, rugbyman, game):
         available = self.available_actions(rugbyman, game)
         while True:
             chosen_action = input("Choose your action:")
-            if chosen_action == "1" and 1 in available:
+            if chosen_action == Actions.MOVE and Actions.MOVE in available:
                 return move_rugbyman(rugbyman, game, moves_executed)
-            if chosen_action == "2" and 2 in available:
+            if chosen_action == Actions.PASS and ACTIONS.PASS in available:
                 return pass_ball(rugbyman, game, pass_scope)
-            if chosen_action == "3" and 3 in available:
+            if chosen_action == Actions.TACKLE and Actions.TACKLE in available:
                 return tackle(rugbyman, game)
-            if chosen_action == "4" and 4 in available:
+            if chosen_action == Actions.FORWARD and Actions.Forward in available:
                 return forward_pass(rugbyman, game) #ne pas oublier rugbyman.has_partners_in_front()
-            if chosen_action == "5" and 5 in available:
+            if chosen_action == Actions.SCORE and Actions.SCORE in available:
                 return score(rugbyman, game)
 
     def place_rugbyman(self):

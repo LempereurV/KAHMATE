@@ -1,16 +1,10 @@
 from typing import Any
 import pygame
 import sys
-<<<<<<< HEAD
 from actions import *
 from rugbymen import *
 import game
 import board
-=======
-from game import *
-from rugbymen import *
-from actions import *
->>>>>>> 7f7adf44df7044cd05f164c443a62ac067d20344
 
 # Initialisation de Pygame
 pygame.init()
@@ -83,18 +77,9 @@ class RugbymanToken(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (scale_x, scale_y))
         self.rect = self.image.get_rect()
         self.player_type = path_to_player_type(picture_path)
-<<<<<<< HEAD
     
     def update(self, tokens_group):
         screen.blit(image, (0, 0))
-=======
-
-
-    def follow_cursor(self, tokens_group, background_image):
-        # Make the token follow the cursor
-        # tokens_group must contains all sprites that should be drawn
-        screen.blit(background_image, (0, 0))
->>>>>>> 7f7adf44df7044cd05f164c443a62ac067d20344
         self.rect.center = pygame.mouse.get_pos()
         tokens_group.draw(screen)
         pygame.display.flip()
@@ -276,7 +261,6 @@ class Graphique:
                     return [i,i]
             else:
                 return None
-<<<<<<< HEAD
     def get_hitbox_for_back(self):
         cond = True 
         while cond:
@@ -291,10 +275,6 @@ class Graphique:
                     cond= True
         return None
     # Affiche un point rouge pour 5s quand on clique quelque part
-=======
-
-    # Affiche un point rouge pour 100ms quand on clique quelque part
->>>>>>> 7f7adf44df7044cd05f164c443a62ac067d20344
     def display_point(self):
         pygame.draw.circle(self.screen, (255, 0, 0), pygame.mouse.get_pos(), 2)
         pygame.display.flip()
@@ -387,14 +367,10 @@ class Graphique:
             ["Move the player", "Pass the ball", "Tackle an opponent", "Kick the ball", "Score"], (30, 40)
         )
 
-<<<<<<< HEAD
         test_menu=FloatingMenu(["Coucou", "Rugby", "Move", "Pass", "Francois"], (30, 40))
         flag_menu=0
 
     
-=======
-        #WIP
->>>>>>> 7f7adf44df7044cd05f164c443a62ac067d20344
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:

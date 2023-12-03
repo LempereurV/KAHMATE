@@ -1,20 +1,29 @@
 from rugbymen import *
-from board import Color
+"""from board import Color"""
+import enum
+
+class Color(enum.Enum):
+    RED = "red"
+    BLUE = "blue"
 
 
-<<<<<<< HEAD
-def available_move_positions(current_x,current_y, scope, game):
-=======
+class Actions(enum.Enum):
+    MOVE = "move"
+    PASS = "pass"
+    TACKLE = "tackle"
+    FORWARD = "forward"
+    SCORE = "score"
+
+
 def ask_if_action_finished():
     while True:
         finished_move = input("Type 'no' if you haven't finished the action of this rugbyman, type 'yes' if you have finished")
-        if finished_move is "yes":
+        if finished_move == "yes":
             return True
-        if finished_move is "no":
+        if finished_move == "no":
             return False
 
 def available_move_positions(current_x, current_y, game, scope):
->>>>>>> 7f7adf44df7044cd05f164c443a62ac067d20344
     """ 
     Returns the list of admissible new positions for a rugbyman in position (current_x, current_y).
     Used in move_rugbyman(rugbyman, game).
@@ -23,16 +32,16 @@ def available_move_positions(current_x, current_y, game, scope):
     current_y = int(current_y)
     scope = int(scope)
     available = []
-    for x in range(current_x-scope, current_x+scope+1):
-        for y in range(current_y-scope, current_y+scope+1):
-            if game.is_position_valid([x, y]) and (abs(current_x-x)+abs(current_y-y))<=scope: # and game.is_position_unoccupied([x, y])
+    for x in range(current_x - scope, current_x + scope + 1):
+        for y in range(current_y - scope, current_y + scope + 1):
+            if game.is_position_valid([x, y]) and (abs(current_x - x) + abs(current_y - y)) <= scope: # and game.is_position_unoccupied([x, y])
                 available.append([x, y])
     return available
 
 def input_move_rugbyman(available_positions):
     while True:
         cancel = input("If you don't want to move, type 'cancel'")
-        if cancel is 'cancel':
+        if cancel == 'cancel':
             return False
         input_x = input("Choisis la nouvelle abcisse de ton joueur parmi celles proposées: par exemple tape 3")
         input_y = input("Choisis la nouvelle ordonnée de ton joueur parmi celles proposées: par exemple tape 5")
@@ -74,7 +83,7 @@ def available_pass_positions(color, current_x, current_y, max_x, max_y, pass_sco
 def input_pass_ball(available_positions):
     while True:
         cancel = input("If you don't want to move the ball anymore, type 'cancel'")
-        if cancel is 'cancel':
+        if cancel == 'cancel':
             return False
         input_x = input("Choisis la nouvelle abcisse de la balle parmi celles proposées: par exemple tape 3")
         input_y = input("Choisis la nouvelle ordonnée de la balle parmi celles proposées: par exemple tape 5")
@@ -122,7 +131,7 @@ def pick_card(player):
 def input_tackle(available_move_positions):
     while True:
         cancel = input("If you don't want to move the ball anymore, type 'cancel'")
-        if cancel is 'cancel':
+        if cancel == 'cancel':
             return False
         input_x = input("Choisis la nouvelle abcisse de la balle parmi celles proposées: par exemple tape 3")
         input_y = input("Choisis la nouvelle ordonnée de la balle parmi celles proposées: par exemple tape 5")
@@ -163,7 +172,7 @@ def available_forward_pass(color, current_x, current_y, forward_pass_scope, game
 def input_forward_pass(available_forward_pass):
     while True:
         cancel = input("If you don't want to move the ball anymore, type 'cancel'")
-        if cancel is 'cancel':
+        if cancel == 'cancel':
             return False
         input_x = input("Choisis la nouvelle abcisse de la balle parmi celles proposées: par exemple tape 3")
         input_y = input("Choisis la nouvelle ordonnée de la balle parmi celles proposées: par exemple tape 5")
@@ -197,7 +206,7 @@ def score(rugbyman, game):
     if available_score(color, current_x, game) != []:
         return True
 
-class Actions: 
+"""class Actions: 
 
     def moove_up(self):
             print("")
@@ -273,3 +282,4 @@ def coord_to_hitbox(coord):
 
 def hitbox_to_coord(n_hit):
     return [n_hit%11, n_hit//11]
+"""
