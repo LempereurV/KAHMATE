@@ -2,6 +2,7 @@
 import enum
 import board
 
+
 class Spec(enum.Enum):
     STRONG = "strong"
     SMART = "smart"
@@ -9,12 +10,14 @@ class Spec(enum.Enum):
     HARD = "hard"
     NORMAL = "normal"
 
+
 class Rugbyman:
     def __init__(self, color):
         self.color = color
         self.attack_bonus = 0
         self.defense_bonus = 0
         self.moove_points = 3
+        self.moves_left = self.moove_points
         self.posx = 0
         self.posy = 0
         self.spec = Spec.NORMAL
@@ -29,7 +32,7 @@ class Rugbyman:
 
     def color(self):
         return self.color
-    
+
     def has_partners_in_front(self, game):
         """
         Renvoie la présence ou non de joueurs alliés devant le joueur.
@@ -44,24 +47,25 @@ class Rugbyman:
                 if rugbyman.posx() > self.posx():
                     return True
         return False
-    
+
     def moove_points(self):
         return self.moove_points
 
     def posx(self):
         return self.posx
-    
+
     def posy(self):
         return self.posy
 
-    def new_posx(self, new_posx): #utiliser une propriété
+    def new_posx(self, new_posx):  # utiliser une propriété
         self.posx = new_posx
         return
-    
-    def new_posy(self, new_posy): #utiliser une propriété
+
+    def new_posy(self, new_posy):  # utiliser une propriété
         self.posy = new_posy
         return
-        
+
+
 class StrongRugbyman(Rugbyman):
     def __init__(self, color):
         Rugbyman.__init__(self, color)
@@ -76,6 +80,7 @@ class HardRugbyman(Rugbyman):
         Rugbyman.__init__(self, color)
         self.attack_bonus = 1
         self.spec = Spec.HARD
+
 
 class SmartRugbyman(Rugbyman):
     def __init__(self, color):

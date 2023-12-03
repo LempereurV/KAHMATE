@@ -1,5 +1,6 @@
 import enum
 
+
 class card(enum.Enum):
     ONE = "1"
     TWO = "2"
@@ -7,4 +8,3 @@ class card(enum.Enum):
     FOUR = "4"
     FIVE = "5"
     SIX = "6"
-    
