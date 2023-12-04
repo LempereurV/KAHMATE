@@ -68,6 +68,11 @@ class Rugbyman:
         self.posy = new_posy
         return
 
+    def refresh_stats(self):
+        self.moves_left = self.moove_points
+
+    def actualize_move_points(self, moove_points):
+        self.moves_left -= moove_points
 
 class StrongRugbyman(Rugbyman):
     def __init__(self, color):

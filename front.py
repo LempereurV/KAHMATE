@@ -295,7 +295,6 @@ class Graphique:
 
     # Met en surbrillance les cases où le joueur peut se déplacer
     def highlight_move(self, list_move):
-        """
         for i in range(len(list_move)):
             pygame.draw.circle(
                 self.screen,
@@ -306,10 +305,12 @@ class Graphique:
                 ),
                 10,
             )
-            """
+
+        pygame.display.flip()
+
+    def highlight_move_FElIX(self, list_move):
         for moove in list_move:
             pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[moove[0]*11+moove[1]] )
-
         pygame.display.flip()
 
     def draw_board(self,board):

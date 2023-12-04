@@ -2,7 +2,7 @@ import numpy as np
 import rugbymen
 import front
 from color import Color
-
+import random 
 n_row = 8
 n_column = 11
 n_case = n_row * n_column
@@ -37,10 +37,10 @@ def positions_rugbymen_player(color,Graphique):
     ### A enlever ####
     for i in range(n_rugbymen):
         if color==Color.RED:
-            R[i] = [i, 0,placement_order[Noms[i]]]
+            R[i] = [i, random.randint(0,4),placement_order[Noms[i]]]
         else:
-            R[i] = [i, 6,placement_order[Noms[i]]]
-        front.Graphique.affiche_joueur(Graphique,11*R[i][0]+int(color==Color.BLUE)*6,front.path_convertor(placement_order[Noms[i]]))
+            R[i] = [i, random.randint(6,10),placement_order[Noms[i]]]
+        front.Graphique.affiche_joueur(Graphique,11*R[i][0]+R[i][1],front.path_convertor(placement_order[Noms[i]]))
     return R
     ####    FIn a enlever
 
@@ -102,7 +102,7 @@ class Board:
         return self._board[pos[0]][pos[1]] == None
     
     def which_rugbyman(self,pos):
-        if not self.is_square_free(pos):
+        if self.is_square_free(pos)==False:
             return self._board[pos[0]][pos[1]]
         else:
             return False
@@ -135,6 +135,23 @@ class Board:
         rubgyman=self.which_rugbyman(pos)
         scope=rubgyman.moove_points
         return self.available_moove_position_recursif(pos,scope,cond_first_layer)
+    
+    def moove_rugbyman(self,pos,possible_moove,Graphique):
+        pos2=front.Graphique.get_hitbox_for_back(Graphique)
+        if pos2 in possible_moove:
+            self._board[pos2[0]][pos2[1]]=self._board[pos[0]][pos[1]]
+            self._board[pos[0]][pos[1]]=None
+            self._board[pos2[0]][pos2[1]].actualize_move_points(abs(pos2[0]-pos[0])+abs(pos2[1]-pos[1]))
+            return True
+        else:
+            print("The move isn't allowed")
+            return False
+    
+    def refresh_rugbymen_stats(self):
+        for i in range(n_row):
+            for j in range(n_column):
+                if self._board[i][j]!=None:
+                    self._board[i][j].refresh_stats()
         
         
 
