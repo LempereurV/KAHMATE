@@ -1,6 +1,91 @@
-from rugbymen import *
+import rugbymen
+import front
+import random
 from color import Color
 
+
+def placement_orders(color):
+    R = {
+        "First Normal Rugbyman": rugbymen.Rugbyman(color),
+        "Second Normal Rugbyman": rugbymen.Rugbyman(color),
+        "Strong Rugbyman": rugbymen.StrongRugbyman(color),
+        "Hard Rugbyman": rugbymen.HardRugbyman(color),
+        "Smart Rugbyman": rugbymen.SmartRugbyman(color),
+        "Fast Rugbyman": rugbymen.FastRugbyman(color),
+    }
+    return R
+
+
+def positions_rugbymen_player(color, n_column, n_rugbymen, Graphique):
+    placement_order = placement_orders(color)
+
+    i = 0
+    R = [None] * n_rugbymen  # R is the list of the positions of the rugbymen
+    Noms = list(placement_order.keys())  # List of the names of the rugbymen
+
+    ### A enlever ####
+    for i in range(n_rugbymen):
+        if color == Color.RED:
+            R[i] = [i, random.randint(0, 4), placement_order[Noms[i]]]
+        else:
+            R[i] = [i, random.randint(6, 10), placement_order[Noms[i]]]
+        front.Graphique.affiche_joueur(
+            Graphique,
+            11 * R[i][0] + R[i][1],
+            front.path_convertor(placement_order[Noms[i]]),
+        )
+    print(R)
+    return R
+    ####    FIn a enlever
+
+    while i < n_rugbymen:
+        print(
+            str(color).split(".")[-1] + " Player, Choose the position of the " + Noms[i]
+        )  # Changer Color.split(".")[-1] for the color to display as intended
+        pos = front.Graphique.get_hitbox_for_back(
+            Graphique
+        )  # Fonction de la classe graphique qui renvoie une liste de la forme [i,j] avec i et j les colonnes et lignes de la case cliquée
+        if pos in R:
+            cond_pos_already_taken = True
+            while cond_pos_already_taken:
+                print("The position chosen is already taken, re choose the position")
+                pos = front.Graphique.get_hitbox_for_back(Graphique)
+                if not pos in R:
+                    cond_pos_already_taken = False
+        if (
+            color == Color.RED and pos[1] >= n_column // 2
+        ):  # Red characters should be placed on the left
+            cond_RED = True
+            while cond_RED:
+                print(
+                    "The position isn't correct, the red team is suppose to be on the left, re choose the position"
+                )
+                pos = front.Graphique.get_hitbox_for_back(Graphique)
+                if pos[1] < n_column // 2:
+                    cond_RED = False
+
+        if color == Color.BLUE and pos[1] <= n_column // 2:
+            cond_Blue = True
+            while cond_Blue:
+                print(
+                    "The position isn't correct, the blue team is suppose to be on the right, re choose the position"
+                )
+                pos = front.Graphique.get_hitbox_for_back(Graphique)
+                if pos[1] > n_column // 2:
+                    cond_Blue = False
+        front.Graphique.affiche_joueur(
+            Graphique,
+            pos[0] * n_column + pos[1],
+            front.path_convertor(placement_order[Noms[i]]),
+        )  # Display the newly placed rugbymen on the board
+        R[i] = [pos[0], pos[1]]
+        i += 1
+    R_with_rugbymen = []
+    # R_with_rugbymen is the list of the positions of the rugbymen with the type of the rugbymen
+    for i in range(n_rugbymen):
+        R_with_rugbymen.append(R[i] + [placement_order[Noms[i]]])
+
+    return R_with_rugbymen
 
 def ask_if_action_finished():
     while True:
@@ -266,83 +351,3 @@ def score(rugbyman, game):
     current_x = rugbyman.posx()
     if available_score(color, current_x, game) != []:
         return True
-
-
-class Actions:
-    def move_up(self):
-        print("")
-        self.posy += 1
-
-    def move_down(self):
-        self.posy -= 1
-
-    def move_left(self):
-        self.posx -= 1
-
-    def move_right(self):
-        self.posx += 1
-
-    def tackle(self, card_self, other, card_other):
-        if (
-            self.active == True
-            and self.possesion == False
-            and self.posx == other.posx
-            and self.posy == other.posy
-        ):
-            if (self.attack_bonus + card_self.point) > (
-                other.defense_bonus + card_other.point
-            ):
-                other.active = False
-                return True
-        return False
-
-    def push_through(self, card_self, other, card_other):
-        if (
-            self.active == True
-            and self.possesion == True
-            and self.posx == other.posx
-            and self.posy == other.posy
-        ):
-            if (self.attack_bonus + card_self.point) > (
-                other.defense_bonus + card_other.point
-            ):
-                other.active = False
-                return True
-        return False
-
-    def grubber_kick(self, throw):
-        if self.possesion == True:
-            return True
-        return False
-
-    def push_through(self, card_self, other, card_other):
-        if (
-            self.active == True
-            and self.possesion == True
-            and self.posx == other.posx
-            and self.posy == other.posy
-        ):
-            if (self.attack_bonus + card_self.point) > (
-                other.defense_bonus + card_other.point
-            ):
-                other.active = False
-                return True
-        return False
-
-    def grubber_kick(self, throw):
-        if self.possesion == True:
-            return True
-        else:
-            return False
-
-    def place_rugbyman(self, x, y):
-        self.posx = x
-        # Fonction qui traduit coordonnées en numéro de hitbox
-
-
-def coord_to_hitbox(coord):
-    return coord[0] + 11 * coord[1]
-
-
-def hitbox_to_coord(n_hit):
-    return [n_hit % 11, n_hit // 11]
