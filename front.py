@@ -56,7 +56,7 @@ def player_type_to_path(player_type):
             return "Images/Dur_bleu.png"
         elif player_type.color() == "red":
             return "Images/Dur_rouge.png"
-    elif player_type.spec() == Spec.ORDINARY:
+    elif player_type.spec() == Spec.NORMAL:
         if player_type.color() == "blue":
             return "Images/Ordinaire_bleu.png"
         elif player_type.color() == "red":
@@ -76,6 +76,8 @@ class RugbymanToken(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.player_type = path_to_player_type(picture_path)
 
+    def move(self, new_pos):
+        self.rect.center = new_pos
 
     def follow_cursor(self, tokens_group, background_image):
         # Make the token follow the cursor
@@ -85,7 +87,7 @@ class RugbymanToken(pygame.sprite.Sprite):
         tokens_group.draw(screen)
         pygame.display.flip()
         # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
-    def get_hitbox(self):
+    def get_hitbox(self):  # Can you explain this ? Wouldn't it be simpler just adding a self.hitbox attribut to any token ? (I'm really not sure)
         for i in range(len(hitbox)):
             if hitbox[i].collidepoint(self.rect.center):
                 if i < 88:
@@ -171,6 +173,18 @@ class FloatingMenu(pygame.sprite.Sprite):
             self.rows_rect[i].y = self.rect.y + self.border + (self.font_size) * i
 
 
+    def get_pos(self):
+        # Return menu position un a tuple, which corresponds to it's upper left border position
+        return (self.rect.x, self.rect.y)
+    
+
+    def is_on_screen(self, screen_size):
+        #Return True if the menu is on screen, False overwise
+        if self.pos[0] < screen[0] and self.pos[1] < screen[1] and self.pos[0] > 0 and self.pos[1] > 0:
+            return True
+        return False
+    
+
     def update_rows_pos(self):
         # Update the rows positions accordingly to the menu background
         for i in range(self.size_menu):
@@ -192,14 +206,22 @@ class FloatingMenu(pygame.sprite.Sprite):
             screen.blit(self.rows[i], (self.rows_rect[i].x, self.rows_rect[i].y))
 
 
-    def print_collision(self):
-        #  Check and return hitbox collision with the mouse
+    def get_collision(self):
+        #  Check and return hitbox collision with the mouse (None if no hibox collided, # of the hitbox collided overwise)
         for i in range(self.size_menu):
             if self.rows_rect[i].collidepoint(pygame.mouse.get_pos()):
                 print(i)
                 return i
         print(None)
         return None
+    
+
+    def is_option_available(self, id_option):
+        # Return True if the option is available, False overwise
+        for i in range(size):
+            if i == id_option:
+                return self.availability[i]
+        return None  # The id of the selected option does not correspond to the menu size (should never be triggered in normal use)
 
 
 ##### #####
@@ -228,7 +250,7 @@ for j in range(8):
     for i in range(11):
         coords.append((92 + i * 46.8, 62 + j * 46.5))
 
-# Hitbox de chaque point
+# Hitbox de chaque point 
 hitbox = []
 for i in range(88):
     hitbox.append(pygame.Rect(coords[i][0], coords[i][1], 46.8, 46.5))
@@ -382,20 +404,19 @@ class Graphique:
         pygame.display.flip()
 
     def test_menu(self):
-        #
-
         ### Initialisation des jetons ###
-        playertoken1 = RugbymanToken("Images/Costaud_bleu.png")
-        playertoken2 = RugbymanToken("Images/Costaud_rouge.png")
+        red_playertoken = RugbymanToken("Images/Costaud_bleu.png")
+        blue_playertoken = RugbymanToken("Images/Costaud_rouge.png")
         tokens_group = pygame.sprite.Group()
-        tokens_group.add(playertoken1)
-        tokens_group.add(playertoken2)
+        tokens_group.add(red_playertoken)
+        tokens_group.add(blue_playertoken)
         i = 0
         for tokens in tokens_group:
             tokens.rect.center = hitbox[i].center
             i += 1
         
         ### Initialisation menu ###
+        offscreen = (size[0] + 1, size[1] + 1) #usefull to move the menu offscreen
         floating_menu = FloatingMenu(
             [
                 "Move the player",
@@ -411,7 +432,37 @@ class Graphique:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    None
+                    # Collision must be checked in order of screen visibility (menu -> token -> empty case)
+                    if floating_menu.is_on_screen(size):
+
+                        collided_menu_hitbox = floating_menu.get_collision()
+                        if collided_menu_hitbox != None:         # If the player clicked on the menu
+
+                            if floating_menu.is_option_available(collided_menu_hitbox):
+
+                                #DO THE CORRECT ACTION
+                                print("""The action " """, floating_menu, """ " is triggered """)
+                            else:
+
+                                print("This action is not available")
+
+                        else: # The menu is on screen but the user didn't click on it
+
+                            floating_menu.move(offscreen)       # The menu is offscreen and thus will be erased at the next screen refresh
+
+                    else: #The menu is offscreen (time for token collision check)
+
+                        selected_hitbox = self.get_hitbox # An hitbox is selected, let's see if it correspond to a Token Hitbox
+                        for token in tokens_group:
+                            if selected_hitbox == token.get_hitbox():
+                                None # Il faut afficher le menu au bon endroit
+
+                        
+
+                    
+
+
+                    
 
     def test_initialisation_board(self, game):
         token_normal1_red = RugbymanToken("Images/Ordinaire_rouge.png")
@@ -476,7 +527,7 @@ class Graphique:
                             if not a:
                                 break
                     flag_menu = 0
-                    if test_menu.print_collision() == None and a:
+                    if test_menu.get_collision() == None and a:
                         test_menu.move(pygame.mouse.get_pos())
                         flag_menu = 1
                 if event.type == pygame.QUIT:
@@ -522,7 +573,7 @@ class Graphique:
                         if not a:
                             break
                     print(a)
-                    if test_menu.print_collision() == None and a:
+                    if test_menu.get_collision()==None and a:
                         test_menu.move(pygame.mouse.get_pos())
                         flag_menu = 1
                 if event.type == pygame.QUIT:

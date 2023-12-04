@@ -2,7 +2,7 @@ import rugbymen
 import players
 import random
 import actions
-
+from color import Color
 
 number_of_rows = 8
 number_of_columns = 11
@@ -11,33 +11,36 @@ forward_pass_scope = 3
 
 class Game:
     def __init__(self):
-        self.max_x_value = number_of_columns - 1
-        self.max_y_value = number_of_rows - 1
-        # ...
-        # forward_pass_scope = forward_pass_scope
-        # player1 = players.Player("blue") #à modifier ici et dans actions.pass_ball() et rugbymen.rugbyman
-        # player2 = players.Player("red") #idem
-        ball = players.Ball(random.randint(0, number_of_rows - 1))
+        self.n_columns = number_of_columns
+        self.n_rows = number_of_rows
+        forward_pass_scope = forward_pass_scope
+        self.red_player = players.Player(Color.RED)
+        self.blue_player = players.Player(Color.BLUE)
+        ball = players.Ball(random.randint(1,number_of_rows - 2))
 
     def is_over(self):
         pass
 
     def max_x(self):
-        return self.max_x_value
-
+        return self.n_columns - 1
+    
     def max_y(self):
-        return self.max_y_value
+        return self.n_rows - 1
 
     def forward_pass_scope(self):
         return self.forward_pass_scope
 
-    def blue_player(self):
-        return self.player1
+    def player(self, color):
+        if color is Color.RED:
+            return self.red_player
+        if color is Color.BLUE:
+            return self.blue_player
+        
+    def player_play(self, color):
+        player = self.player(color)
+        return player.play()
 
-    def red_player(self):
-        return self.player2
-
-    def rugbymen(self):
+    def all_rugbymen(self):
         return self.player1.rugbymen() + self.player2.rugbymen()
 
     def is_position_valid(self, position):

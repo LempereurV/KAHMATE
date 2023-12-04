@@ -16,8 +16,8 @@ class Rugbyman:
         self.color = color
         self.attack_bonus = 0
         self.defense_bonus = 0
-        self.move_points = 3
-        self.moves_left = self.move_points
+        self.moves = 3
+        self.moves_left = self.moves
         self.posx = 0
         self.posy = 0
         self.spec = Spec.NORMAL
@@ -51,10 +51,10 @@ class Rugbyman:
                     return True
         return False
 
-    def move_points(self):
-        return self.move_points
+    def moves(self):
+        return self.moves
 
-    def move_left(self):
+    def moves_left(self):
         return self.moves_left
 
     def posx(self):
