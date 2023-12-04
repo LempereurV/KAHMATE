@@ -1,7 +1,8 @@
-from rugbymen import *
+import rugbymen
 from color import Color
 import enum
-
+import random
+import front
 
 class Action(enum.Enum):
     MOVE = "move"
@@ -10,6 +11,92 @@ class Action(enum.Enum):
     FORWARD_PASS = "forward_pass"
     SCORE = "score"
 
+
+def placement_orders(color):
+    """
+    Returns the dictionary of the placement orders of the rugbymen during game initialization
+    """
+    R = {
+        "First Normal Rugbyman": rugbymen.Rugbyman(color),
+        "Second Normal Rugbyman": rugbymen.Rugbyman(color),
+        "Strong Rugbyman": rugbymen.StrongRugbyman(color),
+        "Hard Rugbyman": rugbymen.HardRugbyman(color),
+        "Smart Rugbyman": rugbymen.SmartRugbyman(color),
+        "Fast Rugbyman": rugbymen.FastRugbyman(color),
+    }
+    return R
+
+def positions_rugbymen_player(color, n_rugbymen, n_column, Graphique):
+    """ 
+    Returns the placement of the rugbymen during game initialization
+    """
+    placement_order = placement_orders(color)
+    
+    i = 0
+    R = [None] * n_rugbymen  # R is the list of the positions of the rugbymen
+    Noms = list(placement_order.keys())  # List of the names of the rugbymen
+
+    ### A enlever ###
+    for i in range(n_rugbymen):
+        if color == Color.RED:
+            R[i] = [i, random.randint(0, 4), placement_order[Noms[i]]]
+        else:
+            R[i] = [i, random.randint(6, 10), placement_order[Noms[i]]]
+        front.Graphique.affiche_joueur(
+            Graphique,
+            11 * R[i][0] + R[i][1],
+            front.path_convertor(placement_order[Noms[i]]),
+        )
+    return R
+    ### Fin a enlever ###
+    while i < n_rugbymen:
+        print(
+            str(color).split(".")[-1] + " Player, Choose the position of the " + Noms[i]
+        )  # Changer Color.split(".")[-1] for the color to display as intended
+        pos = front.Graphique.get_hitbox_for_back(
+            Graphique
+        )  # Fonction de la classe graphique qui renvoie une liste de la forme [i,j] avec i et j les colonnes et lignes de la case cliquée
+        if pos in R:
+            cond_pos_already_taken = True
+            while cond_pos_already_taken:
+                print("The position chosen is already taken, re choose the position")
+                pos = front.Graphique.get_hitbox_for_back(Graphique)
+                if not pos in R:
+                    cond_pos_already_taken = False
+        if (
+            color == Color.RED and pos[1] >= n_column // 2
+        ):  # Red characters should be placed on the left
+            cond_RED = True
+            while cond_RED:
+                print(
+                    "The position isn't correct, the red team is suppose to be on the left, re choose the position"
+                )
+                pos = front.Graphique.get_hitbox_for_back(Graphique)
+                if pos[1] < n_column // 2:
+                    cond_RED = False
+
+        if color == Color.BLUE and pos[1] <= n_column // 2:
+            cond_Blue = True
+            while cond_Blue:
+                print(
+                    "The position isn't correct, the blue team is suppose to be on the right, re choose the position"
+                )
+                pos = front.Graphique.get_hitbox_for_back(Graphique)
+                if pos[1] > n_column // 2:
+                    cond_Blue = False
+        front.Graphique.affiche_joueur(
+            Graphique,
+            pos[0] * n_column + pos[1],
+            front.path_convertor(placement_order[Noms[i]]),
+        )  # Display the newly placed rugbymen on the board
+        R[i] = [pos[0], pos[1]]
+        i += 1
+    R_with_rugbymen = []
+    # R_with_rugbymen is the list of the positions of the rugbymen with the type of the rugbymen
+    for i in range(n_rugbymen):
+        R_with_rugbymen.append(R[i] + [placement_order[Noms[i]]])
+
+    return R_with_rugbymen
 
 def ask_if_action_finished():
     while True:
@@ -54,7 +141,6 @@ def input_move_rugbyman(available_positions):
         )
         if [input_x, input_y] in available_positions:
             return [input_x, input_y]
-
 
 def move_rugbyman(
     rugbyman, game, moves_executed
