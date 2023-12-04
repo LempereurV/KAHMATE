@@ -3,7 +3,8 @@ import front
 import players
 from color import Color
 import rugbymen
-
+import actions
+import game
 
 Initialisation = True
 Game_ON = True

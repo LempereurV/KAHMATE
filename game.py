@@ -4,6 +4,7 @@ import random
 import actions
 from color import Color
 
+number_rugbymen = 6
 number_of_rows = 8
 number_of_columns = 11
 forward_pass_scope = 3
@@ -11,6 +12,7 @@ forward_pass_scope = 3
 
 class Game:
     def __init__(self):
+        self.n_rugbymen = number_rugbymen
         self.n_columns = number_of_columns
         self.n_rows = number_of_rows
         # forward_pass_scope = forward_pass_scope

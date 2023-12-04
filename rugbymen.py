@@ -16,8 +16,8 @@ class Rugbyman:
         self.color = color
         self.attack_bonus = 0
         self.defense_bonus = 0
-        self.moves = 3
-        self.moves_left = self.moves
+        self.moves = 3 # Nombre de cases que le rugbyman peut parcourir à chaque tour
+        self.moves_left = self.moves # Nombre de cases que le rugbyman peut encore parcourir pendant le tour
         self.posx = 0
         self.posy = 0
         self.spec = Spec.NORMAL
