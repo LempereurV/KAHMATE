@@ -1,7 +1,7 @@
 from typing import Any
 import pygame
 import sys
-from actions import *
+import actions
 from rugbymen import *
 from game import *
 
@@ -95,21 +95,24 @@ class RugbymanToken(pygame.sprite.Sprite):
                 else:
                     return [i]
     def select(self, tokens_group, background_image, game, graphique):
+        print("Début")
         if self.rect.collidepoint(pygame.mouse.get_pos()):
+            print(self.player_type.moves)
             list_move = actions.available_move_positions(
                 self.get_hitbox()[1][0],
                 self.get_hitbox()[1][1],
                 game,
-                self.player_type.move_points,
+                self.player_type.moves
             )  # moves_left
             while True:
+                print(True)
                 graphique.highlight_move(list_move)
                 self.follow_cursor(tokens_group, background_image)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         self.follow_cursor(tokens_group, background_image)
                         for box in hitbox:
-                            if box.collidepoint(pygame.mouse.get_pos()) and hitbox_to_coord(hitbox.index(box)) in list_move:
+                            if box.collidepoint(pygame.mouse.get_pos()) and actions.hitbox_to_coord(hitbox.index(box)) in list_move:
                                 self.rect.center = box.center
                                 print(False)
                                 return False
@@ -336,7 +339,6 @@ class Graphique:
                 ),
                 10,
             )
-
         pygame.display.flip()
 
     def highlight_move_FElIX(self, list_move):

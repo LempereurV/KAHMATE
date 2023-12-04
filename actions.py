@@ -1,4 +1,4 @@
-from rugbymen import *
+import rugbymen
 from color import Color
 import enum
 
@@ -22,23 +22,32 @@ def ask_if_action_finished():
             return False
 
 def available_move_positions(current_x,current_y, game, scope):
+    current_x = int(current_x)
+    current_y = int(current_y)
+    scope = int(scope)
+    available = []
+    for x in range(current_x-scope, current_x+scope+1):
+        for y in range(current_y-scope, current_y+scope+1):
+            if game.is_position_valid([x, y]) and (abs(current_x-x)+abs(current_y-y))<=scope: # and game.is_position_unoccupied([x, y])
+                available.append([x, y])
+    return available
     """ 
     Returns the list of admissible new positions for a rugbyman in position (current_x, current_y).
     Used in move_rugbyman(rugbyman, game).
     """    
-    available = [[current_x, current_y, 0]] #la troisième coordonnée correspond à la distance nouvellement parcourue
+    """available = [[current_x, current_y, 0]] #la troisième coordonnée correspond à la distance nouvellement parcourue
     moves_executed = 0
     while moves_executed < scope:
         for intermediate_position in available:
             for delta in [[-1, 0], [1, 0], [0, -1], [0, 1]]:
                 new_position = [intermediate_position[0] + delta[0], intermediate_position[1] + delta[1], moves_executed]
                 if not ((new_position[:2] in [position[:2] for position in available]) 
-                        and game.is_position_correct(new_position) 
-                        and game.is_position_unoccupied(new_position)):
+                        and game.is_position_correct(new_position) ):
+                        #and game.is_position_unoccupied(new_position)):
                      available.append(intermediate_position)
         moves_executed +=1
     available.pop(0)
-    return available
+    return available"""
 
 
 def input_move_rugbyman(available_positions):
@@ -347,7 +356,7 @@ class Actions:
 
     def place_rugbyman(self, x, y):
         self.posx = x
-        # Fonction qui traduit coordonnées en numéro de hitbox
+        # Fonction qui traduit coordonnées en numéro de hitbox"""
 
 
 def coord_to_hitbox(coord):
@@ -356,4 +365,4 @@ def coord_to_hitbox(coord):
 
 def hitbox_to_coord(n_hit):
     return [n_hit%11, n_hit//11]
-"""
+
