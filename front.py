@@ -1,10 +1,9 @@
 from typing import Any
 import pygame
 import sys
-from game import *
+from actions import *
 from rugbymen import *
-import actions
-import board
+from game import *
 
 # Initialisation de Pygame
 pygame.init()
@@ -17,13 +16,12 @@ image = pygame.image.load(image_path)
 size = image.get_size()
 
 
-# A function that translates a path into a object of rugbyman
+#A function that translates a path into a object of rugbyman
 def path_to_player_type(path):
     if path.endswith("bleu.png"):
         color = "blue"
     elif path.endswith("rouge.png"):
         color = "red"
-
     if path == "Images/Costaud_bleu.png" or path == "Images/Costaud_rouge.png":
         return StrongRugbyman(color)
     elif path == "Images/Dur_bleu.png" or path == "Images/Dur_rouge.png":
@@ -34,9 +32,9 @@ def path_to_player_type(path):
         return FastRugbyman(color)
     elif path == "Images/Ordinaire_bleu.png" or path == "Images/Ordinaire_rouge.png":
         return Rugbyman(color)
-
-
-# A function that translates a type of player into a path
+    
+    
+#A function that translates a type of player into a path
 def player_type_to_path(player_type):
     if player_type.spec() == Spec.STRONG:
         if player_type.color() == "blue":
@@ -78,6 +76,7 @@ class RugbymanToken(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.player_type = path_to_player_type(picture_path)
 
+
     def follow_cursor(self, tokens_group, background_image):
         # Make the token follow the cursor
         # tokens_group must contains all sprites that should be drawn
@@ -86,7 +85,6 @@ class RugbymanToken(pygame.sprite.Sprite):
         tokens_group.draw(screen)
         pygame.display.flip()
         # For now, the sprites in tokens_group just follow the mouse (could eventually be used to make Tokens follow the mouse while moving them)
-
     def get_hitbox(self):
         for i in range(len(hitbox)):
             if hitbox[i].collidepoint(self.rect.center):
@@ -94,7 +92,6 @@ class RugbymanToken(pygame.sprite.Sprite):
                     return [i, (i % 11, i // 11)]
                 else:
                     return [i]
-
     def select(self, tokens_group, background_image, game, graphique):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             list_move = actions.available_move_positions(
@@ -105,16 +102,12 @@ class RugbymanToken(pygame.sprite.Sprite):
             )  # moves_left
             while True:
                 graphique.highlight_move(list_move)
-                graphique.highlight_move(list_move)
                 self.follow_cursor(tokens_group, background_image)
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         self.follow_cursor(tokens_group, background_image)
                         for box in hitbox:
-                            if (
-                                box.collidepoint(pygame.mouse.get_pos())
-                                and hitbox_to_coord(hitbox.index(box)) in list_move
-                            ):
+                            if box.collidepoint(pygame.mouse.get_pos()) and hitbox_to_coord(hitbox.index(box)) in list_move:
                                 self.rect.center = box.center
                                 print(False)
                                 return False
@@ -124,6 +117,7 @@ class RugbymanToken(pygame.sprite.Sprite):
 
 class FloatingMenu(pygame.sprite.Sprite):
     # Class of floating menus, from which token actions can be selected
+
 
     def __init__(
         self,
@@ -176,11 +170,13 @@ class FloatingMenu(pygame.sprite.Sprite):
             self.rows_rect[i].x = self.border + self.rect.x
             self.rows_rect[i].y = self.rect.y + self.border + (self.font_size) * i
 
+
     def update_rows_pos(self):
         # Update the rows positions accordingly to the menu background
         for i in range(self.size_menu):
             self.rows_rect[i].x = self.border + self.rect.x
             self.rows_rect[i].y = self.rect.y + self.border + (self.font_size) * i
+
 
     def move(self, pos):
         # Move the menu
@@ -188,11 +184,13 @@ class FloatingMenu(pygame.sprite.Sprite):
         self.rect.y = pos[1]
         self.update_rows_pos()
 
+
     def draw(self, screen):
         # Display on scren the menu
         screen.blit(self.image, (self.rect.x, self.rect.y))
         for i in range(self.size_menu):
             screen.blit(self.rows[i], (self.rows_rect[i].x, self.rows_rect[i].y))
+
 
     def print_collision(self):
         #  Check and return hitbox collision with the mouse
@@ -223,6 +221,7 @@ screen.blit(image_costaud_rouge, (10, 10))
 
 # Dessiner un point bleu
 # pygame.draw.circle(screen, (0, 0, 255), (92, 107), 2)
+
 
 coords = []
 for j in range(8):
@@ -310,8 +309,8 @@ class Graphique:
                 self.screen,
                 (20, 255, 167),
                 (
-                    coords[list_move[i][1]][0] + 46.8 / 2,
-                    coords[list_move[i][0]][1] + 46.5 / 2,
+                    (92+46.8/2+list_move[i][0]*46.8, 
+                     62+46.5/2+list_move[i][1]*46.5)
                 ),
                 10,
             )
@@ -395,7 +394,7 @@ class Graphique:
         for tokens in tokens_group:
             tokens.rect.center = hitbox[i].center
             i += 1
-
+        
         ### Initialisation menu ###
         floating_menu = FloatingMenu(
             [
@@ -408,7 +407,7 @@ class Graphique:
             (30, 40),
         )
 
-        # WIP
+        #WIP
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -568,7 +567,8 @@ def path_convertor(Rugbyman):
 
 if __name__ == "__main__":
     graph = Graphique()
+    
 
     game = Game()
     graph.test_initialisation_board(game)
-    # graph.main_loop(game)
+    #graph.main_loop(game)
