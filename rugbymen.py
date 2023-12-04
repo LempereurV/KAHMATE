@@ -24,12 +24,15 @@ class Rugbyman:
         self.possesion = False  # True if the player has the ball
         self.active = True  # False if the player is KO
 
-    def __str__(self): #Possibilité de la changer 
+    def __str__(self):  # Possibilité de la changer
         return f"{self.color} Rugbyman ({self.spec})"
 
     def spec(self):
         return self.spec
-    
+
+    def get_move_points(self):
+        return self.move_points
+
     def color(self):
         return self.color
 
@@ -60,6 +63,9 @@ class Rugbyman:
     def posy(self):
         return self.posy
 
+    def pos(self):
+        return [self.posx, self.posy]
+
     def new_posx(self, new_posx):  # utiliser une propriété
         self.posx = new_posx
         return
@@ -68,13 +74,19 @@ class Rugbyman:
         self.posy = new_posy
         return
 
+    def refresh_stats(self):
+        self.moves_left = self.move_points
+
+    def actualize_move_left(self, move_points):
+        self.moves_left -= move_points
+
 
 class StrongRugbyman(Rugbyman):
     def __init__(self, color):
         Rugbyman.__init__(self, color)
         self.attack_bonus = 2
         self.defense_bonus = 1
-        self.moves = 2
+        self.move_points = 2
         self.spec = Spec.STRONG
 
 
@@ -94,8 +106,8 @@ class SmartRugbyman(Rugbyman):
 
 class FastRugbyman(Rugbyman):
     def __init__(self, color):
-        Rugbyman.__init__(self,color)
+        Rugbyman.__init__(self, color)
         self.attack_bonus = -1
         self.defense_bonus = -1
-        self.moves = 4
+        self.move_points = 4
         self.spec = Spec.FAST

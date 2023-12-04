@@ -44,29 +44,31 @@ class Game:
         return self.player1.rugbymen() + self.player2.rugbymen()
 
     def is_position_valid(self, position):
-        return ((position[0] >= 0) 
-                and (position[0] <= self.max_x()) 
-                and (position[1] >= 0) 
-                and (position[1] <= self.max_y()))
+        return (
+            (position[0] >= 0)
+            and (position[0] <= self.max_x())
+            and (position[1] >= 0)
+            and (position[1] <= self.max_y())
+        )
 
     def is_position_unoccupied(self, position):
         for rugbyman in self.players():
-            if position == [rugbyman.posx(), rugbyman.posy()]:  # Fixed: Use '==' for comparison
+            if [
+                rugbyman.posx(),
+                rugbyman.posy(),
+            ] == position:  # Fixed: Use '==' for comparison
                 return False
         return True
-    
+
     def is_position_occupied_by_team(self, color, position, game):
         for rugbyman in game.rugbymen():
-            if (color is rugbyman.color()
+            if (
+                color is rugbyman.color()
                 and position[0] == rugbyman.posx()
                 and position[1] == rugbyman.posy()
-                ):
+            ):
                 return True
         return False
-
-        
-    
-
 
     def play(self):
         while not self.is_over:
