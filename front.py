@@ -397,7 +397,7 @@ class Graphique:
                     if floating_menu.is_on_screen(size):
 
                         collided_menu_hitbox = floating_menu.get_collision()
-                        if collided_menu_hitbox != None         # If the player clicked on the menu
+                        if collided_menu_hitbox != None:         # If the player clicked on the menu
 
                             if floating_menu.is_option_available(collided_menu_hitbox):
 
@@ -415,7 +415,8 @@ class Graphique:
 
                         selected_hitbox = self.get_hitbox # An hitbox is selected, let's see if it correspond to a Token Hitbox
                         for token in tokens_group:
-                            if selected_hitbox ==
+                            if selected_hitbox == token.get_hitbox():
+                                None # Il faut afficher le menu au bon endroit
 
                         
 
