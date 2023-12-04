@@ -70,11 +70,7 @@ class Board:
     def available_move_position(self, pos):
         cond_first_layer = True
         rubgyman = self.which_rugbyman(pos)
-<<<<<<< HEAD
         scope = rubgyman.moves_left()
-=======
-        scope = rubgyman.move_left()
->>>>>>> cffc82f26db067780b19b09e021ca26079d6f339
         return self.available_move_position_recursif(pos, scope, cond_first_layer)
 
     def move_rugbyman(self, pos, possible_move, Graphique):
