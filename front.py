@@ -103,7 +103,6 @@ class RugbymanToken(pygame.sprite.Sprite):
                     return [i]
 
     def select(self, tokens_group, background_image, game, graphique):
-        print("Début")
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             print(self.player_type.moves)
             list_move = actions.available_move_positions(
@@ -113,7 +112,6 @@ class RugbymanToken(pygame.sprite.Sprite):
                 self.player_type.moves,
             )  # moves_left
             while True:
-                print(True)
                 graphique.highlight_move(list_move)
                 self.follow_cursor(tokens_group, background_image)
                 for event in pygame.event.get():
@@ -144,13 +142,6 @@ screen.blit(image, (0, 0))
 
 image_costaud_rouge = pygame.image.load("Images/Costaud_bleu.png")
 screen.blit(image_costaud_rouge, (10, 10))
-# surf.blit(image_costaud_rouge, (10, 10))
-
-# Dessiner un point rouge
-# pygame.draw.circle(screen, (255, 0, 0), (92,62), 2)
-
-# Dessiner un point bleu
-# pygame.draw.circle(screen, (0, 0, 255), (92, 107), 2)
 
 
 coords = []
