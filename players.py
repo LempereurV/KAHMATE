@@ -47,6 +47,11 @@ class Player:
                 return True
         return False
 
+    def reset_player(self):
+        self._rugbymen = []
+        #self._cards = [Card.ONE, Card.TWO, Card.THREE, Card.FOUR, Card.FIVE, Card.SIX]
+        self.can_play = True
+
     def set_can_play(self, boolean):
         self.can_play = boolean
 
@@ -58,7 +63,7 @@ class Player:
             move_points = 0
             for rugbyman in self.show_rugbymen():
                 move_points += rugbymen.Rugbyman.move_left(rugbyman)
-                print(move_points)
+                #print(move_points)
             if move_points == 0:
                 self.set_can_play(False)
 
@@ -67,7 +72,9 @@ class Player:
 
     def rugbymen(self):
         return self._rugbymen
-
+    
+    def number_of_rugbymen(self):
+        return len(self._rugbymen)
     # plural
     def show_rugbymen(self):
         return self._rugbymen
