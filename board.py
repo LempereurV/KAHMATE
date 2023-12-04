@@ -3,6 +3,7 @@ import rugbymen
 import front
 from color import Color
 import random
+import actions
 
 n_row = 8
 n_column = 11
@@ -10,94 +11,13 @@ n_case = n_row * n_column
 n_rugbymen = 6
 
 
-def placement_orders(color):
-    R = {
-        "First Normal Rugbyman": rugbymen.Rugbyman(color),
-        "Second Normal Rugbyman": rugbymen.Rugbyman(color),
-        "Strong Rugbyman": rugbymen.StrongRugbyman(color),
-        "Hard Rugbyman": rugbymen.HardRugbyman(color),
-        "Smart Rugbyman": rugbymen.SmartRugbyman(color),
-        "Fast Rugbyman": rugbymen.FastRugbyman(color),
-    }
-    return R
-
-
-def positions_rugbymen_player(color, Graphique):
-    placement_order = placement_orders(color)
-
-    i = 0
-    R = [None] * n_rugbymen  # R is the list of the positions of the rugbymen
-    Noms = list(placement_order.keys())  # List of the names of the rugbymen
-
-    ### A enlever ####
-    for i in range(n_rugbymen):
-        if color == Color.RED:
-            R[i] = [i, random.randint(0, 4), placement_order[Noms[i]]]
-        else:
-            R[i] = [i, random.randint(6, 10), placement_order[Noms[i]]]
-        front.Graphique.affiche_joueur(
-            Graphique,
-            11 * R[i][0] + R[i][1],
-            front.path_convertor(placement_order[Noms[i]]),
-        )
-    return R
-    ####    FIn a enlever
-
-    while i < n_rugbymen:
-        print(
-            str(color).split(".")[-1] + " Player, Choose the position of the " + Noms[i]
-        )  # Changer Color.split(".")[-1] for the color to display as intended
-        pos = front.Graphique.get_hitbox_for_back(
-            Graphique
-        )  # Fonction de la classe graphique qui renvoie une liste de la forme [i,j] avec i et j les colonnes et lignes de la case cliquée
-        if pos in R:
-            cond_pos_already_taken = True
-            while cond_pos_already_taken:
-                print("The position chosen is already taken, re choose the position")
-                pos = front.Graphique.get_hitbox_for_back(Graphique)
-                if not pos in R:
-                    cond_pos_already_taken = False
-        if (
-            color == Color.RED and pos[1] >= n_column // 2
-        ):  # Red characters should be placed on the left
-            cond_RED = True
-            while cond_RED:
-                print(
-                    "The position isn't correct, the red team is suppose to be on the left, re choose the position"
-                )
-                pos = front.Graphique.get_hitbox_for_back(Graphique)
-                if pos[1] < n_column // 2:
-                    cond_RED = False
-
-        if color == Color.BLUE and pos[1] <= n_column // 2:
-            cond_Blue = True
-            while cond_Blue:
-                print(
-                    "The position isn't correct, the blue team is suppose to be on the right, re choose the position"
-                )
-                pos = front.Graphique.get_hitbox_for_back(Graphique)
-                if pos[1] > n_column // 2:
-                    cond_Blue = False
-        front.Graphique.affiche_joueur(
-            Graphique,
-            pos[0] * n_column + pos[1],
-            front.path_convertor(placement_order[Noms[i]]),
-        )  # Display the newly placed rugbymen on the board
-        R[i] = [pos[0], pos[1]]
-        i += 1
-    R_with_rugbymen = []
-    # R_with_rugbymen is the list of the positions of the rugbymen with the type of the rugbymen
-    for i in range(n_rugbymen):
-        R_with_rugbymen.append(R[i] + [placement_order[Noms[i]]])
-
-    return R_with_rugbymen
-
-
 class Board:
     def __init__(self, Graphique):
-        red_position = positions_rugbymen_player(Color.RED, Graphique)
-        blue_position = positions_rugbymen_player(
-            Color.BLUE, Graphique
+        red_position = actions.positions_rugbymen_player(
+            Color.RED, n_rugbymen, n_column, Graphique
+        )
+        blue_position = actions.positions_rugbymen_player(
+            Color.BLUE, n_rugbymen, n_column, Graphique
         )  # Attention, il faut le graphique board soit créé avant les joueurs
         self._board = [[None for j in range(n_column)] for i in range(n_row)]
         assert len(red_position) == n_rugbymen
@@ -150,7 +70,11 @@ class Board:
     def available_move_position(self, pos):
         cond_first_layer = True
         rubgyman = self.which_rugbyman(pos)
+<<<<<<< HEAD
+        scope = rubgyman.moves_left()
+=======
         scope = rubgyman.move_left()
+>>>>>>> cffc82f26db067780b19b09e021ca26079d6f339
         return self.available_move_position_recursif(pos, scope, cond_first_layer)
 
     def move_rugbyman(self, pos, possible_move, Graphique):
