@@ -5,50 +5,124 @@ from cards import Card
 
 class Player:
     def __init__(self, color):
-        self._unplaced_rugbymen = [rugbymen.Rugbyman(color), 
-                              rugbymen.Rugbyman(color), 
-                              rugbymen.StrongRugbyman(color), 
-                              rugbymen.HardRugbyman(color), 
-                              rugbymen.SmartRugbyman(color), 
-                              rugbymen.FastRugbyman(color)
-                              ]
+        # Commentaires suivants à evaluer je pense que les unplaces rugbymen ne servent à rien
+        """
+        self._unplaced_rugbymen = [
+            rugbymen.Rugbyman(color),
+            rugbymen.Rugbyman(color),
+            rugbymen.StrongRugbyman(color),
+            rugbymen.HardRugbyman(color),
+            rugbymen.SmartRugbyman(color),
+            rugbymen.FastRugbyman(color),
+        ]
+        """
+        # Liste qui est je pense à interpréter comme la liste des rugbymen que le joueur choisi de jouer (au maxmimum 2)
         self._rugbymen = []
-        self._cards = [Card.ONE,
-                        Card.TWO, 
-                        Card.THREE, 
-                        Card.FOUR, 
-                        Card.FIVE, 
-                        Card.SIX
-                        ]
+        self._cards = [Card.ONE, Card.TWO, Card.THREE, Card.FOUR, Card.FIVE, Card.SIX]
         self._color = color
+        self.can_play = True
+
+    def can_play(self):
+        return self.can_play
+
+    def choose_rugbymen(self, rugbyman):
+        """
+        Choose the rugbymen that the player wants to play with
+        """
+        if len(self._rugbymen) == 2:
+            print("You already have two rugbyman, you can't select another one")
+        else:
+            if rugbyman in self.show_rugbymen():
+                if rugbymen.Rugbyman.spec(rugbyman) == rugbymen.Spec.NORMAL:
+                    # There is two normal rugbymen on the board we have to make sure we dont select the same one twice
+                    if rugbymen.Rugbyman.pos(rugbyman) == rugbymen.Rugbyman.pos(
+                        self.show_rugbyman(0)
+                    ):
+                        self.add_rugbyman(rugbyman)
+                        return True
+                else:
+                    print("You have already selected this rugbyman")
+            else:
+                self.add_rugbyman(rugbyman)
+                return True
+        return False
+
+    def set_can_play(self, boolean):
+        self.can_play = boolean
+
+    def n_rugbymen(self):
+        return len(self._rugbymen)
+
+    def actualize_can_play(self):
+        if self.n_rugbymen() == 2:
+            move_points = 0
+            for rugbyman in self.show_rugbymen():
+                move_points += rugbymen.Rugbyman.move_left(rugbyman)
+                print(move_points)
+            if move_points == 0:
+                self.set_can_play(False)
 
     def color(self):
         return self._color
-    
+
     def rugbymen(self):
         return self._rugbymen
 
-    def input_select_rugbyman(self, game):
-        rugbyman_selected = None
-        while rugbyman_selected is None:
-            input_x = input("Choose the x coordinate of the rugbyman you want to select")
-            input_y = input("Choose the y coordinate of the rugbyman you want to select")
-            for rugbyman in self._rugbymen:
-                if rugbyman.posx() == input_x and rugbyman.posy() == input_y:
-                    return rugbyman
+    # plural
+    def show_rugbymen(self):
+        return self._rugbymen
+
+    # singular
+    def show_rugbyman(self, i):
+        return self._rugbymen[i]
+
+    def add_rugbyman(self, rugbyman):
+        self._rugbymen.append(rugbyman)
 
     def available_actions(self, rugbyman, game):
         available = []
-        if available_move_positions(rugbyman.posx(), rugbyman.posy(), rugbyman.scope(), game) != []: #définir rugbyman.scope()
+        if (
+            available_move_positions(
+                rugbyman.posx(), rugbyman.posy(), rugbyman.scope(), game
+            )
+            != []
+        ):  # définir rugbyman.scope()
             available.append(1)
             print("To move a player, write 1")
-        if available_pass_positions(self.color(), rugbyman.posx(), rugbyman.posy(), rugbyman.pass_scope(), game) != []: #définir rugbyman.pass_scope()
+        if (
+            available_pass_positions(
+                self.color(),
+                rugbyman.posx(),
+                rugbyman.posy(),
+                rugbyman.pass_scope(),
+                game,
+            )
+            != []
+        ):  # définir rugbyman.pass_scope()
             available.append(2)
             print("To pass the ball to a player, write 2")
-        if available_tackle_positions(self.color(), rugbyman.posx(), rugbyman.posy(), rugbyman.tackle_scope(), game) != []: #définir rugbyman.tackle_scope()
+        if (
+            available_tackle_positions(
+                self.color(),
+                rugbyman.posx(),
+                rugbyman.posy(),
+                rugbyman.tackle_scope(),
+                game,
+            )
+            != []
+        ):  # définir rugbyman.tackle_scope()
             available.append(3)
             print("To tackle a player, write 3")
-        if available_forward_pass(self.color(), rugbyman.posx(), rugbyman.posy(), rugbyman.forward_pass_scope(), game) != []: #définir rugbyman.forward_pass_scope()
+        if (
+            available_forward_pass(
+                self.color(),
+                rugbyman.posx(),
+                rugbyman.posy(),
+                rugbyman.forward_pass_scope(),
+                game,
+            )
+            != []
+        ):  # définir rugbyman.forward_pass_scope()
             available.append(4)
             print("To realize a forward pass, write 4")
         if available_score(self.color(), rugbyman.posx(), game) != []:
@@ -66,7 +140,9 @@ class Player:
             if chosen_action == "3" and 3 in available:
                 return tackle(rugbyman, game)
             if chosen_action == "4" and 4 in available:
-                return forward_pass(rugbyman, game) #ne pas oublier rugbyman.has_partners_in_front()
+                return forward_pass(
+                    rugbyman, game
+                )  # ne pas oublier rugbyman.has_partners_in_front()
             if chosen_action == "5" and 5 in available:
                 return score(rugbyman, game)
 
@@ -87,12 +163,14 @@ class Player:
                 if picked_card == self._cards[i]:
                     self._cards.pop(i)
                     if len(self._cards) == 0:
-                        self._cards = [cards.ONE,
-                                    cards.TWO, 
-                                    cards.THREE, 
-                                    cards.FOUR, 
-                                    cards.FIVE, 
-                                    cards.SIX]
+                        self._cards = [
+                            Card.ONE,
+                            Card.TWO,
+                            Card.THREE,
+                            Card.FOUR,
+                            Card.FIVE,
+                            Card.SIX,
+                        ]
                     return
 
 

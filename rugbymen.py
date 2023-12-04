@@ -16,23 +16,23 @@ class Rugbyman:
         self.color = color
         self.attack_bonus = 0
         self.defense_bonus = 0
-        self.moove_points = 3
-        self.moves_left = self.moove_points
+        self.move_points = 3
+        self.moves_left = self.move_points
         self.posx = 0
         self.posy = 0
         self.spec = Spec.NORMAL
         self.possesion = False  # True if the player has the ball
         self.active = True  # False if the player is KO
-    
-    def __str__(self): #Possibilité de la changer 
+
+    def __str__(self):  # Possibilité de la changer
         return f"{self.color} Rugbyman ({self.spec})"
-    
+
     def spec(self):
         return self.spec
-    
-    def get_moove_points(self):
-        return self.moove_points
-    
+
+    def get_move_points(self):
+        return self.move_points
+
     def color(self):
         return self.color
 
@@ -51,14 +51,20 @@ class Rugbyman:
                     return True
         return False
 
-    def moove_points(self):
-        return self.moove_points
+    def move_points(self):
+        return self.move_points
+
+    def move_left(self):
+        return self.moves_left
 
     def posx(self):
         return self.posx
 
     def posy(self):
         return self.posy
+
+    def pos(self):
+        return [self.posx, self.posy]
 
     def new_posx(self, new_posx):  # utiliser une propriété
         self.posx = new_posx
@@ -69,17 +75,18 @@ class Rugbyman:
         return
 
     def refresh_stats(self):
-        self.moves_left = self.moove_points
+        self.moves_left = self.move_points
 
-    def actualize_move_points(self, moove_points):
-        self.moves_left -= moove_points
+    def actualize_move_left(self, move_points):
+        self.moves_left -= move_points
+
 
 class StrongRugbyman(Rugbyman):
     def __init__(self, color):
         Rugbyman.__init__(self, color)
         self.attack_bonus = 2
         self.defense_bonus = 1
-        self.moove_points = 2
+        self.move_points = 2
         self.spec = Spec.STRONG
 
 
@@ -99,8 +106,8 @@ class SmartRugbyman(Rugbyman):
 
 class FastRugbyman(Rugbyman):
     def __init__(self, color):
-        Rugbyman.__init__(self,color)
+        Rugbyman.__init__(self, color)
         self.attack_bonus = -1
         self.defense_bonus = -1
-        self.moove_points = 4
+        self.move_points = 4
         self.spec = Spec.FAST
