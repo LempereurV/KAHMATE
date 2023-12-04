@@ -15,7 +15,7 @@ class Game:
         self.n_rugbymen = number_rugbymen
         self.n_columns = number_of_columns
         self.n_rows = number_of_rows
-        forward_pass_scope = forward_pass_scope
+        #forward_pass_scope = forward_pass_scope
         self.red_player = players.Player(Color.RED)
         self.blue_player = players.Player(Color.BLUE)
         ball = players.Ball(random.randint(1,number_of_rows - 2))

@@ -30,6 +30,9 @@ class Rugbyman:
     def spec(self):
         return self.spec
 
+    def get_move_points(self):
+        return self.moves_left
+
     def color(self):
         return self.color
 
@@ -83,7 +86,7 @@ class StrongRugbyman(Rugbyman):
         Rugbyman.__init__(self, color)
         self.attack_bonus = 2
         self.defense_bonus = 1
-        self.move_points = 2
+        self.moves = 2
         self.spec = Spec.STRONG
 
 
@@ -106,5 +109,5 @@ class FastRugbyman(Rugbyman):
         Rugbyman.__init__(self, color)
         self.attack_bonus = -1
         self.defense_bonus = -1
-        self.move_points = 4
+        self.moves = 4
         self.spec = Spec.FAST
