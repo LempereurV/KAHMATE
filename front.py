@@ -34,20 +34,6 @@ screen.blit(image, (0, 0))
 image_costaud_rouge = pygame.image.load("Images/Costaud_bleu.png")
 screen.blit(image_costaud_rouge, (10, 10))
 
-
-coords = []
-for j in range(8):
-    for i in range(11):
-        coords.append((92 + i * 46.8, 62 + j * 46.5))
-
-# Hitbox de chaque point
-hitbox = []
-for i in range(88):
-    hitbox.append(pygame.Rect(coords[i][0], coords[i][1], 46.8, 46.5))
-hitbox.append(pygame.Rect(92 - 46.8, 62, 46.8, 46.5 * 8))
-hitbox.append(pygame.Rect(92 + 11 * 46.8, 62, 46.8, 46.5 * 8))
-
-
 class Graphique:
     def __init__(self):
         # Initialisation de Pygame
@@ -64,7 +50,7 @@ class Graphique:
         self.screen.blit(self.plateau, (0, 0))
 
     # Displays the number on the screen of the hitbox when you click on it
-    def display_number(self):
+    def display_number(self, hitbox):
         for i in range(len(hitbox)):
             if hitbox[i].collidepoint(pygame.mouse.get_pos()):
                 if i < 88:
@@ -74,7 +60,7 @@ class Graphique:
             else:
                 pass
 
-    def get_hitbox(self):  # n'attends pas le clique du joueur
+    def get_hitbox(self, hitbox):  # n'attends pas le clique du joueur
         for i in range(len(hitbox)):
             if hitbox[i].collidepoint(pygame.mouse.get_pos()):
                 if i < 88:
@@ -84,7 +70,7 @@ class Graphique:
             else:
                 return None
 
-    def get_hitbox_for_back(self):
+    def get_hitbox_for_back(self, hitbox):
         cond = True
         while cond:
             for event in pygame.event.get():
@@ -130,7 +116,7 @@ class Graphique:
             )
         pygame.display.flip()
 
-    def highlight_move_FElIX(self, list_move):
+    def highlight_move_FElIX(self, list_move, hitbox):
         s = pygame.Surface(hitbox[0].size)  # the size of your rect
         s.set_alpha(128)  # alpha level
         s.fill((150, 150, 150))
@@ -195,6 +181,17 @@ class Graphique:
         pygame.display.flip()
 
     def test_menu(self):
+        coords = []
+        for j in range(8):
+            for i in range(11):
+                coords.append((92 + i * 46.8, 62 + j * 46.5))
+
+        # Hitbox de chaque point
+        hitbox = []
+        for i in range(88):
+            hitbox.append(pygame.Rect(coords[i][0], coords[i][1], 46.8, 46.5))
+        hitbox.append(pygame.Rect(92 - 46.8, 62, 46.8, 46.5 * 8))
+        hitbox.append(pygame.Rect(92 + 11 * 46.8, 62, 46.8, 46.5 * 8))
         ### Initialisation des jetons ###
         red_playertoken = RugbymanToken("Images/Costaud_bleu.png")
         blue_playertoken = RugbymanToken("Images/Costaud_rouge.png")
@@ -253,6 +250,17 @@ class Graphique:
                                 None  # Il faut afficher le menu au bon endroit
 
     def test_initialisation_board(self, game):
+        coords = []
+        for j in range(8):
+            for i in range(11):
+                coords.append((92 + i * 46.8, 62 + j * 46.5))
+
+        # Hitbox de chaque point
+        hitbox = []
+        for i in range(88):
+            hitbox.append(pygame.Rect(coords[i][0], coords[i][1], 46.8, 46.5))
+        hitbox.append(pygame.Rect(92 - 46.8, 62, 46.8, 46.5 * 8))
+        hitbox.append(pygame.Rect(92 + 11 * 46.8, 62, 46.8, 46.5 * 8))
         token_normal1_red = RugbymanToken("Images/Ordinaire_rouge.png")
         token_normal2_red = RugbymanToken("Images/Ordinaire_rouge.png")
         token_strong_red = RugbymanToken("Images/Costaud_rouge.png")
@@ -303,7 +311,7 @@ class Graphique:
             a = True
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.display_number()
+                    self.display_number(hitbox)
                     self.display_point()
                     for token in red_tokens_group:
                         a = token.select(red_tokens_group, image, game, self, hitbox)
@@ -332,6 +340,17 @@ class Graphique:
     # Boucle principale
     def main_loop(self, game):
         # Players tokens sprites initialisation
+        coords = []
+        for j in range(8):
+            for i in range(11):
+                coords.append((92 + i * 46.8, 62 + j * 46.5))
+
+    # Hitbox de chaque point
+        hitbox = []
+        for i in range(88):
+            hitbox.append(pygame.Rect(coords[i][0], coords[i][1], 46.8, 46.5))
+            hitbox.append(pygame.Rect(92 - 46.8, 62, 46.8, 46.5 * 8))
+            hitbox.append(pygame.Rect(92 + 11 * 46.8, 62, 46.8, 46.5 * 8))
 
         playertoken1 = RugbymanToken("Images/Costaud_bleu.png")
         playertoken2 = RugbymanToken("Images/Costaud_rouge.png")
