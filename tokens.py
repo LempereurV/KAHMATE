@@ -87,7 +87,6 @@ class RugbymanToken(pygame.sprite.Sprite):
                     return [i]
     def select(self, tokens_group, background_image, game, graphique, hitbox):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
-            print(self.player_type.moves)
             list_move = actions.available_move_positions(
                 self.get_hitbox(hitbox)[1][0],
                 self.get_hitbox(hitbox)[1][1],
