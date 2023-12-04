@@ -57,7 +57,7 @@ def player_type_to_path(player_type):
             return "Images/Dur_bleu.png"
         elif player_type.color() == "red":
             return "Images/Dur_rouge.png"
-    elif player_type.spec() == Spec.ORDINARY:
+    elif player_type.spec() == Spec.NORMAL:
         if player_type.color() == "blue":
             return "Images/Ordinaire_bleu.png"
         elif player_type.color() == "red":

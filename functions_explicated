@@ -32,3 +32,7 @@ Fonctions pour faire un en-avant
 
 Fonction pour marquer
 - score(rugbyman, game)
+
+Board.py
+
+placement_orders:
