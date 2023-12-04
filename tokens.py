@@ -86,7 +86,6 @@ class RugbymanToken(pygame.sprite.Sprite):
                 else:
                     return [i]
     def select(self, tokens_group, background_image, game, graphique, hitbox):
-        print("Début")
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             print(self.player_type.moves)
             list_move = actions.available_move_positions(
@@ -96,7 +95,6 @@ class RugbymanToken(pygame.sprite.Sprite):
                 self.player_type.moves
             )  # moves_left
             while True:
-                print(True)
                 graphique.highlight_move(list_move)
                 self.follow_cursor(tokens_group, background_image, graphique.screen)
                 for event in pygame.event.get():
