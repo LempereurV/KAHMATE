@@ -124,7 +124,9 @@ class Board:
                 R=R+self.available_moove_position_recursif([pos[0],pos[1]+1],scope-1,cond_first_layer)
             if pos[1]-1>=0 and self.is_square_free([pos[0],pos[1]-1]) :
                 R=R+self.available_moove_position_recursif([pos[0],pos[1]-1],scope-1,cond_first_layer)
-            return R
+            unique_positions_set = set(map(tuple, R))
+            unique_positions_list = [list(pos) for pos in unique_positions_set]
+            return unique_positions_list
         
         
 

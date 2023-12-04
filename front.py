@@ -309,8 +309,12 @@ class Graphique:
         pygame.display.flip()
 
     def highlight_move_FElIX(self, list_move):
+        s = pygame.Surface(hitbox[0].size)  # the size of your rect
+        s.set_alpha(128)                # alpha level
+        s.fill((150, 150, 150))  
         for moove in list_move:
-            pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[moove[0]*11+moove[1]] )
+            screen.blit(s, hitbox[moove[0]*11+moove[1]].topleft)  # (0,0) are the top-left coordinates
+            #pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[moove[0]*11+moove[1]] )
         pygame.display.flip()
 
     def draw_board(self,board):

@@ -38,9 +38,10 @@ while Game_ON:
                 if board.Board.moove_rugbyman(B,pos,possible_move,Graph):
                     Red_player_turn=False
                     Blue_player_turn=True
-                    front.Graphique.draw_board(Graph,B)  
-            #else :
-                #print(board.Board.which_rugbyman(B,pos))
+                    front.Graphique.draw_board(Graph,B)
+                else:
+                    front.Graphique.draw_board(Graph,B)   
+                
         while Blue_player_turn:
             pos=front.Graphique.get_hitbox_for_back(Graph)
 
@@ -48,18 +49,15 @@ while Game_ON:
                 print(board.Board.which_rugbyman(B,pos))
                 front.Graphique.draw_board(Graph,B)
                 possible_move=board.Board.available_moove_position(B,pos)
+                print(possible_move)
                 front.Graphique.highlight_move_FElIX(Graph,possible_move) 
 
                 if board.Board.moove_rugbyman(B,pos,possible_move,Graph):
                     Red_player_turn=True
                     Blue_player_turn=False
                     front.Graphique.draw_board(Graph,B)  
-            #else :
-                #print(board.Board.which_rugbyman(B,pos))
-            
-            
-
-        
+                else:
+                    front.Graphique.draw_board(Graph,B)  
         if event.type == front.pygame.QUIT:
             front.pygame.quit()
             front.sys.exit()
