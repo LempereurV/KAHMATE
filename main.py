@@ -32,21 +32,23 @@ while Game_ON:
                 and rugbymen.Rugbyman.color(board.Board.which_rugbyman(B, pos))
                 == Color.RED
             ):
-
                 # print(board.Board.which_rugbyman(B,pos))
                 front.Graphique.draw_board(Graph, B)
                 possible_move = board.Board.available_move_position(B, pos)
                 front.Graphique.highlight_move_FElIX(Graph, possible_move)
-                
-                if players.Player.number_of_rugbymen(P_RED)<2:
-                    pos2_or_bool=board.Board.move_rugbyman(B, pos, possible_move, Graph)
-                    if not pos2_or_bool ==False :
+
+                if players.Player.number_of_rugbymen(P_RED) < 2:
+                    pos2_or_bool = board.Board.move_rugbyman(
+                        B, pos, possible_move, Graph
+                    )
+                    if not pos2_or_bool == False:
                         print(players.Player.number_of_rugbymen(P_RED))
-                        players.Player.choose_rugbymen(P_RED, board.Board.which_rugbyman(B, pos2_or_bool))
-                        #print(players.Player.can_play(P_RED))
+                        players.Player.choose_rugbymen(
+                            P_RED, board.Board.which_rugbyman(B, pos2_or_bool)
+                        )
+                        # print(players.Player.can_play(P_RED))
                 front.Graphique.draw_board(Graph, B)
                 players.Player.actualize_can_play(P_RED)
-
 
         while players.Player.can_play(P_BLUE):
             pos = front.Graphique.get_hitbox_for_back(Graph)
@@ -56,7 +58,6 @@ while Game_ON:
                 and rugbymen.Rugbyman.color(board.Board.which_rugbyman(B, pos))
                 == Color.BLUE
             ):
-
                 # print(board.Board.which_rugbyman(B,pos))
                 front.Graphique.draw_board(Graph, B)
                 players.Player.choose_rugbymen(
@@ -70,8 +71,7 @@ while Game_ON:
                     players.Player.actualize_can_play(P_BLUE)
                     # print(players.Player.can_play(P_BLUE))
                 front.Graphique.draw_board(Graph, B)
-                
-        
+
         ### Partie reset quand les deux joueurs ont joué ###
         if not players.Player.can_play(P_RED) and not players.Player.can_play(P_BLUE):
             players.Player.reset_player(P_RED)

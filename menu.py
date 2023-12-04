@@ -1,8 +1,8 @@
 import pygame
 
+
 class FloatingMenu(pygame.sprite.Sprite):
     # Class of floating menus, from which token actions can be selected
-
 
     def __init__(
         self,
@@ -55,18 +55,20 @@ class FloatingMenu(pygame.sprite.Sprite):
             self.rows_rect[i].x = self.border + self.rect.x
             self.rows_rect[i].y = self.rect.y + self.border + (self.font_size) * i
 
-
     def get_pos(self):
         # Return menu position un a tuple, which corresponds to it's upper left border position
         return (self.rect.x, self.rect.y)
-    
 
     def is_on_screen(self, screen_size):
-        #Return True if the menu is on screen, False overwise
-        if self.pos[0] < screen[0] and self.pos[1] < screen[1] and self.pos[0] > 0 and self.pos[1] > 0:
+        # Return True if the menu is on screen, False overwise
+        if (
+            self.pos[0] < screen[0]
+            and self.pos[1] < screen[1]
+            and self.pos[0] > 0
+            and self.pos[1] > 0
+        ):
             return True
         return False
-    
 
     def update_rows_pos(self):
         # Update the rows positions accordingly to the menu background
@@ -74,20 +76,17 @@ class FloatingMenu(pygame.sprite.Sprite):
             self.rows_rect[i].x = self.border + self.rect.x
             self.rows_rect[i].y = self.rect.y + self.border + (self.font_size) * i
 
-
     def move(self, pos):
         # Move the menu
         self.rect.x = pos[0]
         self.rect.y = pos[1]
         self.update_rows_pos()
 
-
     def draw(self, screen):
         # Display on scren the menu
         screen.blit(self.image, (self.rect.x, self.rect.y))
         for i in range(self.size_menu):
             screen.blit(self.rows[i], (self.rows_rect[i].x, self.rows_rect[i].y))
-
 
     def get_collision(self):
         #  Check and return hitbox collision with the mouse (None if no hibox collided, # of the hitbox collided overwise)
@@ -97,7 +96,6 @@ class FloatingMenu(pygame.sprite.Sprite):
                 return i
         print(None)
         return None
-    
 
     def is_option_available(self, id_option):
         # Return True if the option is available, False overwise

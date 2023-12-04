@@ -3,6 +3,7 @@ from actions import *
 from cards import Card
 import actions
 
+
 class Player:
     def __init__(self, color):
         # Commentaires suivants à evaluer je pense que les unplaces rugbymen ne servent à rien
@@ -49,7 +50,7 @@ class Player:
 
     def reset_player(self):
         self._rugbymen = []
-        #self._cards = [Card.ONE, Card.TWO, Card.THREE, Card.FOUR, Card.FIVE, Card.SIX]
+        # self._cards = [Card.ONE, Card.TWO, Card.THREE, Card.FOUR, Card.FIVE, Card.SIX]
         self.can_play = True
 
     def set_can_play(self, boolean):
@@ -63,7 +64,7 @@ class Player:
             move_points = 0
             for rugbyman in self.show_rugbymen():
                 move_points += rugbymen.Rugbyman.move_left(rugbyman)
-                #print(move_points)
+                # print(move_points)
             if move_points == 0:
                 self.set_can_play(False)
 
@@ -72,9 +73,10 @@ class Player:
 
     def rugbymen(self):
         return self._rugbymen
-    
+
     def number_of_rugbymen(self):
         return len(self._rugbymen)
+
     # plural
     def show_rugbymen(self):
         return self._rugbymen
@@ -88,16 +90,48 @@ class Player:
 
     def available_actions(self, rugbyman, game):
         available = []
-        if available_move_positions(rugbyman.posx(), rugbyman.posy(), rugbyman.moves_left(), game) != []:
+        if (
+            available_move_positions(
+                rugbyman.posx(), rugbyman.posy(), rugbyman.moves_left(), game
+            )
+            != []
+        ):
             available.append(actions.Action.MOVE)
             print("To move a player, write " + Action.MOVE)
-        if available_pass_positions(self.color(), rugbyman.posx(), rugbyman.posy(), rugbyman.pass_scope(), game) != []: #définir rugbyman.pass_scope()
+        if (
+            available_pass_positions(
+                self.color(),
+                rugbyman.posx(),
+                rugbyman.posy(),
+                rugbyman.pass_scope(),
+                game,
+            )
+            != []
+        ):  # définir rugbyman.pass_scope()
             available.append(actions.Action.PASS)
             print("To pass the ball to a player, write " + Action.PASS)
-        if available_tackle_positions(self.color(), rugbyman.posx(), rugbyman.posy(), rugbyman.tackle_scope(), game) != []: #définir rugbyman.tackle_scope()
+        if (
+            available_tackle_positions(
+                self.color(),
+                rugbyman.posx(),
+                rugbyman.posy(),
+                rugbyman.tackle_scope(),
+                game,
+            )
+            != []
+        ):  # définir rugbyman.tackle_scope()
             available.append(actions.Action.TACKLE)
             print("To tackle a player, write " + Action.TACKLE)
-        if available_forward_pass(self.color(), rugbyman.posx(), rugbyman.posy(), rugbyman.forward_pass_scope(), game) != []: #définir rugbyman.forward_pass_scope()
+        if (
+            available_forward_pass(
+                self.color(),
+                rugbyman.posx(),
+                rugbyman.posy(),
+                rugbyman.forward_pass_scope(),
+                game,
+            )
+            != []
+        ):  # définir rugbyman.forward_pass_scope()
             available.append(actions.Action.FORWARD_PASS)
             print("To realize a forward pass, write " + Action.FORWARD_PASS)
         if available_score(self.color(), rugbyman.posx(), game) != []:

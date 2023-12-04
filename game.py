@@ -13,17 +13,17 @@ class Game:
     def __init__(self):
         self.n_columns = number_of_columns
         self.n_rows = number_of_rows
-        #forward_pass_scope = forward_pass_scope
+        # forward_pass_scope = forward_pass_scope
         self.red_player = players.Player(Color.RED)
         self.blue_player = players.Player(Color.BLUE)
-        ball = players.Ball(random.randint(1,number_of_rows - 2))
+        ball = players.Ball(random.randint(1, number_of_rows - 2))
 
     def is_over(self):
         pass
 
     def max_x(self):
         return self.n_columns - 1
-    
+
     def max_y(self):
         return self.n_rows - 1
 
@@ -35,7 +35,7 @@ class Game:
             return self.red_player
         if color is Color.BLUE:
             return self.blue_player
-        
+
     def player_play(self, color):
         player = self.player(color)
         return player.play()
