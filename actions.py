@@ -18,7 +18,7 @@ def ask_if_action_finished():
             return True
         if finished_move == "no":
             return False
-a
+
 def available_move_positions(current_x,current_y, game, scope):
     """ 
     Returns the list of admissible new positions for a rugbyman in position (current_x, current_y).
