@@ -20,19 +20,9 @@ image = pygame.image.load(image_path)
 size = image.get_size()
 
 
-
-##### #####
-
 # Création de la fenêtre
 screen = pygame.display.set_mode(size)
-# surf = pygame.surface.Surface(size)
 
-print(type(screen))
-# Affichage de l'image dans la fenêtre
-screen.blit(image, (0, 0))
-
-image_costaud_rouge = pygame.image.load("Images/Costaud_bleu.png")
-screen.blit(image_costaud_rouge, (10, 10))
 
 class Graphique:
     def __init__(self):
