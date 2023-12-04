@@ -3,7 +3,8 @@ import pygame
 import sys
 from game import *
 from rugbymen import *
-from actions import *
+import actions
+import board
 
 # Initialisation de Pygame
 pygame.init()
@@ -15,7 +16,7 @@ image = pygame.image.load(image_path)
 # Définition de la taille de la fenêtre
 size = image.get_size()
 
-#A function that translates a path into a object of rugbyman
+# A function that translates a path into a object of rugbyman
 def path_to_player_type(path):
     if path.endswith("bleu.png"):
         color = "blue"
@@ -32,10 +33,10 @@ def path_to_player_type(path):
         return FastRugbyman(color)
     elif path == "Images/Ordinaire_bleu.png" or path == "Images/Ordinaire_rouge.png":
         return Rugbyman(color)
-    
-    
-#A function that translates a type of player into a path
-def player_type_to_path(player_type): 
+
+
+# A function that translates a type of player into a path
+def player_type_to_path(player_type):
     if player_type.spec() == Spec.STRONG:
         if player_type.color() == "blue":
             return "Images/Costaud_bleu.png"
@@ -54,7 +55,7 @@ def player_type_to_path(player_type):
     elif player_type.spec() == Spec.HARD:
         if player_type.color() == "blue":
             return "Images/Dur_bleu.png"
-        elif player_type.color() == "red": 
+        elif player_type.color() == "red":
             return "Images/Dur_rouge.png"
     elif player_type.spec() == Spec.ORDINARY:
         if player_type.color() == "blue":
@@ -91,13 +92,19 @@ class RugbymanToken(pygame.sprite.Sprite):
     def get_hitbox(self):  # Can you explain this ? Wouldn't it be simpler just adding a self.hitbox attribut to any token ? (I'm really not sure)
         for i in range(len(hitbox)):
             if hitbox[i].collidepoint(self.rect.center):
-                if i<88:
-                    return [i,(i%11, i//11)]
+                if i < 88:
+                    return [i, (i % 11, i // 11)]
                 else:
                     return [i]
+
     def select(self, tokens_group, background_image, game, graphique):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
-            list_move = actions.available_move_positions(self.get_hitbox()[1][0],self.get_hitbox()[1][1], game, self.player_type.moove_points) #moves_left
+            list_move = actions.available_move_positions(
+                self.get_hitbox()[1][0],
+                self.get_hitbox()[1][1],
+                game,
+                self.player_type.move_points,
+            )  # moves_left
             while True:
                 graphique.highlight_move(list_move)
                 graphique.highlight_move(list_move)
@@ -106,16 +113,19 @@ class RugbymanToken(pygame.sprite.Sprite):
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         self.follow_cursor(tokens_group, background_image)
                         for box in hitbox:
-                            if box.collidepoint(pygame.mouse.get_pos()) and hitbox_to_coord(hitbox.index(box)) in list_move:
+                            if (
+                                box.collidepoint(pygame.mouse.get_pos())
+                                and hitbox_to_coord(hitbox.index(box)) in list_move
+                            ):
                                 self.rect.center = box.center
                                 print(False)
                                 return False
         else:
-            return True 
-                    
+            return True
+
+
 class FloatingMenu(pygame.sprite.Sprite):
     # Class of floating menus, from which token actions can be selected
-
 
     def __init__(
         self,
@@ -139,7 +149,7 @@ class FloatingMenu(pygame.sprite.Sprite):
         super().__init__()
 
         # Dimension attributes
-        self.size_menu = len(rows)  
+        self.size_menu = len(rows)
         self.interline = 2
         self.border = 5
         self.font_size = font_size
@@ -154,10 +164,14 @@ class FloatingMenu(pygame.sprite.Sprite):
         self.rect.y = pos[1]
 
         # Menu attributes
-        self.availability = [True for i in range(self.size_menu)] # for each row, false if the option is not available
+        self.availability = [
+            True for i in range(self.size_menu)
+        ]  # for each row, false if the option is not available
         self.rows = [None for i in range(self.size_menu)]
         self.rows_rect = [None for i in range(self.size_menu)]
-        menu_font = pygame.font.SysFont(font_type, font_size)   #rows and rows_rect initialisation
+        menu_font = pygame.font.SysFont(
+            font_type, font_size
+        )  # rows and rows_rect initialisation
         for i in range(self.size_menu):
             self.rows[i] = menu_font.render(rows[i], False, color_font)
             self.rows_rect[i] = self.rows[i].get_rect()
@@ -175,6 +189,7 @@ class FloatingMenu(pygame.sprite.Sprite):
         if self.pos[0] < screen[0] and self.pos[1] < screen[1] and self.pos[0] > 0 and self.pos[1] > 0:
             return True
         return False
+    
 
     def update_rows_pos(self):
         # Update the rows positions accordingly to the menu background
@@ -274,18 +289,18 @@ class Graphique:
             else:
                 pass
 
-    def get_hitbox(self):#n'attends pas le clique du joueur 
+    def get_hitbox(self):  # n'attends pas le clique du joueur
         for i in range(len(hitbox)):
             if hitbox[i].collidepoint(pygame.mouse.get_pos()):
                 if i < 88:
                     return [i, (i % 11, i // 11)]
                 else:
-                    return [i,i]
+                    return [i, i]
             else:
                 return None
 
     def get_hitbox_for_back(self):
-        cond = True 
+        cond = True
         while cond:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -294,9 +309,11 @@ class Graphique:
                     cond = False
                     for i in range(len(hitbox)):
                         if hitbox[i].collidepoint(pygame.mouse.get_pos()):
-                            return [i//11, i%11]
-                    cond= True
+                            if i < 88:
+                                return [i // 11, i % 11]
+                    cond = True
         return None
+
     # Affiche un point rouge pour 5s quand on clique quelque part
     def display_point(self):
         pygame.draw.circle(self.screen, (255, 0, 0), pygame.mouse.get_pos(), 2)
@@ -320,10 +337,30 @@ class Graphique:
                 (20, 255, 167),
                 (
                     coords[list_move[i][1]][0] + 46.8 / 2,
-                    coords[list_move[i][0]][1] + 46.5 / 2
+                    coords[list_move[i][0]][1] + 46.5 / 2,
                 ),
                 10,
             )
+
+        pygame.display.flip()
+
+    def highlight_move_FElIX(self, list_move):
+        s = pygame.Surface(hitbox[0].size)  # the size of your rect
+        s.set_alpha(128)  # alpha level
+        s.fill((150, 150, 150))
+        for move in list_move:
+            screen.blit(
+                s, hitbox[move[0] * 11 + move[1]].topleft
+            )  # (0,0) are the top-left coordinates
+            # pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[move[0]*11+move[1]] )
+        pygame.display.flip()
+
+    def draw_board(self, board):
+        self.screen.blit(self.plateau, (0, 0))
+        for i in range(len(board._board)):
+            for j in range(len(board._board[0])):
+                if board._board[i][j] != None:
+                    self.affiche_joueur(i * 11 + j, path_convertor(board._board[i][j]))
         pygame.display.flip()
 
     def create_dropdown_menu(self, options, menu_pos, menu_size):
@@ -382,14 +419,21 @@ class Graphique:
         for tokens in tokens_group:
             tokens.rect.center = hitbox[i].center
             i += 1
-        
+
         ### Initialisation menu ###
         offscreen = (size[0] + 1, size[1] + 1) #usefull to move the menu offscreen
         floating_menu = FloatingMenu(
-            ["Move the player", "Pass the ball", "Tackle an opponent", "Kick the ball", "Score"], offscreen #Menu is initialized "offscreen" (see 2 lines above)
-       )
+            [
+                "Move the player",
+                "Pass the ball",
+                "Tackle an opponent",
+                "Kick the ball",
+                "Score",
+            ],
+            (30, 40),
+        )
 
-        #WIP
+        # WIP
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -528,7 +572,7 @@ class Graphique:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.display_number()
                     self.display_point()
-                    flag_menu=0
+                    flag_menu = 0
                     for token in tokens_group:
                         a = token.select(tokens_group, image, game, self)
                         if not a:
@@ -548,7 +592,7 @@ class Graphique:
             clock.tick(60)
 
 
-#Fonction qui renvoit la position de l'image correspondant au rugbyman (surement à merge avec path_to_player_type)
+# Fonction qui renvoit la position de l'image correspondant au rugbyman (surement à merge avec path_to_player_type)
 def path_convertor(Rugbyman):
     if Rugbyman.spec == rugbymen.Spec.NORMAL:
         if Rugbyman.color == board.Color.RED:
@@ -577,11 +621,9 @@ def path_convertor(Rugbyman):
             return "Images/Rapide_bleu.png"
 
 
-
 if __name__ == "__main__":
     graph = Graphique()
-    
 
     game = Game()
     graph.test_initialisation_board(game)
-    #graph.main_loop(game)
+    # graph.main_loop(game)
