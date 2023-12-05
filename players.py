@@ -1,35 +1,35 @@
 import rugbymen
-from actions import *
+import actions
 from cards import Card
-
+import players 
+import game
 
 class Player:
     def __init__(self, color):
-        # Commentaires suivants à evaluer je pense que les unplaces rugbymen ne servent à rien
-        """
-        self._unplaced_rugbymen = [
-            rugbymen.Rugbyman(color),
-            rugbymen.Rugbyman(color),
-            rugbymen.StrongRugbyman(color),
-            rugbymen.HardRugbyman(color),
-            rugbymen.SmartRugbyman(color),
-            rugbymen.FastRugbyman(color),
-        ]
-        """
-        # Liste qui est je pense à interpréter comme la liste des rugbymen que le joueur choisi de jouer (au maxmimum 2)
-        self._rugbymen = []
+        
+        # Placement order of the rugbylen (mostly for the initialisation but can be usefull later)
+        self._placement_order= actions.placement_orders(color)
+
+        # List of all the rugbymen of the player
+        self._rugbymen = [self._placement_order[i] for i in list(self._placement_order.keys())]
+        
+        # List of all the rugbymen chosen by the player for his turn 
+        self._chosen_rugbymen = []
+
+
         self._cards = [Card.ONE, Card.TWO, Card.THREE, Card.FOUR, Card.FIVE, Card.SIX]
         self._color = color
         self.can_play = True
 
-    def can_play(self):
-        return self.can_play
+    ### Fonctions Felix ###
+
+    
 
     def choose_rugbymen(self, rugbyman):
         """
         Choose the rugbymen that the player wants to play with
         """
-        if len(self._rugbymen) == 2:
+        if len(self._chosen_rugbymen) == 2:
             print("You already have two rugbyman, you can't select another one")
         else:
             if rugbyman in self.show_rugbymen():
@@ -47,19 +47,18 @@ class Player:
                 return True
         return False
 
-    def reset_player(self):
-        self._rugbymen = []
-        #self._cards = [Card.ONE, Card.TWO, Card.THREE, Card.FOUR, Card.FIVE, Card.SIX]
+    def reset_player_after_turn(self):
+        self._chosen_rugbymen = []
         self.can_play = True
 
+    def get_can_play(self):
+        return self.can_play
+    
     def set_can_play(self, boolean):
         self.can_play = boolean
 
-    def n_rugbymen(self):
-        return len(self._rugbymen)
-
     def actualize_can_play(self):
-        if self.n_rugbymen() == 2:
+        if self.get_n_rugbymen() == 2:
             move_points = 0
             for rugbyman in self.show_rugbymen():
                 move_points += rugbymen.Rugbyman.move_left(rugbyman)
@@ -70,21 +69,48 @@ class Player:
     def color(self):
         return self._color
 
-    def rugbymen(self):
+    def get_chosen_rugbymen(self):
+        return self._chosen_rugbymen
+    
+    def get_n_rugbymen(self):
+        return len(self._chosen_rugbymen)
+
+    def get_rugbymen(self):
         return self._rugbymen
     
-    def number_of_rugbymen(self):
-        return len(self._rugbymen)
-    # plural
     def show_rugbymen(self):
-        return self._rugbymen
+        return self._chosen_rugbymen
 
-    # singular
     def show_rugbyman(self, i):
-        return self._rugbymen[i]
+        return self._chosen_rugbymen[i]
+    
+    def move_rugbyman(self,new_posx,new_posy, rugbyman, game):
+        """
+        Move the rugbyman
+        """
+        if rugbyman in self.get_chosen_rugbymen():    
+            if rugbyman in game.Game.available_move_positions(game):
+                rugbymen.Rugbyman.set_posx(rugbyman,new_posx)
+                rugbymen.Rugbyman.set_posy(rugbyman,new_posy)
+                #The following line isnt correct it doesnt take into account the obstacles
+                rugbymen.Rugbyman.actualize_move_left(rugbyman,abs(new_posx - posx) + abs(new_posy - posy))
+                return True
+            else:
+                print("You can't move to this position")
+        else:
+            print("You can't move this rugbyman")
+        return False
 
+    def refresh_rugbymen_stats(self):
+        for rugbyman in self.get_chosen_rugbymen():
+            rugbymen.Rugbyman.refresh_stats(rugbyman)
+
+
+
+
+    ### Francois ###
     def add_rugbyman(self, rugbyman):
-        self._rugbymen.append(rugbyman)
+        self._chosen_rugbymen.append(rugbyman)
 
     def available_actions(self, rugbyman, game):
         available = []

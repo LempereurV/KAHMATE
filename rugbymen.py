@@ -57,22 +57,20 @@ class Rugbyman:
     def move_left(self):
         return self.moves_left
 
-    def posx(self):
+    def get_posx(self):
         return self.posx
 
-    def posy(self):
+    def get_posy(self):
         return self.posy
 
     def pos(self):
         return [self.posx, self.posy]
 
-    def new_posx(self, new_posx):  # utiliser une propriété
+    def set_posx(self, new_posx):  # utiliser une propriété
         self.posx = new_posx
-        return
 
-    def new_posy(self, new_posy):  # utiliser une propriété
+    def set_posy(self, new_posy):  # utiliser une propriété
         self.posy = new_posy
-        return
 
     def refresh_stats(self):
         self.moves_left = self.move_points

@@ -87,6 +87,11 @@ def positions_rugbymen_player(color, n_column, n_rugbymen, Graphique):
 
     return R_with_rugbymen
 
+
+
+
+
+### Fonctions de Francois ###
 def ask_if_action_finished():
     while True:
         finished_move = input(
