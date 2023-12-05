@@ -3,40 +3,41 @@ import actions
 from cards import Card
 import players 
 import game
+import color
 
 class Player:
-    def __init__(self, color):
+    def __init__(self, color,Game,Graphique):
         
         # Placement order of the rugbylen (mostly for the initialisation but can be usefull later)
         self._placement_order= actions.placement_orders(color)
 
         # List of all the rugbymen of the player
-        self._rugbymen = [self._placement_order[i] for i in list(self._placement_order.keys())]
-        
+        self._rugbymen = actions.positions_rugbymen_player(color, game.Game.get_number_of_columns(Game), self._placement_order, Graphique)
+
         # List of all the rugbymen chosen by the player for his turn 
         self._chosen_rugbymen = []
 
 
         self._cards = [Card.ONE, Card.TWO, Card.THREE, Card.FOUR, Card.FIVE, Card.SIX]
-        self._color = color
+        self._color = color 
         self.can_play = True
 
     ### Fonctions Felix ###
 
     
 
-    def choose_rugbymen(self, rugbyman):
+    def add_choosen_rugbymen(self, rugbyman):
         """
         Choose the rugbymen that the player wants to play with
         """
         if len(self._chosen_rugbymen) == 2:
             print("You already have two rugbyman, you can't select another one")
         else:
-            if rugbyman in self.show_rugbymen():
+            if rugbyman in self.get_chosen_rugbymen():
                 if rugbymen.Rugbyman.spec(rugbyman) == rugbymen.Spec.NORMAL:
                     # There is two normal rugbymen on the board we have to make sure we dont select the same one twice
                     if rugbymen.Rugbyman.pos(rugbyman) == rugbymen.Rugbyman.pos(
-                        self.show_rugbyman(0)
+                        self.self.get_chosen_rugbymen()[0]
                     ):
                         self.add_rugbyman(rugbyman)
                         return True
@@ -60,9 +61,8 @@ class Player:
     def actualize_can_play(self):
         if self.get_n_rugbymen() == 2:
             move_points = 0
-            for rugbyman in self.show_rugbymen():
+            for rugbyman in self.get_chosen_rugbymen():
                 move_points += rugbymen.Rugbyman.move_left(rugbyman)
-                #print(move_points)
             if move_points == 0:
                 self.set_can_play(False)
 
@@ -78,32 +78,21 @@ class Player:
     def get_rugbymen(self):
         return self._rugbymen
     
-    def show_rugbymen(self):
-        return self._chosen_rugbymen
+
 
     def show_rugbyman(self, i):
         return self._chosen_rugbymen[i]
     
-    def move_rugbyman(self,new_posx,new_posy, rugbyman, game):
-        """
-        Move the rugbyman
-        """
-        if rugbyman in self.get_chosen_rugbymen():    
-            if rugbyman in game.Game.available_move_positions(game):
-                rugbymen.Rugbyman.set_posx(rugbyman,new_posx)
-                rugbymen.Rugbyman.set_posy(rugbyman,new_posy)
-                #The following line isnt correct it doesnt take into account the obstacles
-                rugbymen.Rugbyman.actualize_move_left(rugbyman,abs(new_posx - posx) + abs(new_posy - posy))
-                return True
-            else:
-                print("You can't move to this position")
-        else:
-            print("You can't move this rugbyman")
-        return False
+    
 
     def refresh_rugbymen_stats(self):
+        
         for rugbyman in self.get_chosen_rugbymen():
             rugbymen.Rugbyman.refresh_stats(rugbyman)
+            print(rugbymen.Rugbyman.move_left(rugbyman))
+        self._chosen_rugbymen= []
+        self.can_play = True
+
 
 
 

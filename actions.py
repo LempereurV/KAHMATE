@@ -2,7 +2,8 @@ import rugbymen
 import front
 import random
 from color import Color
-
+import players
+import game
 
 def placement_orders(color):
     R = {
@@ -16,25 +17,24 @@ def placement_orders(color):
     return R
 
 
-def positions_rugbymen_player(color, n_column, n_rugbymen, Graphique):
-    placement_order = placement_orders(color)
+def positions_rugbymen_player(color, n_column, placement_order, Graphique):
 
     i = 0
-    R = [None] * n_rugbymen  # R is the list of the positions of the rugbymen
-    Noms = list(placement_order.keys())  # List of the names of the rugbymen
+    n_rugbymen = len(placement_order)
+    R = [None] * n_rugbymen 
+    Noms = list(placement_order.keys())  
 
     ### A enlever ####
     for i in range(n_rugbymen):
+        placement_order[Noms[i]].set_posx(i)
         if color == Color.RED:
-            R[i] = [i, random.randint(0, 4), placement_order[Noms[i]]]
+            placement_order[Noms[i]].set_posy(random.randint(0, 4))
         else:
-            R[i] = [i, random.randint(6, 10), placement_order[Noms[i]]]
-        front.Graphique.affiche_joueur(
-            Graphique,
-            11 * R[i][0] + R[i][1],
-            front.path_convertor(placement_order[Noms[i]]),
-        )
-    print(R)
+            placement_order[Noms[i]].set_posy(random.randint(6, 10))
+
+        R[i]=placement_order[Noms[i]]
+        front.Graphique.affiche_joueur(Graphique,11 * rugbymen.Rugbyman.get_posx(R[i]) + rugbymen.Rugbyman.get_posy(R[i]),front.path_convertor(placement_order[Noms[i]]))
+    #print(R)
     return R
     ####    FIn a enlever
 
@@ -88,6 +88,28 @@ def positions_rugbymen_player(color, n_column, n_rugbymen, Graphique):
     return R_with_rugbymen
 
 
+def move_rugbyman( rugbyman,Possible_moves,Graphisme):
+        """
+        Move the rugbyman
+        
+        """
+        pos2 = front.Graphique.get_hitbox_for_back(Graphisme)
+
+        new_posx=pos2[0]
+        new_posy=pos2[1]  
+        posx=rugbyman.get_posx()
+        posy=rugbyman.get_posy()
+        
+        if pos2 in Possible_moves:
+            rugbymen.Rugbyman.set_posx(rugbyman,new_posx)
+            rugbymen.Rugbyman.set_posy(rugbyman,new_posy)
+            #The following line isnt correct it doesnt take into account the obstacles
+            rugbymen.Rugbyman.actualize_move_left(rugbyman,abs(new_posx - posx) + abs(new_posy - posy))
+            return pos2
+        else:
+            print("You can't move to this position")
+        return False
+
 
 
 
@@ -136,7 +158,7 @@ def input_move_rugbyman(available_positions):
         if [input_x, input_y] in available_positions:
             return [input_x, input_y]
 
-
+"""
 def move_rugbyman(
     rugbyman, game, moves_executed
 ):  # prendre en compte le moves_executed choisi (3e coordonnée)
@@ -163,7 +185,7 @@ def move_rugbyman(
     else:
         return True
 
-
+"""
 def available_pass_positions(
     color, current_x, current_y, max_x, max_y, pass_scope, game
 ):

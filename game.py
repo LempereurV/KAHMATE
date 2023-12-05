@@ -10,13 +10,13 @@ forward_pass_scope = 3
 
 
 class Game:
-    def __init__(self):
+    def __init__(self,Graphique):
         self._number_of_columns = number_of_columns 
         self._number_of_rows = number_of_rows 
-        # forward_pass_scope = forward_pass_scope
 
-        self._player_red = players.Player(color.Color.RED) 
-        self._player_blue = players.Player(color.Color.BLUE) 
+        #player ne s'initialise pas pour rouge et bleu
+        self._player_red = players.Player(color.Color.RED,self,Graphique) 
+        self._player_blue = players.Player(color.Color.BLUE,self,Graphique) 
 
         ball = players.Ball(random.randint(0, number_of_rows - 1))
 
@@ -26,14 +26,24 @@ class Game:
 
     def get_number_of_rows(self):
         return self._number_of_rows
+    
+    def get_number_of_columns(self):
+        return self._number_of_columns
+    
+    def get_player_red(self):
+        return self._player_red
+    
+    def get_player_blue(self):
+        return self._player_blue
+    
     def rugbymen(self):
-        return players.Player.get_rugbymen(self._player_red) + players.Player.get_rugbymen(self._player_blue)
+        return players.Player.get_rugbymen( self.get_player_red()) + players.Player.get_rugbymen(self.get_player_blue())
     
 
     def which_rugbyman_in_pos(self, x,y):
 
         for rugbyman in self.rugbymen():
-            if rugbymen.Rugbyman.get_posx() == x and rugbymen.Rugbyman.get_posy() == y:
+            if rugbymen.Rugbyman.get_posx(rugbyman) == x and rugbymen.Rugbyman.get_posy(rugbyman) == y:
                 return rugbyman
         return False
     
@@ -46,22 +56,23 @@ class Game:
             return []
         else:
             R=[[x,y]]
-            if x + 1 < self.get_number_of_rows() and self.which_rugbyman_in_pos(x + 1, y)!=False:
+            if x + 1 < self.get_number_of_rows() and self.which_rugbyman_in_pos(x + 1, y)==False:
                 R = R + self.available_move_position_recursif(x + 1, y, scope - 1)
 
-            if x - 1 >= 0 and self.which_rugbyman_in_pos(x - 1, y)!=False:
+            if x - 1 >= 0 and self.which_rugbyman_in_pos(x - 1, y)==False:
                 R = R + self.available_move_position_recursif(x - 1, y, scope - 1)
             
-            if y + 1 < self.get_number_of_columns() and self.which_rugbyman_in_pos(x, y + 1)!=False:
+            if y + 1 < self.get_number_of_columns() and self.which_rugbyman_in_pos(x, y + 1)==False:
                 R = R + self.available_move_position_recursif(x, y + 1, scope - 1)
             
-            if y - 1 >= 0 and self.which_rugbyman_in_pos(x, y - 1)!=False:
+            if y - 1 >= 0 and self.which_rugbyman_in_pos(x, y - 1)==False:
                 R = R + self.available_move_position_recursif(x, y - 1, scope - 1)
             
             return R
     
     def available_move_position(self,rugbyman):
-        Liste_untreated=self.available_move_position_recursif(rugbyman.get_posx(),rugbyman.get_posy(),rugbyman.get_move_points())
+        
+        Liste_untreated=self.available_move_position_recursif(rugbyman.get_posx(),rugbyman.get_posy(),rugbyman.get_moves_left())
         #Deleting the first position of the list because it is the position of the rugbyman
         Liste_untreated.remove([rugbyman.get_posx(),rugbyman.get_posy()])
         #Deleting the duplicates
@@ -71,11 +82,7 @@ class Game:
                 Liste_treated.append(element)
         return Liste_treated
     
-    def get_player_red(self):
-        return self._player_red
-    
-    def get_player_blue(self):
-        return self._player_blue
+
     
     def refresh_players_rugbymen_stats(self):
         players.Player.refresh_rugbymen_stats(self._player_red)

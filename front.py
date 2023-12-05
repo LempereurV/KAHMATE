@@ -1,11 +1,10 @@
 from typing import Any
 import pygame
 import sys
-from game import *
-from rugbymen import *
+import game
+import rugbymen
 import actions
-import board
-
+import color
 # Initialisation de Pygame
 pygame.init()
 clock = pygame.time.Clock()
@@ -329,12 +328,10 @@ class Graphique:
             # pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[move[0]*11+move[1]] )
         pygame.display.flip()
 
-    def draw_board(self, board):
+    def draw_board(self, G):
         self.screen.blit(self.plateau, (0, 0))
-        for i in range(len(board._board)):
-            for j in range(len(board._board[0])):
-                if board._board[i][j] != None:
-                    self.affiche_joueur(i * 11 + j, path_convertor(board._board[i][j]))
+        for rugbyman in game.Game.rugbymen(G):
+            self.affiche_joueur(rugbymen.Rugbyman.get_posx(rugbyman) * 11 + rugbymen.Rugbyman.get_posy(rugbyman), path_convertor(rugbyman))
         pygame.display.flip()
 
     def create_dropdown_menu(self, options, menu_pos, menu_size):
@@ -540,35 +537,35 @@ class Graphique:
 # Fonction qui renvoit la position de l'image correspondant au rugbyman (surement à merge avec path_to_player_type)
 def path_convertor(Rugbyman):
     if Rugbyman.spec == rugbymen.Spec.NORMAL:
-        if Rugbyman.color == board.Color.RED:
+        if Rugbyman.color == color.Color.RED:
             return "Images/Ordinaire_rouge.png"
-        if Rugbyman.color == board.Color.BLUE:
+        if Rugbyman.color == color.Color.BLUE:
             return "Images/Ordinaire_bleu.png"
     if Rugbyman.spec == rugbymen.Spec.STRONG:
-        if Rugbyman.color == board.Color.RED:
+        if Rugbyman.color == color.Color.RED:
             return "Images/Costaud_rouge.png"
-        if Rugbyman.color == board.Color.BLUE:
+        if Rugbyman.color == color.Color.BLUE:
             return "Images/Costaud_bleu.png"
     if Rugbyman.spec == rugbymen.Spec.HARD:
-        if Rugbyman.color == board.Color.RED:
+        if Rugbyman.color == color.Color.RED:
             return "Images/Dur_rouge.png"
-        if Rugbyman.color == board.Color.BLUE:
+        if Rugbyman.color == color.Color.BLUE:
             return "Images/Dur_bleu.png"
     if Rugbyman.spec == rugbymen.Spec.SMART:
-        if Rugbyman.color == board.Color.RED:
+        if Rugbyman.color == color.Color.RED:
             return "Images/Fute_rouge.png"
-        if Rugbyman.color == board.Color.BLUE:
+        if Rugbyman.color == color.Color.BLUE:
             return "Images/Fute_bleu.png"
     if Rugbyman.spec == rugbymen.Spec.FAST:
-        if Rugbyman.color == board.Color.RED:
+        if Rugbyman.color == color.Color.RED:
             return "Images/Rapide_rouge.png"
-        if Rugbyman.color == board.Color.BLUE:
+        if Rugbyman.color == color.Color.BLUE:
             return "Images/Rapide_bleu.png"
 
 
 if __name__ == "__main__":
     graph = Graphique()
 
-    game = Game()
+    game = game.Game(graph)
     graph.test_initialisation_board(game)
     # graph.main_loop(game)

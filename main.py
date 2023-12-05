@@ -1,9 +1,9 @@
-import board
 import front
 import players
 from color import Color
 import rugbymen
-
+import game
+import actions 
 
 Initialisation = True
 Game_ON = True
@@ -13,72 +13,86 @@ while Game_ON:
         ### Partie Initialisation ###
         if Initialisation:
             Graph = front.Graphique()
-            P_RED = players.Player(Color.RED)
-            P_BLUE = players.Player(Color.BLUE)
+            Game=game.Game(Graph)
             front.pygame.display.flip()
-            B = board.Board(Graph)
             Initialisation = False
 
-        ### Partie Essai ###
+        while players.Player.get_can_play(game.Game.get_player_red(Game)):
+            
+            
 
-        # Red_player_turn=True #Inutile Ici foncion initiale était de remplacer player.PLAye.get_can_play par un boolean
-        # Blue_player_turn=not Red_player_turn
-
-        while players.Player.get_can_play(P_RED):
-            pos = front.Graphique.get_hitbox_for_back(Graph)
-            print(board.Board.which_rugbyman(B, pos))
-
-            if (not board.Board.which_rugbyman(B, pos) == False and rugbymen.Rugbyman.color(board.Board.which_rugbyman(B, pos))== Color.RED):
-
-                # print(board.Board.which_rugbyman(B,pos))
-                front.Graphique.draw_board(Graph, B)
-                possible_move = board.Board.available_move_position(B, pos)
-                front.Graphique.highlight_move_FElIX(Graph, possible_move)
-                if players.Player.get_n_rugbymen(P_RED)<2:
-                    pos2_or_bool=board.Board.move_rugbyman(B, pos, possible_move, Graph)
-                    if not pos2_or_bool ==False :
-                        #print(players.Player.get_n_rugbymen(P_RED))
-                        players.Player.choose_rugbymen(P_RED, board.Board.which_rugbyman(B, pos2_or_bool))
-                        #print(players.Player.get_can_play(P_RED))
-                
-                elif board.Board.which_rugbyman(B,pos) in players.Player.show_rugbymen(P_RED) :
-                    board.Board.move_rugbyman(B, pos, possible_move, Graph)
-                players.Player.actualize_can_play(P_RED)
-                    
-                #print(players.Player.get_n_rugbymen(P_RED))
-                front.Graphique.draw_board(Graph, B)
-                players.Player.actualize_can_play(P_RED)
-
-
-        while players.Player.get_can_play(P_BLUE):
             pos = front.Graphique.get_hitbox_for_back(Graph)
 
-            if (not board.Board.which_rugbyman(B, pos) == False and rugbymen.Rugbyman.color(board.Board.which_rugbyman(B, pos))== Color.BLUE):
-
-                # print(board.Board.which_rugbyman(B,pos))
-                front.Graphique.draw_board(Graph, B)
-                possible_move = board.Board.available_move_position(B, pos)
-                front.Graphique.highlight_move_FElIX(Graph, possible_move)
-                if players.Player.get_n_rugbymen(P_BLUE)<2:
-                    pos2_or_bool=board.Board.move_rugbyman(B, pos, possible_move, Graph)
-                    if not pos2_or_bool ==False :
-                        #print(players.Player.get_n_rugbymen(P_BLUE))
-                        players.Player.choose_rugbymen(P_BLUE, board.Board.which_rugbyman(B, pos2_or_bool))
-                        #print(players.Player.get_can_play(P_BLUE))
+            if ( (game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]) != False) and (rugbymen.Rugbyman.color(game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]))== Color.RED)):
                 
-                elif board.Board.which_rugbyman(B,pos) in players.Player.show_rugbymen(P_BLUE) :
-                    board.Board.move_rugbyman(B, pos, possible_move, Graph)
-                players.Player.actualize_can_play(P_BLUE)
+                front.Graphique.draw_board(Graph, Game)
+                possible_move = game.Game.available_move_position(Game, game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]))
+                front.Graphique.highlight_move_FElIX(Graph, possible_move)
+
+                if players.Player.get_n_rugbymen(game.Game.get_player_red(Game))<2:
+
                     
-                #print(players.Player.get_n_rugbymen(P_BLUE))
-                front.Graphique.draw_board(Graph, B)
-                players.Player.actualize_can_play(P_BLUE)
-        
+                    pos2_or_bool=actions.move_rugbyman(
+                        game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]),
+                        possible_move,
+                        Graph)
+                    if not pos2_or_bool ==False :
+                        players.Player.add_choosen_rugbymen(
+                            game.Game.get_player_red(Game), 
+                            game.Game.which_rugbyman_in_pos(Game, pos2_or_bool[0], pos2_or_bool[1]))
+                
+                elif game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]) in players.Player.get_chosen_rugbymen(game.Game.get_player_red(Game)) :
+                    actions.move_rugbyman(
+                        game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]),
+                        possible_move,
+                        Graph)
+                players.Player.actualize_can_play(game.Game.get_player_red(Game))
+                    
+                
+                front.Graphique.draw_board(Graph, Game)
+                players.Player.actualize_can_play(game.Game.get_player_red(Game))
+
+
+        while players.Player.get_can_play(game.Game.get_player_blue(Game)):
+            
+            
+
+            pos = front.Graphique.get_hitbox_for_back(Graph)
+
+            if ( (game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]) != False) and (rugbymen.Rugbyman.color(game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]))== Color.BLUE)):
+                
+                front.Graphique.draw_board(Graph, Game)
+                possible_move = game.Game.available_move_position(Game, game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]))
+                front.Graphique.highlight_move_FElIX(Graph, possible_move)
+
+                if players.Player.get_n_rugbymen(game.Game.get_player_blue(Game))<2:
+
+                    
+                    pos2_or_bool=actions.move_rugbyman(
+                        game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]),
+                        possible_move,
+                        Graph)
+                    if not pos2_or_bool ==False :
+                        players.Player.add_choosen_rugbymen(
+                            game.Game.get_player_blue(Game), 
+                            game.Game.which_rugbyman_in_pos(Game, pos2_or_bool[0], pos2_or_bool[1]))
+                
+                elif game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]) in players.Player.get_chosen_rugbymen(game.Game.get_player_blue(Game)) :
+                    actions.move_rugbyman(
+                        game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1]),
+                        possible_move,
+                        Graph)
+                players.Player.actualize_can_play(game.Game.get_player_blue(Game))
+                    
+                
+                front.Graphique.draw_board(Graph, Game)
+                players.Player.actualize_can_play(game.Game.get_player_blue(Game))
+
         ### Partie reset quand les deux joueurs ont joué ###
-        if not players.Player.get_can_play(P_RED) and not players.Player.get_can_play(P_BLUE):
-            players.Player.reset_player_after_turn(P_RED)
-            players.Player.reset_player_after_turn(P_BLUE)
-            board.Board.refresh_rugbymen_stats(B)
+        if not players.Player.get_can_play(game.Game.get_player_blue(Game)) and not players.Player.get_can_play(game.Game.get_player_blue(Game)):
+            players.Player.reset_player_after_turn(game.Game.get_player_red(Game))
+            players.Player.reset_player_after_turn(game.Game.get_player_blue(Game))
+            Game.refresh_players_rugbymen_stats()
 
         if event.type == front.pygame.QUIT:
             front.pygame.quit()

@@ -1,6 +1,6 @@
 # Classe de base Player
 import enum
-import board
+
 
 
 class Spec(enum.Enum):
@@ -75,6 +75,8 @@ class Rugbyman:
     def refresh_stats(self):
         self.moves_left = self.move_points
 
+    def get_moves_left(self):
+        return self.moves_left
     def actualize_move_left(self, move_points):
         self.moves_left -= move_points
 
