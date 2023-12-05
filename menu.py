@@ -96,9 +96,7 @@ class FloatingMenu(pygame.sprite.Sprite):
         #  Check and return hitbox collision with the mouse (None if no hibox collided, # of the hitbox collided overwise)
         for i in range(self.size_menu):
             if self.rows_rect[i].collidepoint(pygame.mouse.get_pos()):
-                print(i)
                 return i
-        print(None)
         return None
 
     def is_option_available(self, id_option):

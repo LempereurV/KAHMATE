@@ -51,16 +51,13 @@ class Graphique:
                 pass
 
     def get_hitbox(self, hitbox):  # n'attends pas le clique du joueur
-        print("Début")
         for i in range(len(hitbox)):
             if hitbox[i].collidepoint(pygame.mouse.get_pos()):
                 if i < 88:
                     return [i, (i % 11, i // 11)]
                 else:
                     return [i, i]
-    #No collision found with existing hitbox
-        print("NONE")
-        return None
+        return None #No collision found with existing hitbox
 
     def get_hitbox_for_back(self, hitbox):
         cond = True
@@ -214,9 +211,8 @@ class Graphique:
         # WIP
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN or event.type == pygame.QUIT:
-                    if event.key == pygame.K_q:
-                        return
+                if event.type == pygame.QUIT:
+                    return
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     
                     # Collision must be checked in order of screen visibility (menu -> token -> empty case)
@@ -228,17 +224,24 @@ class Graphique:
                             if floating_menu.is_option_available(collided_menu_hitbox):
                                 # DO THE CORRECT ACTION
                                 print(
-                                    """The action " """,
-                                    floating_menu,
-                                    """ " is triggered """,
+                                    """The action """,
+                                    collided_menu_hitbox,
+                                    """ is triggered """,
                                 )
                             else:
                                 print("This action is not available")
 
                         else:  # The menu is on screen but the user didn't click on it
-                            floating_menu.move(
-                                offscreen
-                            )  # The menu is offscreen and thus will be erased at the next screen refresh
+                            selected_hitbox = (self.get_hitbox(hitbox))  # An hitbox is selected, let's see if it correspond to a Token Hitbox
+                            flag_no_token_selected = True
+                            for token in tokens_group:
+                                if selected_hitbox == token.get_hitbox(hitbox):
+                                    floating_menu.move_next_to_case(selected_hitbox[1], coords)  # Setting the menu close to the token
+                                    flag_no_token_selected = False
+                            if flag_no_token_selected:  # If the user didn't click on a token nor an option of the menu
+                                floating_menu.move(
+                                    offscreen
+                                )  # The menu is offscreen and thus will be erased at the next screen refresh
 
                     else:  # The menu is offscreen (time for token collision check)
                         selected_hitbox = (
