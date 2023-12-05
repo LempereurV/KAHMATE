@@ -87,6 +87,7 @@ class StrongRugbyman(Rugbyman):
         self.attack_bonus = 2
         self.defense_bonus = 1
         self.move_points = 2
+        self.moves_left = self.move_points
         self.spec = Spec.STRONG
 
 
@@ -110,4 +111,5 @@ class FastRugbyman(Rugbyman):
         self.attack_bonus = -1
         self.defense_bonus = -1
         self.move_points = 4
+        self.moves_left = self.move_points
         self.spec = Spec.FAST
