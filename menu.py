@@ -103,7 +103,7 @@ class FloatingMenu(pygame.sprite.Sprite):
 
     def is_option_available(self, id_option):
         # Return True if the option is available, False overwise
-        for i in range(self.size):
+        for i in range(self.size_menu):
             if i == id_option:
                 return self.availability[i]
         return None  # The id of the selected option does not correspond to the menu size (should never be triggered in normal use)

@@ -253,12 +253,12 @@ class Graphique:
                     pygame.display.flip()
                     clock.tick(5)
 
+
     def test_initialisation_board(self, game):
         coords = []
         for j in range(8):
             for i in range(11):
                 coords.append((92 + i * 46.8, 62 + j * 46.5))
-
         # Hitbox de chaque point
         hitbox = []
         for i in range(88):
