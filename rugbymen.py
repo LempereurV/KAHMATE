@@ -97,6 +97,7 @@ class Rugbyman:
     def refresh_stats(self):
         self.moves_left = self.move_points
         if self.get_KO() > 0:
+            print(self.get_KO())
             self.KO -= 1
 
     def get_moves_left(self):
@@ -137,7 +138,9 @@ class SmartRugbyman(Rugbyman):
 class FastRugbyman(Rugbyman):
     def __init__(self, color):
         Rugbyman.__init__(self, color)
+        # Achanger
         self.attack_bonus = -1
+        #
         self.defense_bonus = -1
         self.move_points = 4
         self.moves_left = self.move_points

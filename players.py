@@ -75,7 +75,9 @@ class Player:
         if self.get_n_rugbymen() >= 2:
             move_points = 0
             for rugbyman in self.get_chosen_rugbymen():
-                if rugbyman.get_KO()==0 or rugbymen.Rugbyman.move_left(rugbyman)>0:
+                if (rugbyman.get_KO()==0 
+                    and rugbymen.Rugbyman.move_left(rugbyman)>0):
+                    print(rugbyman.get_KO())
                     cond=True
                 move_points += rugbymen.Rugbyman.move_left(rugbyman)
             if not cond:
@@ -108,7 +110,7 @@ class Player:
 
     def refresh_rugbymen_stats(self):
         
-        for rugbyman in self.get_chosen_rugbymen():
+        for rugbyman in self.get_rugbymen():
             rugbymen.Rugbyman.refresh_stats(rugbyman)
         self._chosen_rugbymen= []
         self.can_play = True

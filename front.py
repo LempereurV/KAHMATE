@@ -143,7 +143,13 @@ class Graphique:
     def draw_board(self, G):
         self.screen.blit(self.plateau, (0, 0))
         for rugbyman in game.Game.rugbymen(G):
-                self.affiche_joueur(rugbymen.Rugbyman.get_posx(rugbyman) * 11 + rugbymen.Rugbyman.get_posy(rugbyman), path_convertor(rugbyman))
+                if rugbyman.get_KO() > 0:
+                    self.affiche_joueur(rugbymen.Rugbyman.get_posx(rugbyman) * 11 + rugbymen.Rugbyman.get_posy(rugbyman), path_convertor(rugbyman))
+        for rugbyman in game.Game.rugbymen(G):
+                if rugbyman.get_KO() == 0:
+                    self.affiche_joueur(rugbymen.Rugbyman.get_posx(rugbyman) * 11 + rugbymen.Rugbyman.get_posy(rugbyman), path_convertor(rugbyman))
+
+                
         self.display_ball(game.Game.get_ball(G))
         pygame.display.flip()
 
