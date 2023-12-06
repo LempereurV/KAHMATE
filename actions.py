@@ -30,9 +30,9 @@ def positions_rugbymen_player(color, n_column, placement_order, Graphique):
     for i in range(n_rugbymen):
         placement_order[Noms[i]].set_posx(i+2)
         if color == Color.RED:
-            placement_order[Noms[i]].set_posy(4)
+            placement_order[Noms[i]].set_posy(random.randint(0, 4))
         else:
-            placement_order[Noms[i]].set_posy(6)
+            placement_order[Noms[i]].set_posy(random.randint(6, 8))
 
         R[i]=placement_order[Noms[i]]
         front.Graphique.affiche_joueur(Graphique,11 * rugbymen.Rugbyman.get_posx(R[i]) + rugbymen.Rugbyman.get_posy(R[i]),front.path_convertor(placement_order[Noms[i]]))
@@ -361,7 +361,9 @@ def make_pass(Game,Graph,Possible_passes):
         if (former_owner.get_color() is Color.RED
             and pos[1] < former_owner.get_posy()):
             for rugbyman in Game.get_player_blue().get_rugbymen():
-                if rugbyman.get_posy() < former_owner.get_posy() and rugbyman.get_posy() >= pos[1]:
+                if (rugbyman.get_posy() < former_owner.get_posy() 
+                    and rugbyman.get_posy() >= pos[1]
+                    and rugbyman.get_KO()==0):
                     #ensure there on the same side of the passing position set
                     if (rugbyman.get_posx() -former_owner.get_posx())*(pos[0] -former_owner.get_posx())>=0:
                         if norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos):
@@ -373,7 +375,9 @@ def make_pass(Game,Graph,Possible_passes):
         if (former_owner.get_color() is Color.BLUE
             and pos[1] > former_owner.get_posy()):
             for rugbyman in Game.get_player_red().get_rugbymen():
-                if rugbyman.get_posy() > former_owner.get_posy() and rugbyman.get_posy() <= pos[1]:
+                if (rugbyman.get_posy() > former_owner.get_posy() 
+                    and rugbyman.get_posy() <= pos[1]
+                    and rugbyman.get_KO()==0):
                     #ensure there on the same side of the passing position set
                     if (rugbyman.get_posx() -former_owner.get_posx())*(pos[0] -former_owner.get_posx())>=0:
                         if norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos):
