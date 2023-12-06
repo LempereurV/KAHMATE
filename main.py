@@ -69,7 +69,7 @@ while Game_ON:
                 
             elif (rugbyman_or_ball_or_bool ==Game.get_ball()):
                 available_pass=actions.available_pass(Game)
-                Graph.highlight_move_FElIX( available_pass)
+                Graph.highlight_pass( available_pass)
                 actions.make_pass(Game,Graph,available_pass)
         
             if Game.is_rugbyman_on_ball()!=False :
@@ -81,8 +81,6 @@ while Game_ON:
         ### Partie reset quand le joueur a fini de jouer  ###
         Game.refresh_players_rugbymen_stats()
         Game.change_player_turn()
-
-
 
 
         if event.type == front.pygame.QUIT:

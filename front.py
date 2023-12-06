@@ -129,16 +129,36 @@ class Graphique:
         pygame.display.flip()
 
 
-    def highlight_move_FElIX(self, list_move):
+    def highlight_pass(self, passes):
         s = pygame.Surface(hitbox[0].size)  # the size of your rect
-        s.set_alpha(128)  # alpha level
-        s.fill((200, 200, 200))
-        for move in list_move:
+        s.set_alpha(100)  # alpha level
+        s.fill((255, 255, 0))
+        for pass_ in passes:
             screen.blit(
-                s, hitbox[move[0] * 11 + move[1]].topleft
-            )  # (0,0) are the top-left coordinates
-            # pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[move[0]*11+move[1]] )
+                s, hitbox[pass_[0] * 11 + pass_[1]].topleft
+            )
+            pygame.display.flip()
+        
+        
+    def highlight_move_FElIX(self, list_move):
+        for move in list_move:
+            if move[3]:
+                self.highlight_move_annexe(move,(200, 200, 200))
+            else:
+                self.highlight_move_annexe(move,(72, 0, 72))
+
+
+    def highlight_move_annexe(self, move,color):
+        s = pygame.Surface(hitbox[0].size)  # the size of your rect
+        s.set_alpha(125)  # alpha level
+        s.fill(color)
+        screen.blit(
+            s, hitbox[move[0] * 11 + move[1]].topleft
+        )  # (0,0) are the top-left coordinates
+        # pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[move[0]*11+move[1]] )
         pygame.display.flip()
+        
+
 
     def draw_board(self, G):
         self.screen.blit(self.plateau, (0, 0))

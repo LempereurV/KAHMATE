@@ -24,6 +24,7 @@ class Game:
         self._player_red = players.Player(color.Color.RED,self,self._whose_turn,Graphique) 
         self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,Graphique) 
 
+        
         self._forward_pass_scope = forward_pass_scope
         self._back_pass_scope = back_pass_scope
         
