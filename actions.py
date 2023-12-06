@@ -102,14 +102,16 @@ def move_rugbyman( ball,rugbyman,Possible_moves,Graphisme):
         new_posy=pos2[1]  
         posx=rugbyman.get_posx()
         posy=rugbyman.get_posy()
-        
-        if pos2 in Possible_moves:
+        Possible_moves_without_scope=[[k[0],k[1]] for k in Possible_moves]
+
+        if pos2 in Possible_moves_without_scope:
             if rugbyman.get_possesion():
                 ball.set_position(pos2)
             rugbymen.Rugbyman.set_posx(rugbyman,new_posx)
             rugbymen.Rugbyman.set_posy(rugbyman,new_posy)
             #The following line isnt correct it doesnt take into account the obstacles
-            rugbymen.Rugbyman.actualize_move_left(rugbyman,abs(new_posx - posx) + abs(new_posy - posy))
+            i=Possible_moves_without_scope.index(pos2)
+            rugbyman.set_move_left(Possible_moves[i][2])
             return rugbyman
         else:
             print("You can't move to this position")

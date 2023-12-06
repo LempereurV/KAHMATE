@@ -68,7 +68,6 @@ while Game_ON:
 
                 active_player.actualize_can_play()
                 Graph.draw_board(Game)
-                active_player.actualize_can_play()
 
             elif (rugbyman_or_ball_or_bool ==Game.get_ball()):
                 available_pass=actions.available_pass(Game)

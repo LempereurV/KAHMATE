@@ -75,8 +75,11 @@ class Player:
             move_points = 0
             for rugbyman in self.get_chosen_rugbymen():
                 move_points += rugbymen.Rugbyman.move_left(rugbyman)
-            if move_points == 0:
-                self.set_can_play(False)
+            if move_points == 0 :
+                if self.has_ball():
+                    print("You can only pass the ball")
+                else:
+                    self.set_can_play(False)
 
     def color(self):
         return self._color

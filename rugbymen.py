@@ -86,7 +86,8 @@ class Rugbyman:
         return self.moves_left
     def actualize_move_left(self, move_points):
         self.moves_left -= move_points
-    
+    def set_move_left(self, move_points):
+        self.moves_left = move_points
     def has_ball(self):
         return self.possesion
 

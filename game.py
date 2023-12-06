@@ -119,7 +119,7 @@ class Game:
         if scope < 0:
             return []
         else:
-            R=[[x,y]]
+            R=[[x,y,scope]]
             if x + 1 < self.get_number_of_rows() and self.is_square_empty(x + 1, y):
                 R = R + self.available_move_position_recursif(x + 1, y, scope - 1)
             if x - 1 >= 0 and self.is_square_empty(x - 1, y):
@@ -134,13 +134,22 @@ class Game:
     def available_move_position(self,rugbyman):
         
         Liste_untreated=self.available_move_position_recursif(rugbyman.get_posx(),rugbyman.get_posy(),rugbyman.get_moves_left())
+        
         #Deleting the first position of the list because it is the position of the rugbyman
-        Liste_untreated.remove([rugbyman.get_posx(),rugbyman.get_posy()])
+        Liste_untreated = sorted(Liste_untreated, key=lambda x: (x[0], x[1],x[2]), reverse=True)
+        
         #Deleting the duplicates
         Liste_treated=[]
-        for element in Liste_untreated:
-            if element not in Liste_treated:
-                Liste_treated.append(element)
+        i=0
+        while i<len(Liste_untreated):
+            if Liste_untreated[i][2]!=rugbyman.get_moves_left():
+                Liste_treated.append(Liste_untreated[i])
+            j=i
+            while (j<len(Liste_untreated) 
+                   and Liste_untreated[j][0]==Liste_untreated[i][0]
+                   and Liste_untreated[j][1]==Liste_untreated[i][1]):
+                j+=1
+            i=j
         return Liste_treated
     
 
