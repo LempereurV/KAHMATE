@@ -3,10 +3,14 @@ import players
 import random
 import actions
 import color
+import ball
+import front 
+
 
 number_of_rows = 8
 number_of_columns = 11
 forward_pass_scope = 3
+back_pass_scope = 2
 
 
 class Game:
@@ -20,11 +24,20 @@ class Game:
         self._player_red = players.Player(color.Color.RED,self,self._whose_turn,Graphique) 
         self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,Graphique) 
 
+        self._forward_pass_scope = forward_pass_scope
+        self._back_pass_scope = back_pass_scope
+
+        self._ball = ball.Ball(random.randint(0, number_of_rows - 1))
 
 
-        ball = players.Ball(random.randint(0, number_of_rows - 1))
+    def get_forward_pass_scope(self):
+        return self._forward_pass_scope
 
-
+    def get_back_pass_scope(self):
+        return self._back_pass_scope
+    
+    def is_position_correct(self, x, y):
+        return x >= 0 and x < self.get_number_of_rows() and y >= 0 and y < self.get_number_of_columns()
 
 
     def get_number_of_rows(self):
@@ -56,6 +69,7 @@ class Game:
         return players.Player.get_rugbymen( self.get_player_red()) + players.Player.get_rugbymen(self.get_player_blue())
     
 
+    
     def which_rugbyman_in_pos(self,Graph):
         pos = Graph.get_hitbox_for_back()
         x=pos[0]
@@ -65,6 +79,34 @@ class Game:
                 return rugbyman
         return False
     
+    def which_rugbyman_in_pos_annexe(self,pos):
+        x=pos[0]
+        y=pos[1]
+        for rugbyman in self.rugbymen():
+            if rugbymen.Rugbyman.get_posx(rugbyman) == x and rugbymen.Rugbyman.get_posy(rugbyman) == y:
+                return rugbyman
+        return False
+    
+    def what_is_in_pos(self,Graph):
+        pos = Graph.get_new_hitbox_for_back()
+        x=pos[0]
+        y=pos[1]
+
+        converted_pos = front.convert_new_hitbox_to_hitbox(pos)
+        converted_x = converted_pos[0]
+        converted_y = converted_pos[1]
+
+        if (self.get_player_turn().has_ball() #Ne sert à rien avec le suivant 
+            and self.which_rugbyman_in_pos_annexe(converted_pos) in self.get_player_turn().get_rugbymen()
+            and front.is_pos_bottom_right(pos) 
+            and self.which_rugbyman_in_pos_annexe(converted_pos).get_possesion()
+        ):
+            return self.get_ball()
+        else :
+            for rugbyman in self.rugbymen():
+                if rugbymen.Rugbyman.get_posx(rugbyman) == converted_x and rugbymen.Rugbyman.get_posy(rugbyman) == converted_y:
+                    return rugbyman
+            return False
 
     def is_square_empty(self, x, y):
         for rugbyman in self.rugbymen():
@@ -117,4 +159,11 @@ class Game:
 
 
     def get_ball(self):
-        return self.ball
+        return self._ball
+
+    def is_rugbyman_on_ball(self):
+        for rugbyman in self.rugbymen():
+            if rugbyman.get_posx() == self.get_ball().get_position_x() and rugbyman.get_posy() == self.get_ball().get_position_y():
+                rugbyman.set_possesion(True)
+                return rugbyman
+        return False

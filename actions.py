@@ -4,6 +4,7 @@ import random
 from color import Color
 import players
 import game
+import ball
 
 def placement_orders(color):
     R = {
@@ -24,11 +25,12 @@ def positions_rugbymen_player(color, n_column, placement_order, Graphique):
     R = [None] * n_rugbymen 
     Noms = list(placement_order.keys())  
 
+    
     ### A enlever ####
     for i in range(n_rugbymen):
-        placement_order[Noms[i]].set_posx(i)
+        placement_order[Noms[i]].set_posx(i+2)
         if color == Color.RED:
-            placement_order[Noms[i]].set_posy(random.randint(0, 4))
+            placement_order[Noms[i]].set_posy(4)
         else:
             placement_order[Noms[i]].set_posy(random.randint(6, 10))
 
@@ -37,6 +39,7 @@ def positions_rugbymen_player(color, n_column, placement_order, Graphique):
     #print(R)
     return R
     ####    FIn a enlever
+    
 
     while i < n_rugbymen:
         print(
@@ -88,7 +91,7 @@ def positions_rugbymen_player(color, n_column, placement_order, Graphique):
     return R_with_rugbymen
 
 
-def move_rugbyman( rugbyman,Possible_moves,Graphisme):
+def move_rugbyman( ball,rugbyman,Possible_moves,Graphisme):
         """
         Move the rugbyman
         
@@ -101,6 +104,8 @@ def move_rugbyman( rugbyman,Possible_moves,Graphisme):
         posy=rugbyman.get_posy()
         
         if pos2 in Possible_moves:
+            if rugbyman.get_possesion():
+                ball.set_position(pos2)
             rugbymen.Rugbyman.set_posx(rugbyman,new_posx)
             rugbymen.Rugbyman.set_posy(rugbyman,new_posy)
             #The following line isnt correct it doesnt take into account the obstacles
@@ -144,103 +149,69 @@ def available_move_positions(current_x, current_y, game, scope):
     return available
 
 
-def input_move_rugbyman(available_positions):
-    while True:
-        cancel = input("If you don't want to move, type 'cancel'")
-        if cancel is "cancel":
-            return False
-        input_x = input(
-            "Choisis la nouvelle abcisse de ton joueur parmi celles proposées: par exemple tape 3"
-        )
-        input_y = input(
-            "Choisis la nouvelle ordonnée de ton joueur parmi celles proposées: par exemple tape 5"
-        )
-        if [input_x, input_y] in available_positions:
-            return [input_x, input_y]
 
-"""
-def move_rugbyman(
-    rugbyman, game, moves_executed
-):  # prendre en compte le moves_executed choisi (3e coordonnée)
-    "Moves rugbyman to an available position chosen by player"
-    current_x = rugbyman.posx()
-    current_y = rugbyman.posy()
-    scope = rugbyman.move_points() - moves_executed
-    rugbymen_positions_list = game.positions()
-    # Ne pas oublier de prendre en compte la 3e coordonnée
-    available_positions = available_move_positions(
-        current_x, current_y, scope - moves_executed, rugbymen_positions_list
-    ) + [
-        current_x,
-        current_y,
-    ]  # Current position should be available
-    input_x, input_y = input_move_rugbyman(available_positions)
-    moves_executed += abs(current_x - input_x) + abs(current_y - input_y)
-    rugbyman.new_posx(input_x)
-    rugbyman.new_posy(input_y)
-    if game.ball.is_carried_by_rugbyman(rugbyman):
-        game.ball.moves([input_x, input_y])
-    if moves_executed < rugbyman.move_points:
-        return ask_if_action_finished()
-    else:
-        return True
-
-"""
-def available_pass_positions(
-    color, current_x, current_y, max_x, max_y, pass_scope, game
-):
+def available_backward_pass( rugbyman ,Game):
     available = []
-    if color is Color.RED:
-        for x in range(current_x - pass_scope, current_x):
-            for y in range(current_y - pass_scope, current_y + pass_scope + 1):
-                if game.is_position_correct([x, y]):
+
+    current_x = rugbyman.get_posx()
+    current_y = rugbyman.get_posy()
+
+    pass_scope = Game.get_back_pass_scope()
+
+    if rugbyman.get_color() is Color.RED:
+        for x in range(current_x - pass_scope, current_x + pass_scope+1):
+            for y in range( current_y - pass_scope, current_y):
+                if Game.is_position_correct(x, y):
                     available.append([x, y])
-    if color is Color.BLUE:
-        for x in range(current_x + 1, min(current_x + pass_scope, max_x) + 1):
-            for y in range(
-                max(current_y - pass_scope, 0), min(current_y + pass_scope, max_y)
-            ):
-                available.append([x, y])
+
+    if rugbyman.get_color() is Color.BLUE:
+        for x in range(current_x - pass_scope, current_x + pass_scope+1):
+            for y in range( current_y +1, current_y+pass_scope+1):
+                if Game.is_position_correct(x, y):
+                    available.append([x, y])
+
     return available
 
+def available_forward_pass( rugbyman ,Game):
+    available = []
 
-def input_pass_ball(available_positions):
-    while True:
-        cancel = input("If you don't want to move the ball anymore, type 'cancel'")
-        if cancel is "cancel":
-            return False
-        input_x = input(
-            "Choisis la nouvelle abcisse de la balle parmi celles proposées: par exemple tape 3"
-        )
-        input_y = input(
-            "Choisis la nouvelle ordonnée de la balle parmi celles proposées: par exemple tape 5"
-        )
-        if [input_x, input_y] in available_positions:
-            return [input_x, input_y]
+    current_x = rugbyman.get_posx()
+    current_y = rugbyman.get_posy()
+
+    pass_scope = Game.get_forward_pass_scope()
+
+    if rugbyman.get_color() is Color.BLUE:
+        for x in range(current_x - pass_scope, current_x + pass_scope+1):
+            for y in range( current_y - pass_scope, current_y):
+                if Game.is_position_correct(x, y):
+                    available.append([x, y])
+
+    if rugbyman.get_color() is Color.RED:
+        for x in range(current_x - pass_scope, current_x + pass_scope+1):
+            for y in range( current_y +1, current_y+pass_scope+1):
+                if Game.is_position_correct(x, y):
+                    available.append([x, y])
+
+    return available
+
+def available_pass( Game):
+    rugbyman=Game.is_rugbyman_on_ball()
+
+    return available_forward_pass(rugbyman ,Game)+available_backward_pass(rugbyman ,Game)
 
 
-def pass_ball(rugbyman, game, pass_scope):
-    """
-    Ball possessor passes the ball to another position
-    """
-    current_x = rugbyman.posx()
-    current_y = rugbyman.posy()
-    max_x = game.max_x()
-    max_y = game.max_y()
-    available_pass_positions = available_pass_positions(
-        rugbyman.color(), current_x, current_y, max_x, max_y, pass_scope, game
-    )
-    input_x, input_y = input_pass_ball(available_pass_positions)
-    if [input_x, input_y] in available_pass_positions:
-        game.ball.new_carrier(None)
-        game.ball.moved([input_x, input_y])
-        for rugbyman_ball_potential_owner in game.players():
-            if (
-                rugbyman_ball_potential_owner.posx() == input_x
-                and rugbyman_ball_potential_owner.posy() == input_y
-            ):
-                game.ball.new_carrier(rugbyman_ball_potential_owner)
-    return True
+def make_pass(Game,Graph,Possible_passes):
+    pos=front.Graphique.get_hitbox_for_back(Graph)
+    if pos in Possible_passes:
+        Game.is_rugbyman_on_ball().set_possesion(False)
+        Game.get_ball().set_position(pos)
+        if Game.is_rugbyman_on_ball()!=False:
+            Game.is_rugbyman_on_ball().set_possesion(True)
+
+
+
+    
+
 
 
 def available_tackle_positions(color, current_x, current_y, scope, game):
@@ -306,46 +277,6 @@ def tackle(rugbyman, game):
             ):
                 game.ball.new_carrier(rugbyman_ball_potential_owner)
 
-
-def available_forward_pass(color, current_x, current_y, forward_pass_scope, game):
-    available = []
-    if color is Color.RED:
-        for x in range(current_x + 1, current_x + forward_pass_scope + 1):
-            for y in range(
-                current_y - forward_pass_scope, current_y + forward_pass_scope + 1
-            ):
-                intermediate_position = [x, y]
-                if game.is_position_valid(
-                    intermediate_position
-                ) and game.is_position_unoccupied(intermediate_position):
-                    available.append(intermediate_position)
-        return available
-    if color is Color.BLUE:
-        for x in range(current_x - forward_pass_scope, current_x):
-            for y in range(
-                current_y - forward_pass_scope, current_y + forward_pass_scope + 1
-            ):
-                intermediate_position = [x, y]
-                if game.is_position_valid(
-                    intermediate_position
-                ) and game.is_position_unoccupied(intermediate_position):
-                    available.append(intermediate_position)
-        return available
-
-
-def input_forward_pass(available_forward_pass):
-    while True:
-        cancel = input("If you don't want to move the ball anymore, type 'cancel'")
-        if cancel is "cancel":
-            return False
-        input_x = input(
-            "Choisis la nouvelle abcisse de la balle parmi celles proposées: par exemple tape 3"
-        )
-        input_y = input(
-            "Choisis la nouvelle ordonnée de la balle parmi celles proposées: par exemple tape 5"
-        )
-        if [input_x, input_y] in available_forward_pass:
-            return [input_x, input_y]
 
 
 def forward_pass(rugbyman, game):

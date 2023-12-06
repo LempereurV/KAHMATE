@@ -27,6 +27,15 @@ class Player:
 
     ### Fonctions Felix ###
 
+    def has_ball(self):
+        """
+        Return True if the player has the ball, False otherwise
+        """
+        for rugbyman in self.get_rugbymen():
+            if rugbyman.has_ball():
+                return True
+        return False
+
     
 
     def add_choosen_rugbymen(self, rugbyman):
@@ -197,23 +206,3 @@ class Player:
                         ]
                     return
 
-
-class Ball:
-    def __init__(self, init_position):
-        self._position = init_position
-        self._carrier = None
-
-    def is_carried(self):
-        return self._carrier != None
-
-    def new_carrier(self, player):
-        self._carrier = player
-
-    def is_carried_by_rugbyman(self, rugbyman):
-        return self.is_carried() and self._carrier() == rugbyman
-
-    def left(self):
-        self._carrier = None
-
-    def moved(self, position):
-        self._position = position

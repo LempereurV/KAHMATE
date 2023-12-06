@@ -72,6 +72,13 @@ class Rugbyman:
     def set_posy(self, new_posy):  # utiliser une propriété
         self.posy = new_posy
 
+    def set_possesion(self, boolean):
+        self.possesion = boolean
+    
+    def get_possesion(self):
+        return self.possesion
+
+
     def refresh_stats(self):
         self.moves_left = self.move_points
 
@@ -79,6 +86,9 @@ class Rugbyman:
         return self.moves_left
     def actualize_move_left(self, move_points):
         self.moves_left -= move_points
+    
+    def has_ball(self):
+        return self.possesion
 
 
 class StrongRugbyman(Rugbyman):
