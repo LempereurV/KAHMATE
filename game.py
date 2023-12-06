@@ -122,13 +122,10 @@ class Game:
             R=[[x,y]]
             if x + 1 < self.get_number_of_rows() and self.is_square_empty(x + 1, y):
                 R = R + self.available_move_position_recursif(x + 1, y, scope - 1)
-
             if x - 1 >= 0 and self.is_square_empty(x - 1, y):
                 R = R + self.available_move_position_recursif(x - 1, y, scope - 1)
-            
             if y + 1 < self.get_number_of_columns() and self.is_square_empty(x, y + 1):
                 R = R + self.available_move_position_recursif(x, y + 1, scope - 1)
-            
             if y - 1 >= 0 and self.is_square_empty(x, y - 1):
                 R = R + self.available_move_position_recursif(x, y - 1, scope - 1)
             

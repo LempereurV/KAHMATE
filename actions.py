@@ -183,7 +183,7 @@ def available_forward_pass( rugbyman ,Game):
     cond = True
     
     if rugbyman.get_color() is Color.BLUE:
-        for rugbyman in Game.rugbymen():
+        for rugbyman in Game.get_player_turn().get_rugbymen():
             if rugbyman.get_posy()<current_y:
                 cond = False
 

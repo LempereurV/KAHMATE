@@ -42,14 +42,7 @@ while Game_ON:
 
                 possible_move = Game.available_move_position(rugbyman_or_ball_or_bool)
                 
-                """
-                ### A changer
-                if active_player.has_ball():
-                    pos=Graph.get_hitbox_for_back()
-                    if pos in 
-                ####
-                """
-                 #If the rugbyman selected is already in the list of chosen rugbyman, then he can move him
+                #If the rugbyman selected is already in the list of chosen rugbyman, then he can move him
                 if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
                     Graph.highlight_move_FElIX( possible_move)
                     rugbyman_or_ball_or_bool=actions.move_rugbyman(Game.get_ball(),rugbyman_or_ball_or_bool,possible_move,Graph)
