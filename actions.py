@@ -185,7 +185,6 @@ def available_forward_pass( rugbyman ,Game):
     if rugbyman.get_color() is Color.BLUE:
         for rugbyman in Game.rugbymen():
             if rugbyman.get_posy()<current_y:
-                print("caca")
                 cond = False
 
         if cond :
@@ -211,10 +210,36 @@ def available_pass( Game):
 
     return available_forward_pass(rugbyman ,Game)+available_backward_pass(rugbyman ,Game)
 
+def norm(pos1,pos2):
+    return abs(pos1[0]-pos2[0])+abs(pos1[1]-pos2[1])
 
 def make_pass(Game,Graph,Possible_passes):
     pos=front.Graphique.get_hitbox_for_back(Graph)
     if pos in Possible_passes:
+        former_owner=Game.is_rugbyman_on_ball()
+        if (former_owner.get_color() is Color.RED
+            and pos[1] < former_owner.get_posy()):
+            for rugbyman in Game.get_player_blue().get_rugbymen():
+                if rugbyman.get_posy() < former_owner.get_posy() and rugbyman.get_posy() >= pos[1]:
+                    #ensure there on the same side of the passing position set
+                    if (rugbyman.get_posx() -former_owner.get_posx())*(pos[0] -former_owner.get_posx())>=0:
+                        if norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos):
+                            rugbyman.set_possesion(True)
+                            Game.get_ball().set_carrier(rugbyman)
+                            Game.get_ball().set_position(rugbyman.get_pos())
+                            return True
+        if (former_owner.get_color() is Color.BLUE
+            and pos[1] > former_owner.get_posy()):
+            for rugbyman in Game.get_player_red().get_rugbymen():
+                if rugbyman.get_posy() > former_owner.get_posy() and rugbyman.get_posy() <= pos[1]:
+                    #ensure there on the same side of the passing position set
+                    if (rugbyman.get_posx() -former_owner.get_posx())*(pos[0] -former_owner.get_posx())>=0:
+                        if norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos):
+                            rugbyman.set_possesion(True)
+                            Game.get_ball().set_carrier(rugbyman)
+                            Game.get_ball().set_position(rugbyman.get_pos())
+                            return True
+        
         Game.is_rugbyman_on_ball().set_possesion(False)
         Game.get_ball().set_position(pos)
         if Game.is_rugbyman_on_ball()!=False:

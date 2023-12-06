@@ -63,7 +63,7 @@ class Rugbyman:
     def get_posy(self):
         return self.posy
 
-    def pos(self):
+    def get_pos(self):
         return [self.posx, self.posy]
 
     def set_posx(self, new_posx):  # utiliser une propriété
