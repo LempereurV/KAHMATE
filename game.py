@@ -14,15 +14,18 @@ class Game:
         self._number_of_columns = number_of_columns 
         self._number_of_rows = number_of_rows 
 
+        self._whose_turn = color.Color.RED
+
         #player ne s'initialise pas pour rouge et bleu
-        self._player_red = players.Player(color.Color.RED,self,Graphique) 
-        self._player_blue = players.Player(color.Color.BLUE,self,Graphique) 
+        self._player_red = players.Player(color.Color.RED,self,self._whose_turn,Graphique) 
+        self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,Graphique) 
+
+
 
         ball = players.Ball(random.randint(0, number_of_rows - 1))
 
 
     ### FELIX ###
-
 
     def get_number_of_rows(self):
         return self._number_of_rows
@@ -36,6 +39,19 @@ class Game:
     def get_player_blue(self):
         return self._player_blue
     
+    def get_player_turn(self):
+        if self._whose_turn == color.Color.RED:
+            return self.get_player_red()
+        else:
+            return self.get_player_blue()
+
+    
+    def change_player_turn(self):
+        if self._whose_turn == color.Color.RED:
+            self._whose_turn = color.Color.BLUE
+        else:
+            self._whose_turn = color.Color.RED
+            
     def rugbymen(self):
         return players.Player.get_rugbymen( self.get_player_red()) + players.Player.get_rugbymen(self.get_player_blue())
     
@@ -87,7 +103,6 @@ class Game:
     def refresh_players_rugbymen_stats(self):
         players.Player.refresh_rugbymen_stats(self._player_red)
         players.Player.refresh_rugbymen_stats(self._player_blue)
-
 
 
     def is_over(self):

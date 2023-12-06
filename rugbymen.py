@@ -33,7 +33,7 @@ class Rugbyman:
     def get_move_points(self):
         return self.move_points
 
-    def color(self):
+    def get_color(self):
         return self.color
 
     def has_partners_in_front(self, game):

@@ -6,21 +6,24 @@ import game
 import color
 
 class Player:
-    def __init__(self, color,Game,Graphique):
+    def __init__(self, color,Game,turn_color,Graphique):
         
         # Placement order of the rugbylen (mostly for the initialisation but can be usefull later)
         self._placement_order= actions.placement_orders(color)
 
         # List of all the rugbymen of the player
-        self._rugbymen = actions.positions_rugbymen_player(color, game.Game.get_number_of_columns(Game), self._placement_order, Graphique)
+        self._rugbymen = actions.positions_rugbymen_player(color, Game.get_number_of_columns(), self._placement_order, Graphique)
 
         # List of all the rugbymen chosen by the player for his turn 
         self._chosen_rugbymen = []
 
 
         self._cards = [Card.ONE, Card.TWO, Card.THREE, Card.FOUR, Card.FIVE, Card.SIX]
-        self._color = color 
-        self.can_play = True
+        self._color = color
+        if color ==turn_color:
+            self.can_play = True
+        else:
+            self.can_play = False
 
     ### Fonctions Felix ###
 
@@ -37,7 +40,7 @@ class Player:
                 if rugbymen.Rugbyman.spec(rugbyman) == rugbymen.Spec.NORMAL:
                     # There is two normal rugbymen on the board we have to make sure we dont select the same one twice
                     if rugbymen.Rugbyman.pos(rugbyman) == rugbymen.Rugbyman.pos(
-                        self.self.get_chosen_rugbymen()[0]
+                        self.get_chosen_rugbymen()[0]
                     ):
                         self.add_rugbyman(rugbyman)
                         return True
@@ -89,7 +92,6 @@ class Player:
         
         for rugbyman in self.get_chosen_rugbymen():
             rugbymen.Rugbyman.refresh_stats(rugbyman)
-            print(rugbymen.Rugbyman.move_left(rugbyman))
         self._chosen_rugbymen= []
         self.can_play = True
 
