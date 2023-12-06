@@ -180,17 +180,29 @@ def available_forward_pass( rugbyman ,Game):
 
     pass_scope = Game.get_forward_pass_scope()
 
+    cond = True
+    
     if rugbyman.get_color() is Color.BLUE:
-        for x in range(current_x - pass_scope, current_x + pass_scope+1):
-            for y in range( current_y - pass_scope, current_y):
-                if Game.is_position_correct(x, y):
-                    available.append([x, y])
+        for rugbyman in Game.rugbymen():
+            if rugbyman.get_posy()<current_y:
+                print("caca")
+                cond = False
+
+        if cond :
+            for x in range(current_x - pass_scope, current_x + pass_scope+1):
+                for y in range( current_y - pass_scope, current_y):
+                    if Game.is_position_correct(x, y):
+                        available.append([x, y])
 
     if rugbyman.get_color() is Color.RED:
-        for x in range(current_x - pass_scope, current_x + pass_scope+1):
-            for y in range( current_y +1, current_y+pass_scope+1):
-                if Game.is_position_correct(x, y):
-                    available.append([x, y])
+        for rugbyman in Game.get_player_turn().get_rugbymen():
+            if rugbyman.get_posy()>current_y:
+                cond = False
+        if cond :
+            for x in range(current_x - pass_scope, current_x + pass_scope+1):
+                for y in range( current_y +1, current_y+pass_scope+1):
+                    if Game.is_position_correct(x, y):
+                        available.append([x, y])
 
     return available
 

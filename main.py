@@ -41,7 +41,6 @@ while Game_ON:
                 Graph.draw_board(Game)
 
                 possible_move = Game.available_move_position(rugbyman_or_ball_or_bool)
-                Graph.highlight_move_FElIX( possible_move)
                 
                 """
                 ### A changer
@@ -50,9 +49,14 @@ while Game_ON:
                     if pos in 
                 ####
                 """
+                 #If the rugbyman selected is already in the list of chosen rugbyman, then he can move him
+                if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
+                    Graph.highlight_move_FElIX( possible_move)
+                    rugbyman_or_ball_or_bool=actions.move_rugbyman(Game.get_ball(),rugbyman_or_ball_or_bool,possible_move,Graph)
                 
                 #If the player hasnt chosen his two rugbyman yet
-                if active_player.get_n_rugbymen()<2:
+                elif active_player.get_n_rugbymen()<2:
+                    Graph.highlight_move_FElIX( possible_move)
                     
                     #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
                     #Note that the move is made in the function
@@ -62,10 +66,7 @@ while Game_ON:
                     if rugbyman_or_ball_or_bool !=False :
                         active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
                 
-                #If the rugbyman selected is already in the list of chosen rugbyman, then he can move him
-                elif rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
-                    
-                    rugbyman_or_ball_or_bool=actions.move_rugbyman(Game.get_ball(),rugbyman_or_ball_or_bool,possible_move,Graph)
+               
                 
                 if Game.is_rugbyman_on_ball()!=False :
                     rugbyman_with_ball=Game.is_rugbyman_on_ball()
@@ -85,7 +86,7 @@ while Game_ON:
 
 
 
-        ### Partie reset quand les deux joueurs ont joué ###
+        ### Partie reset quand le joueur a fini de jouer  ###
         Game.refresh_players_rugbymen_stats()
         Game.change_player_turn()
 

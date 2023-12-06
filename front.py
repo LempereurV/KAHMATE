@@ -132,7 +132,7 @@ class Graphique:
     def highlight_move_FElIX(self, list_move):
         s = pygame.Surface(hitbox[0].size)  # the size of your rect
         s.set_alpha(128)  # alpha level
-        s.fill((150, 150, 150))
+        s.fill((200, 200, 200))
         for move in list_move:
             screen.blit(
                 s, hitbox[move[0] * 11 + move[1]].topleft
