@@ -29,6 +29,7 @@ while Game_ON:
             
             #which_rugbyman_in_pos returns false if there is no rugbyman in the position, and the rugbyman otherwise
 
+            print(active_player.get_n_rugbymen())
             
             #Graph.draw_new_hitboxes()
             #rugbyman_or_ball_or_bool = Game.which_rugbyman_in_pos(Graph)
@@ -45,7 +46,10 @@ while Game_ON:
                 #If the rugbyman selected is already in the list of chosen rugbyman, then he can move him
                 if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
                     Graph.highlight_move_FElIX( possible_move)
-                    rugbyman_or_ball_or_bool=actions.move_rugbyman(Game.get_ball(),rugbyman_or_ball_or_bool,possible_move,Graph)
+                    rugbyman_or_ball_or_bool=actions.action_rugbyman(rugbyman_or_ball_or_bool,
+                                                                     Game,
+                                                                     possible_move,
+                                                                     Graph)
                 
                 #If the player hasnt chosen his two rugbyman yet
                 elif active_player.get_n_rugbymen()<2:
@@ -53,7 +57,11 @@ while Game_ON:
                     
                     #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
                     #Note that the move is made in the function
-                    rugbyman_or_ball_or_bool=actions.move_rugbyman(Game.get_ball(),rugbyman_or_ball_or_bool,possible_move,Graph)
+                    rugbyman_or_ball_or_bool=actions.action_rugbyman(rugbyman_or_ball_or_bool,
+                                                                     Game,
+                                                                     possible_move,
+                                                                     Graph)
+                    print(rugbyman_or_ball_or_bool)
 
                     #We add the rugbyman to the list of chosen rugbyman if the move is made
                     if rugbyman_or_ball_or_bool !=False :

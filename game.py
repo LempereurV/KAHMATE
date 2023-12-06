@@ -26,8 +26,10 @@ class Game:
 
         self._forward_pass_scope = forward_pass_scope
         self._back_pass_scope = back_pass_scope
-
-        self._ball = ball.Ball(random.randint(0, number_of_rows - 1))
+        
+        #A changer
+        #self._ball = ball.Ball(random.randint(0, number_of_rows - 1))
+        self._ball = ball.Ball(number_of_rows - 1)
 
 
     def get_forward_pass_scope(self):
@@ -105,7 +107,10 @@ class Game:
         else :
             for rugbyman in self.rugbymen():
                 if rugbymen.Rugbyman.get_posx(rugbyman) == converted_x and rugbymen.Rugbyman.get_posy(rugbyman) == converted_y:
-                    return rugbyman
+                    if rugbyman.get_KO()==0:
+                        return rugbyman
+                    else:
+                        return False
             return False
 
     def is_square_empty(self, x, y):
@@ -115,25 +120,37 @@ class Game:
         return True
     #  available_move_position_recursif returns the list of all the possible positions (including the initial position) that a rugbyman can move to
     # Be aware that the elements of the list arent unique, the unicity will be given by available_move_position
-    def available_move_position_recursif(self, x , y , scope):
+    def available_move_position_recursif(self, x , y , scope, color, cond):
         if scope < 0:
             return []
         else:
-            R=[[x,y,scope]]
-            if x + 1 < self.get_number_of_rows() and self.is_square_empty(x + 1, y):
-                R = R + self.available_move_position_recursif(x + 1, y, scope - 1)
-            if x - 1 >= 0 and self.is_square_empty(x - 1, y):
-                R = R + self.available_move_position_recursif(x - 1, y, scope - 1)
-            if y + 1 < self.get_number_of_columns() and self.is_square_empty(x, y + 1):
-                R = R + self.available_move_position_recursif(x, y + 1, scope - 1)
-            if y - 1 >= 0 and self.is_square_empty(x, y - 1):
-                R = R + self.available_move_position_recursif(x, y - 1, scope - 1)
+            R=[[x,y,scope,cond]]
+            if x + 1 < self.get_number_of_rows() :
+                if self.is_square_empty(x + 1, y):
+                    R = R + self.available_move_position_recursif(x + 1, y, scope - 1,color,True)
+                elif self.which_rugbyman_in_pos_annexe([x + 1, y]).get_color()!=color:
+                    R = R + self.available_move_position_recursif(x + 1, y, scope - 1,color,False)
+            if x - 1 >= 0 :
+                if self.is_square_empty(x - 1, y):
+                    R = R + self.available_move_position_recursif(x - 1, y, scope - 1,color,True)
+                elif self.which_rugbyman_in_pos_annexe([x - 1, y]).get_color()!=color:
+                    R = R + self.available_move_position_recursif(x - 1, y, scope - 1,color,False)
+            if y + 1 < self.get_number_of_columns() :
+                if self.is_square_empty(x, y + 1):
+                    R = R + self.available_move_position_recursif(x, y + 1, scope - 1,color,True)
+                elif self.which_rugbyman_in_pos_annexe([x, y + 1]).get_color()!=color:
+                    R = R + self.available_move_position_recursif(x, y + 1, scope - 1,color,False)
+            if y - 1 >= 0 :
+                if self.is_square_empty(x, y - 1):
+                    R = R + self.available_move_position_recursif(x, y - 1, scope - 1,color,True)
+                elif self.which_rugbyman_in_pos_annexe([x, y - 1]).get_color()!=color:
+                    R = R + self.available_move_position_recursif(x, y - 1, scope - 1,color,False)
             
             return R
     
     def available_move_position(self,rugbyman):
         
-        Liste_untreated=self.available_move_position_recursif(rugbyman.get_posx(),rugbyman.get_posy(),rugbyman.get_moves_left())
+        Liste_untreated=self.available_move_position_recursif(rugbyman.get_posx(),rugbyman.get_posy(),rugbyman.get_moves_left(),rugbyman.get_color(),True)
         
         #Deleting the first position of the list because it is the position of the rugbyman
         Liste_untreated = sorted(Liste_untreated, key=lambda x: (x[0], x[1],x[2]), reverse=True)
@@ -151,6 +168,11 @@ class Game:
                 j+=1
             i=j
         return Liste_treated
+    
+
+        
+    #def unavailable_moove_position(self,rugbyman):
+
     
 
     

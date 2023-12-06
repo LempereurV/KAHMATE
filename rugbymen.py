@@ -22,7 +22,7 @@ class Rugbyman:
         self.posy = 0
         self.spec = Spec.NORMAL
         self.possesion = False  # True if the player has the ball
-        self.active = True  # False if the player is KO
+        self.KO = 0  # 0 if the player is active
 
     def __str__(self):  # Possibilité de la changer
         return f"{self.color} Rugbyman ({self.spec})"
@@ -51,9 +51,21 @@ class Rugbyman:
                     return True
         return False
 
+    def set_KO(self):
+        self.KO = 2
+    
+    def get_KO(self):
+        return self.KO
+    
     def move_points(self):
         return self.move_points
 
+    def get_attack_bonus(self):
+        return self.attack_bonus
+    
+    def get_defense_bonus(self):
+        return self.defense_bonus
+    
     def move_left(self):
         return self.moves_left
 
@@ -71,6 +83,9 @@ class Rugbyman:
 
     def set_posy(self, new_posy):  # utiliser une propriété
         self.posy = new_posy
+    def set_pos(self, pos):
+        self.posx = pos[0]
+        self.posy = pos[1]
 
     def set_possesion(self, boolean):
         self.possesion = boolean
@@ -81,9 +96,12 @@ class Rugbyman:
 
     def refresh_stats(self):
         self.moves_left = self.move_points
+        if self.get_KO() > 0:
+            self.KO -= 1
 
     def get_moves_left(self):
         return self.moves_left
+    
     def actualize_move_left(self, move_points):
         self.moves_left -= move_points
     def set_move_left(self, move_points):

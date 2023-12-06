@@ -71,15 +71,21 @@ class Player:
         self.can_play = boolean
 
     def actualize_can_play(self):
-        if self.get_n_rugbymen() == 2:
+        cond=False
+        if self.get_n_rugbymen() >= 2:
             move_points = 0
             for rugbyman in self.get_chosen_rugbymen():
+                if rugbyman.get_KO()==0 or rugbymen.Rugbyman.move_left(rugbyman)>0:
+                    cond=True
                 move_points += rugbymen.Rugbyman.move_left(rugbyman)
-            if move_points == 0 :
-                if self.has_ball():
-                    print("You can only pass the ball")
-                else:
-                    self.set_can_play(False)
+            if not cond:
+                self.set_can_play(False)
+            else :
+                if move_points == 0 :
+                    if self.has_ball():
+                        print("You can only pass the ball")
+                    else:
+                        self.set_can_play(False)
 
     def color(self):
         return self._color

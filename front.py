@@ -143,7 +143,7 @@ class Graphique:
     def draw_board(self, G):
         self.screen.blit(self.plateau, (0, 0))
         for rugbyman in game.Game.rugbymen(G):
-            self.affiche_joueur(rugbymen.Rugbyman.get_posx(rugbyman) * 11 + rugbymen.Rugbyman.get_posy(rugbyman), path_convertor(rugbyman))
+                self.affiche_joueur(rugbymen.Rugbyman.get_posx(rugbyman) * 11 + rugbymen.Rugbyman.get_posy(rugbyman), path_convertor(rugbyman))
         self.display_ball(game.Game.get_ball(G))
         pygame.display.flip()
 
@@ -152,33 +152,40 @@ class Graphique:
     def refresh(self):
         pygame.display.flip()
 
+
 # Fonction qui renvoit la position de l'image correspondant au rugbyman (surement à merge avec path_to_player_type)
 def path_convertor(Rugbyman):
-    if Rugbyman.spec == rugbymen.Spec.NORMAL:
-        if Rugbyman.color == color.Color.RED:
-            return "Images/Ordinaire_rouge.png"
-        if Rugbyman.color == color.Color.BLUE:
-            return "Images/Ordinaire_bleu.png"
-    if Rugbyman.spec == rugbymen.Spec.STRONG:
-        if Rugbyman.color == color.Color.RED:
-            return "Images/Costaud_rouge.png"
-        if Rugbyman.color == color.Color.BLUE:
-            return "Images/Costaud_bleu.png"
-    if Rugbyman.spec == rugbymen.Spec.HARD:
-        if Rugbyman.color == color.Color.RED:
-            return "Images/Dur_rouge.png"
-        if Rugbyman.color == color.Color.BLUE:
-            return "Images/Dur_bleu.png"
-    if Rugbyman.spec == rugbymen.Spec.SMART:
-        if Rugbyman.color == color.Color.RED:
-            return "Images/Fute_rouge.png"
-        if Rugbyman.color == color.Color.BLUE:
-            return "Images/Fute_bleu.png"
-    if Rugbyman.spec == rugbymen.Spec.FAST:
-        if Rugbyman.color == color.Color.RED:
-            return "Images/Rapide_rouge.png"
-        if Rugbyman.color == color.Color.BLUE:
-            return "Images/Rapide_bleu.png"
+    if Rugbyman.get_KO()>0:
+        if Rugbyman.get_color() == color.Color.RED:
+            return "Images/Plaquage_rouge.png"
+        if Rugbyman.get_color() == color.Color.BLUE:
+            return "Images/Plaquage_bleu.png"
+    else :
+        if Rugbyman.spec == rugbymen.Spec.NORMAL:
+            if Rugbyman.color == color.Color.RED:
+                return "Images/Ordinaire_rouge.png"
+            if Rugbyman.color == color.Color.BLUE:
+                return "Images/Ordinaire_bleu.png"
+        if Rugbyman.spec == rugbymen.Spec.STRONG:
+            if Rugbyman.color == color.Color.RED:
+                return "Images/Costaud_rouge.png"
+            if Rugbyman.color == color.Color.BLUE:
+                return "Images/Costaud_bleu.png"
+        if Rugbyman.spec == rugbymen.Spec.HARD:
+            if Rugbyman.color == color.Color.RED:
+                return "Images/Dur_rouge.png"
+            if Rugbyman.color == color.Color.BLUE:
+                return "Images/Dur_bleu.png"
+        if Rugbyman.spec == rugbymen.Spec.SMART:
+            if Rugbyman.color == color.Color.RED:
+                return "Images/Fute_rouge.png"
+            if Rugbyman.color == color.Color.BLUE:
+                return "Images/Fute_bleu.png"
+        if Rugbyman.spec == rugbymen.Spec.FAST:
+            if Rugbyman.color == color.Color.RED:
+                return "Images/Rapide_rouge.png"
+            if Rugbyman.color == color.Color.BLUE:
+                return "Images/Rapide_bleu.png"
 
 
 def is_pos_bottom_right(pos):
