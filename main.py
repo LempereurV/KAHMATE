@@ -17,15 +17,16 @@ while Game_ON:
             front.pygame.display.flip()
             Initialisation = False
         
-        
+        #Get whowe turn it is to play
+
         active_player = Game.get_player_turn()
 
         while active_player.get_can_play():
-
-            pos = Graph.get_hitbox_for_back()
-
+            #Get the position of the click
+            #pos = Graph.get_hitbox_for_back()
             #which_rugbyman_in_pos returns false if there is no rugbyman in the position, and the rugbyman otherwise
-            rugbyman_or_bool = game.Game.which_rugbyman_in_pos(Game, pos[0], pos[1])
+            
+            rugbyman_or_bool = Game.which_rugbyman_in_pos(Graph)
 
             if (rugbyman_or_bool in active_player.get_rugbymen()):
                 
@@ -33,27 +34,24 @@ while Game_ON:
 
                 possible_move = Game.available_move_position(rugbyman_or_bool)
                 Graph.highlight_move_FElIX( possible_move)
+                
 
                 #If the player hasnt chosen his two rugbyman yet
                 if active_player.get_n_rugbymen()<2:
                     
-                    #move_rugbyman returns false if the move is not possible, and the new position otherwise
+                    #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
                     #Note that the move is made in the function
-                    pos2_or_bool=actions.move_rugbyman(
-                        rugbyman_or_bool,
-                        possible_move,
-                        Graph)
+                    rugbyman_or_bool=actions.move_rugbyman(rugbyman_or_bool,possible_move,Graph)
+
                     #We add the rugbyman to the list of chosen rugbyman if the move is made
-                    if not pos2_or_bool ==False :
-                        active_player.add_choosen_rugbymen(Game.which_rugbyman_in_pos( pos2_or_bool[0], pos2_or_bool[1]))
+                    if rugbyman_or_bool !=False :
+                        active_player.add_choosen_rugbymen(rugbyman_or_bool)
                 
                 #If the rugbyman selected is already in the list of chosen rugbyman, then he can move him
                 elif rugbyman_or_bool in active_player.get_chosen_rugbymen() :
                     
-                    actions.move_rugbyman(
-                        Game.which_rugbyman_in_pos( pos[0], pos[1]),
-                        possible_move,
-                        Graph)
+                    rugbyman_or_bool=actions.move_rugbyman(rugbyman_or_bool,possible_move,Graph)
+                
                 active_player.actualize_can_play()
                 Graph.draw_board(Game)
                 active_player.actualize_can_play()
@@ -61,6 +59,9 @@ while Game_ON:
         ### Partie reset quand les deux joueurs ont joué ###
         Game.refresh_players_rugbymen_stats()
         Game.change_player_turn()
+
+
+
 
         if event.type == front.pygame.QUIT:
             front.pygame.quit()

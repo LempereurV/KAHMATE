@@ -105,7 +105,7 @@ def move_rugbyman( rugbyman,Possible_moves,Graphisme):
             rugbymen.Rugbyman.set_posy(rugbyman,new_posy)
             #The following line isnt correct it doesnt take into account the obstacles
             rugbymen.Rugbyman.actualize_move_left(rugbyman,abs(new_posx - posx) + abs(new_posy - posy))
-            return pos2
+            return rugbyman
         else:
             print("You can't move to this position")
         return False
