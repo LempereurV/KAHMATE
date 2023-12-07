@@ -58,7 +58,7 @@ class Graphique:
                 else:
                     return [i, i]
             else:
-                return None
+                print (None)
 
     def get_hitbox_for_back(self, hitbox):
         cond = True
