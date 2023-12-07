@@ -6,6 +6,8 @@ import rugbymen
 import actions
 import color
 import random
+from constants import *
+
 # Initialisation de Pygame
 pygame.init()
 clock = pygame.time.Clock()
@@ -23,40 +25,20 @@ screen = pygame.display.set_mode(size)
 # surf = pygame.surface.Surface(size)
 
 
-coords = []
-for j in range(8):
-    for i in range(11):
-        coords.append((92 + i * 46.8, 62 + j * 46.5))
-
-# Hitbox de chaque point
-hitbox = []
-for i in range(88):
-    hitbox.append(pygame.Rect(coords[i][0], coords[i][1], 46.8, 46.5))
-hitbox.append(pygame.Rect(92 - 46.8, 62, 46.8, 46.5 * 8))
-hitbox.append(pygame.Rect(92 + 11 * 46.8, 62, 46.8, 46.5 * 8))
-
-new_coords = []
-for j in range(16):
-    for i in range(22):
-        new_coords.append((92 + i * 46.8/2, 62 + j * 46.5/2))
-
-hitbox_cards_red = []
-for i in range(8):
-    hitbox_cards_red.append(pygame.Rect(92 + i * 46.8, 62 + 8 * 46.5, 46.8, 46.5))
+def create_hitbox(screen):
+    #La hitbox contient chaque case du terrain, ainsi que les bords du terrain (les bords sont des cases de tailles identiques au damier classique)
+    #Chaque hitbox est divisé par 4 pour avoir une hitbox plus petite (permet de  cliquer sur le ballon )
+    full_hitbox = []
+    for j in range((Constants.number_of_rows+2)):
+        for i in range((Constants.number_of_columns+2)):
+            full_hitbox.append(pygame.Rect((Constants.edge_width_normalized + i * Constants.square_width_normalized)*screen.get_width(), 
+                                        (Constants.edge_height_normalized + j * Constants.square_height_normalized)*screen.get_height(),
+                                        Constants.square_width_normalized*screen.get_width(), 
+                                        Constants.square_height_normalized*screen.get_height()))
+    return full_hitbox
+        
 
 
-ball_coords=[]
-for j in range(8):
-    for i in range(11):
-        ball_coords.append((92 + i * 46.8+46.8/2, 62 + j * 46.5+46.5/2))
-
-new_hitbox = []
-for i in range(len(new_coords)):
-    new_hitbox.append(pygame.Rect(new_coords[i][0], new_coords[i][1], 46.8/2, 46.5/2))
-
-ball_hitbox = []
-for i in range(88):
-    ball_hitbox.append(pygame.Rect(ball_coords[i][0], ball_coords[i][1], 46.8/2, 46.5/2))
 
 
 class Graphique:
@@ -71,100 +53,66 @@ class Graphique:
 
         # Création de la fenêtre
         self.screen = pygame.display.set_mode(self.size)
+
+        # Création de la hitbox
+        self.hitbox = create_hitbox(self.screen)
+
         # Affichage de l'image dans la fenêtre
         self.screen.blit(self.plateau, (0, 0))
 
-    def draw_ball_hitboxes(self):
-        for i in range(88):
-            pygame.draw.rect(screen, pygame.Color(128, 128, 128, 1), ball_hitbox[i])
-        pygame.display.flip()
-   
-    def draw_new_hitboxes(self):
-        for i in range(len(new_coords)):
-            pygame.draw.rect(screen, pygame.Color(random.randint(1,255), random.randint(1,255), random.randint(1,255)), new_hitbox[i])
-        pygame.display.flip()
-             
 
-    def get_hitbox_for_back(self):
-        cond = True
-        while cond:
+    def get_hitbox_on_click(self):
+        cond=False
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return False
+                    raise ValueError("The player has quit the game")
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    cond = False
-                    for i in range(len(hitbox)):
-                        if hitbox[i].collidepoint(pygame.mouse.get_pos()):
-                            if i < 88:
-                                return [i // 11, i % 11]
-                        
-                    cond = True
-        return None
-    
-    def get_new_hitbox_for_back(self):
-        cond = True
-        while cond:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    return False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    cond = False
-                    for i in range(len(new_hitbox)):
-                        if new_hitbox[i].collidepoint(pygame.mouse.get_pos()):
-                            if i < len(new_hitbox):
-                                if i//22%2==1:# on est en bad de la case
-                                    if i%22%2==1: #On est à droite de la case 
-                                        return [i // 22, i % 22]
-                            return [(i // 22) , (i % 22)]
-                            
-                    cond = True
-        return None
+                    for i in range(len(self.hitbox)):
+                        if self.hitbox[i].collidepoint(pygame.mouse.get_pos()):
+                            #We check if the click was on the bottom right part of the hitbox
+                            hitbox_center_x, hitbox_center_y=self.hitbox[i].center
+                            mouse_x,mouse_y =pygame.mouse.get_pos()
+                            if mouse_x>hitbox_center_x and mouse_y>hitbox_center_y:
+                                cond=True
+                            return [i//(Constants.number_of_columns+2),i%(Constants.number_of_columns+2)],cond
 
+    def draw_hitbox(self):
+        for i in range(len(self.hitbox)):
+            pygame.draw.rect(self.screen,pygame.Color(random.randint(0,255), random.randint(0,255), random.randint(0,255), 1),self.hitbox[i] )
+        pygame.display.flip()
     def display_ball(self, ball):
         ball_graph = pygame.image.load("Images/Ballon.png")
-        ball_graph = pygame.transform.scale(ball_graph, (ball_hitbox[0].width, ball_hitbox[0].height))
-        self.screen.blit(ball_graph, ball_coords[ball.get_position_x() * 11 + ball.get_position_y()])
+        ball_graph = pygame.transform.scale(ball_graph, (self.hitbox[0].width/2, self.hitbox[0].height/2))
+
+        self.screen.blit(ball_graph,self.hitbox[ball.get_pos_x()*(Constants.number_of_columns+2)+ball.get_pos_y()].center)
         pygame.display.flip()
+        
+        
     
+    def display_rugbyman(self, rugbyman):
+        path=path_convertor(rugbyman)
+        pos=rugbyman.get_pos()
+        player = pygame.image.load(path)
+        player = pygame.transform.scale(player,
+                                         (Constants.square_width_normalized*self.screen.get_width(),
+                                           Constants.square_height_normalized*self.screen.get_height()))
+        
+        self.screen.blit(player, self.hitbox[pos[0]*(Constants.number_of_columns+2)+pos[1]].topleft)
+
+
     # Affiche un joueur au centre de la hitbox
-    def affiche_joueur(self, n_hit, path):
-        joueur = pygame.image.load(path)
-        joueur = pygame.transform.scale(joueur, (46.8, 46.5))
-        self.screen.blit(joueur, coords[n_hit])
-        pygame.display.flip()
+    
 
 
     def highlight_pass(self, passes):
-        s = pygame.Surface(hitbox[0].size)  # the size of your rect
+        s = pygame.Surface(self.hitbox[0].size)  # the size of your rect
         s.set_alpha(100)  # alpha level
         s.fill((255, 255, 0))
         for pass_ in passes:
-            screen.blit(
-                s, hitbox[pass_[0] * 11 + pass_[1]].topleft
-            )
-            pygame.display.flip()
+            screen.blit(s, self.hitbox[pass_[0]*(Constants.number_of_columns+2) + pass_[1]].topleft)
+        pygame.display.flip()
 
-    """
-    def display_cards(self, player):
-        for i in range(len(player.get_cards())):
-            card = pygame.image.load("Images/" +"Carte" player.get_cards()[i] + ".png")
-            card = pygame.transform.scale(card, (46.8, 46.5))
-            self.screen.blit(card, (92 + i * 46.8, 62 + 8 * 46.5))
-        pygame.display.flip()   
-    """
-    def get_hitbox_cards(self, player):
-        cond = True
-        while cond:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    return False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    cond = False
-                    for i in range(len(player.get_cards())):
-                        if hitbox[i].collidepoint(pygame.mouse.get_pos()):
-                            return player.get_cards()[i]
-                    cond = True
-        return None
 
     def highlight_move_FElIX(self, list_move):
         for move in list_move:
@@ -172,17 +120,14 @@ class Graphique:
                 self.highlight_move_annexe(move,(200, 200, 200))
             else:
                 self.highlight_move_annexe(move,(72, 0, 72))
+        pygame.display.flip()
 
 
     def highlight_move_annexe(self, move,color):
-        s = pygame.Surface(hitbox[0].size)  # the size of your rect
+        s = pygame.Surface(self.hitbox[0].size)  # the size of your rect
         s.set_alpha(125)  # alpha level
         s.fill(color)
-        screen.blit(
-            s, hitbox[move[0] * 11 + move[1]].topleft
-        )  # (0,0) are the top-left coordinates
-        # pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[move[0]*11+move[1]] )
-        pygame.display.flip()
+        screen.blit(s, self.hitbox[move[0] * (Constants.number_of_columns+2) + move[1]].topleft)  
         
 
 
@@ -190,10 +135,12 @@ class Graphique:
         self.screen.blit(self.plateau, (0, 0))
         for rugbyman in game.Game.rugbymen(G):
                 if rugbyman.get_KO() > 0:
-                    self.affiche_joueur(rugbymen.Rugbyman.get_posx(rugbyman) * 11 + rugbymen.Rugbyman.get_posy(rugbyman), path_convertor(rugbyman))
+                        self.display_rugbyman(rugbyman)
+
+        #The double loop allows to draw the rugbyman not ko on top
         for rugbyman in game.Game.rugbymen(G):
                 if rugbyman.get_KO() == 0:
-                    self.affiche_joueur(rugbymen.Rugbyman.get_posx(rugbyman) * 11 + rugbymen.Rugbyman.get_posy(rugbyman), path_convertor(rugbyman))
+                    self.display_rugbyman(rugbyman)
 
                 
         self.display_ball(game.Game.get_ball(G))
@@ -240,10 +187,4 @@ def path_convertor(Rugbyman):
                 return "Images/Rapide_bleu.png"
 
 
-def is_pos_bottom_right(pos):
-    if pos[0]%2==1:# on est en bas de la case
-        if pos[1]%2==1: #On est à droite de la case
-            return True
 
-def convert_new_hitbox_to_hitbox(pos):
-    return [pos[0]//2,pos[1]//2]

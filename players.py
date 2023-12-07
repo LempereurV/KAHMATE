@@ -25,7 +25,12 @@ class Player:
         else:
             self.can_play = False
 
-    ### Fonctions Felix ###
+    ### A supprimer ###
+
+    def get_color(self):
+        return self._color
+    
+    ####
 
     def has_ball(self):
         """

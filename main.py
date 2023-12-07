@@ -5,31 +5,26 @@ import rugbymen
 import game
 import actions 
 
-Initialisation = True
-Game_ON = True
 
-while Game_ON:
-    for event in front.pygame.event.get():
-        ### Partie Initialisation ###
-        if Initialisation:
-            Graph = front.Graphique()
-            Game=game.Game(Graph)
-            Graph.display_ball(Game.get_ball())
-            front.pygame.display.flip()
-            Initialisation = False
-            
+
+Graph = front.Graphique()
+Game=game.Game(Graph)
+Graph.display_ball(Game.get_ball())
+front.pygame.display.flip()
+Initialisation = False
+
+
+
+
+for event in front.pygame.event.get():
+    while not Game.is_game_over():
         
-        #Get whowe turn it is to play
-
         active_player = Game.get_player_turn()
-
         while active_player.get_can_play():
-
             rugbyman_or_ball_or_bool=Game.what_is_in_pos(Graph)
 
             if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
 
-                Graph.draw_board(Game)
                 possible_move = Game.available_move_position(rugbyman_or_ball_or_bool)
 
                 if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
@@ -45,7 +40,7 @@ while Game_ON:
                     Graph.highlight_move_FElIX( possible_move)
                     
                     #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
-                    #Note that the move is made in the function
+                    #Note that the move itself is made in the function
                     rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
                                                                      Game,
                                                                      possible_move,
@@ -58,11 +53,11 @@ while Game_ON:
                 
             elif (rugbyman_or_ball_or_bool ==Game.get_ball()):
                 available_pass=actions.available_pass(Game)
-                Graph.highlight_pass( available_pass)
-                actions.make_pass(Game,Graph,available_pass)
+                if len(available_pass)>0:
+                    Graph.highlight_pass( available_pass)
+                    actions.make_pass(Game,Graph,available_pass)
         
-            if Game.is_rugbyman_on_ball()!=False :
-                rugbyman_with_ball=Game.is_rugbyman_on_ball()
+            Game.is_rugbyman_on_ball()
 
             active_player.actualize_can_play()
             Graph.draw_board(Game)

@@ -1,0 +1,13 @@
+
+class Constants:
+    
+    edge_width_normalized = 45.2/700
+    square_width_normalized = 46.8/700
+
+    edge_height_normalized=15.5/492
+    square_height_normalized = 46.5/492
+
+    number_of_rows = 8
+    number_of_columns = 11
+    forward_pass_scope = 3
+    back_pass_scope = 2
