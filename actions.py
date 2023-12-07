@@ -268,36 +268,6 @@ def action_rugbyman(Graphique,rugbyman, Game,Possible_moves, Graphisme):
 
 
 
-### Fonctions de Francois ###
-def ask_if_action_finished():
-    while True:
-        finished_move = input(
-            "Type 'no' if you haven't finished the action of this rugbyman, type 'yes' if you have finished"
-        )
-        if finished_move is "yes":
-            return True
-        if finished_move is "no":
-            return False
-
-
-def available_move_positions(current_x, current_y, game, scope):
-    """
-    Returns the list of admissible new positions for a rugbyman in position (current_x, current_y).
-    Used in move_rugbyman(rugbyman, game).
-    """
-    current_x = int(current_x)
-    current_y = int(current_y)
-    scope = int(scope)
-    available = []
-    for x in range(current_x - scope, current_x + scope + 1):
-        for y in range(current_y - scope, current_y + scope + 1):
-            if (
-                game.is_position_valid([x, y])
-                and (abs(current_x - x) + abs(current_y - y)) <= scope
-            ):  # and game.is_position_unoccupied([x, y])
-                available.append([x, y])
-    return available
-
 
 
 def available_backward_pass( rugbyman ,Game):

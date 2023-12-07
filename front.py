@@ -60,7 +60,16 @@ class Graphique:
         # Affichage de l'image dans la fenêtre
         self.screen.blit(self.plateau, (0, 0))
 
+    ### A supprrimer###
 
+    def draw_last_row(self):
+        for i in range (len(self.hitbox)):
+            if i//(Constants.number_of_columns+2)==Constants.number_of_rows+1:
+                pygame.draw.rect(self.screen, (255, 255, 255), self.hitbox[i], 0)
+        pygame.display.flip()
+
+    ### FIn a supprimer #####
+    
     def get_hitbox_on_click(self):
         cond=False
         while True:
@@ -77,10 +86,7 @@ class Graphique:
                                 cond=True
                             return [i//(Constants.number_of_columns+2),i%(Constants.number_of_columns+2)],cond
 
-    def draw_hitbox(self):
-        for i in range(len(self.hitbox)):
-            pygame.draw.rect(self.screen,pygame.Color(random.randint(0,255), random.randint(0,255), random.randint(0,255), 1),self.hitbox[i] )
-        pygame.display.flip()
+    
     def display_ball(self, ball):
         ball_graph = pygame.image.load("Images/Ballon.png")
         ball_graph = pygame.transform.scale(ball_graph, (self.hitbox[0].width/2, self.hitbox[0].height/2))

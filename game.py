@@ -80,6 +80,16 @@ class Game:
     def what_is_in_pos(self,Graph):
 
         pos,cond = Graph.get_hitbox_on_click()
+
+        L_RED_skip_button=[[Constants.number_of_rows+1,i] for i in range(5)]
+        L_BLUE_skip_button=[[0,Constants.number_of_columns+1-i] for i in range(5)]
+        if (pos in L_RED_skip_button
+            and self.get_player_turn().get_color()==color.Color.RED):
+            return True
+        if (pos in L_BLUE_skip_button
+            and self.get_player_turn().get_color()==color.Color.BLUE):
+            return True
+
         if (self.which_rugbyman_in_pos(pos) in self.get_player_turn().get_rugbymen()
             and cond
             and self.which_rugbyman_in_pos(pos).get_possesion()
