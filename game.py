@@ -133,26 +133,29 @@ class Game:
                     R = R + self.available_move_position_recursif(x + 1, y, scope - 1,color,True)
                 elif (self.which_rugbyman_in_pos_annexe([x + 1, y])!=False 
                       and self.which_rugbyman_in_pos_annexe([x + 1, y]).get_color()!=color):
-                    R = R + R + [[x+1,y,scope-1,False]]
+                    if scope>0:
+                        R = R + R + [[x+1,y,scope-1,False]]
             if x - 1 >= 0 :
                 if self.is_square_empty(x - 1, y):
                     R = R + self.available_move_position_recursif(x - 1, y, scope - 1,color,True)
                 elif ( self.which_rugbyman_in_pos_annexe([x - 1, y])!=False
                       and self.which_rugbyman_in_pos_annexe([x - 1, y]).get_color()!=color):
-                    
-                    R = R + [[x-1,y,scope-1,False]]
+                    if scope>0:
+                        R = R + [[x-1,y,scope-1,False]]
             if y + 1 < self.get_number_of_columns() :
                 if self.is_square_empty(x, y + 1):
                     R = R + self.available_move_position_recursif(x, y + 1, scope - 1,color,True)
                 elif ( self.which_rugbyman_in_pos_annexe([x , y+1])!=False 
                       and self.which_rugbyman_in_pos_annexe([x, y + 1]).get_color()!=color):
-                    R = R + R + [[x,y+1,scope-1,False]]
+                    if scope>0:
+                        R = R + R + [[x,y+1,scope-1,False]]
             if y - 1 >= 0 :
                 if self.is_square_empty(x, y - 1):
                     R = R + self.available_move_position_recursif(x, y - 1, scope - 1,color,True)
                 elif ( self.which_rugbyman_in_pos_annexe([x , y-1])!=False and 
                       self.which_rugbyman_in_pos_annexe([x, y - 1]).get_color()!=color):
-                    R = R + R + [[x,y-1,scope-1,False]]
+                    if scope>0:
+                        R = R + R + [[x,y-1,scope-1,False]]
             
             return R
     

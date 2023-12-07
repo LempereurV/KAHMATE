@@ -24,27 +24,16 @@ while Game_ON:
         active_player = Game.get_player_turn()
 
         while active_player.get_can_play():
-            #Get the position of the click
 
-            
-            #which_rugbyman_in_pos returns false if there is no rugbyman in the position, and the rugbyman otherwise
-
-
-            
-            #Graph.draw_new_hitboxes()
-            #rugbyman_or_ball_or_bool = Game.which_rugbyman_in_pos(Graph)
             rugbyman_or_ball_or_bool=Game.what_is_in_pos(Graph)
 
             if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
-                
-                
 
                 Graph.draw_board(Game)
-
                 possible_move = Game.available_move_position(rugbyman_or_ball_or_bool)
-                
-                #If the rugbyman selected is already in the list of chosen rugbyman, then he can move him
+
                 if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
+                    
                     Graph.highlight_move_FElIX( possible_move)
                     rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
                                                                      Game,

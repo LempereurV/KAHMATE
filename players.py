@@ -35,6 +35,9 @@ class Player:
             if rugbyman.has_ball():
                 return True
         return False
+    
+    def gett_cards(self):
+        return self._cards
 
     
 
@@ -130,23 +133,5 @@ class Player:
         except IndexError:
             raise ("No rugbyman to place")
 
-    def pick_card(self):
-        """
-        Discard the card chosen by the player and reinitialize the deck if all cards have been played
-        """
-        while True:
-            picked_card = input("Which card do you pick ?")
-            for i in range(len(self._cards)):
-                if picked_card == self._cards[i]:
-                    self._cards.pop(i)
-                    if len(self._cards) == 0:
-                        self._cards = [
-                            Card.ONE,
-                            Card.TWO,
-                            Card.THREE,
-                            Card.FOUR,
-                            Card.FIVE,
-                            Card.SIX,
-                        ]
-                    return
+    
 

@@ -40,6 +40,10 @@ for j in range(16):
     for i in range(22):
         new_coords.append((92 + i * 46.8/2, 62 + j * 46.5/2))
 
+hitbox_cards_red = []
+for i in range(8):
+    hitbox_cards_red.append(pygame.Rect(92 + i * 46.8, 62 + 8 * 46.5, 46.8, 46.5))
+
 
 ball_coords=[]
 for j in range(8):
@@ -93,6 +97,7 @@ class Graphique:
                         if hitbox[i].collidepoint(pygame.mouse.get_pos()):
                             if i < 88:
                                 return [i // 11, i % 11]
+                        
                     cond = True
         return None
     
@@ -138,8 +143,29 @@ class Graphique:
                 s, hitbox[pass_[0] * 11 + pass_[1]].topleft
             )
             pygame.display.flip()
-        
-        
+
+    """
+    def display_cards(self, player):
+        for i in range(len(player.get_cards())):
+            card = pygame.image.load("Images/" +"Carte" player.get_cards()[i] + ".png")
+            card = pygame.transform.scale(card, (46.8, 46.5))
+            self.screen.blit(card, (92 + i * 46.8, 62 + 8 * 46.5))
+        pygame.display.flip()   
+    """
+    def get_hitbox_cards(self, player):
+        cond = True
+        while cond:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    cond = False
+                    for i in range(len(player.get_cards())):
+                        if hitbox[i].collidepoint(pygame.mouse.get_pos()):
+                            return player.get_cards()[i]
+                    cond = True
+        return None
+
     def highlight_move_FElIX(self, list_move):
         for move in list_move:
             if move[3]:
