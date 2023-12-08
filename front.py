@@ -45,11 +45,18 @@ class Graphique:
     def __init__(self):
         # Initialisation de Pygame
         pygame.init()
+
         # Chargement de l'image, chemin relatif
         image_path = "Images/plateau.png"
-        self.plateau = pygame.image.load(image_path)
+        self.board = pygame.image.load(image_path)
+
+        
         # Définition de la taille de la fenêtre
-        self.size = self.plateau.get_size()
+        width = int(self.board.get_width() * Constants.scale_factor)
+        height = int(self.board.get_height() * Constants.scale_factor)
+        self.board = pygame.transform.scale(self.board, (width, height))
+        self.size = self.board.get_size()
+
 
         # Création de la fenêtre
         self.screen = pygame.display.set_mode(self.size)
@@ -58,7 +65,7 @@ class Graphique:
         self.hitbox = create_hitbox(self.screen)
 
         # Affichage de l'image dans la fenêtre
-        self.screen.blit(self.plateau, (0, 0))
+        self.screen.blit(self.board, (0, 0))
 
     ### A supprrimer###
 
@@ -138,7 +145,7 @@ class Graphique:
 
 
     def draw_board(self, G):
-        self.screen.blit(self.plateau, (0, 0))
+        self.screen.blit(self.board, (0, 0))
         for rugbyman in game.Game.rugbymen(G):
                 if rugbyman.get_KO() > 0:
                         self.display_rugbyman(rugbyman)
