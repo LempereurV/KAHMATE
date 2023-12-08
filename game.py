@@ -27,7 +27,7 @@ class Game:
         
         #A changer
         #self._ball = ball.Ball(random.randint(0, number_of_rows - 1))
-        self._ball = ball.Ball(Constants.number_of_rows - 1)
+        self._ball = ball.Ball(Constants.number_of_rows - 2)
 
 
     def get_forward_pass_scope(self):

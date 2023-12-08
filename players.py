@@ -12,13 +12,14 @@ class Player:
         self._placement_order= actions.placement_orders(color)
 
         # List of all the rugbymen of the player
-        self._rugbymen = actions.positions_rugbymen_player(color, Game.get_number_of_columns(), self._placement_order, Graphique)
+        self._rugbymen = actions.positions_rugbymen_player(self._placement_order, Graphique)
 
         # List of all the rugbymen chosen by the player for his turn 
         self._chosen_rugbymen = []
 
 
-        self._cards=cards.full_deck()
+        self._deck=cards.full_deck()
+
         self._color = color
         if color ==turn_color:
             self.can_play = True
@@ -40,9 +41,7 @@ class Player:
             if rugbyman.has_ball():
                 return True
         return False
-    
-    def gett_cards(self):
-        return self._cards
+
 
     
 
@@ -113,30 +112,34 @@ class Player:
     def show_rugbyman(self, i):
         return self._chosen_rugbymen[i]
     
+    def add_rugbyman(self, rugbyman):
+        self._chosen_rugbymen.append(rugbyman)
     
 
     def refresh_rugbymen_stats(self):
         
+        if len(self.get_deck())==0 :
+            self._deck=cards.full_deck()
         for rugbyman in self.get_rugbymen():
             rugbymen.Rugbyman.refresh_stats(rugbyman)
         self._chosen_rugbymen= []
         self.can_play = True
 
 
-
-
-
-    ### Francois ###
-    def add_rugbyman(self, rugbyman):
-        self._chosen_rugbymen.append(rugbyman)
-
-
-    def place_rugbyman(self):
-        try:
-            rugbyman = self._unplaced_rugbymen.pop()
-            pass
-        except IndexError:
-            raise ("No rugbyman to place")
-
+    def get_deck_int(self):
+        R=[]
+        for card in self._deck:
+            R.append(cards.convert_card_to_int(card))
+        return R
+    
+    def get_deck(self):
+        return self._deck
+    
+    def choose_card(self,card):
+        if card in self.get_deck():
+            self._deck.remove(card)
+            return True
+        else:
+            return False
     
 

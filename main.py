@@ -19,9 +19,10 @@ Initialisation = False
 
 while not Game.is_game_over():
     active_player = Game.get_player_turn()
-    
+
     while active_player.get_can_play():
 
+        
         rugbyman_or_ball_or_bool=Game.what_is_in_pos(Graph)
 
         if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
@@ -51,7 +52,7 @@ while not Game.is_game_over():
                 #We add the rugbyman to the list of chosen rugbyman if the move is made
                 if rugbyman_or_ball_or_bool !=False :
                     active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
-            
+
         elif (rugbyman_or_ball_or_bool ==Game.get_ball()):
             available_pass=actions.available_pass(Game)
             if len(available_pass)>0:
@@ -59,6 +60,7 @@ while not Game.is_game_over():
                 actions.make_pass(Game,Graph,available_pass)
 
         elif (rugbyman_or_ball_or_bool == True):
+            #If the player has resized the screen
             break
 
         Game.is_rugbyman_on_ball()

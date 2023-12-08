@@ -5,6 +5,8 @@ from color import Color
 import players
 import game
 import ball
+from constants import *
+import cards   
 
 def placement_orders(color):
     R = {
@@ -18,77 +20,77 @@ def placement_orders(color):
     return R
 
 
-def positions_rugbymen_player(color, n_column, placement_order, Graphique):
+def positions_rugbymen_player(placement_order, Graphique):
 
     i = 0
     n_rugbymen = len(placement_order)
     R = [None] * n_rugbymen 
+    L_pos=[]
     Noms = list(placement_order.keys())  
+    color=placement_order[Noms[0]].get_color()
 
     
     ### A enlever ####
     for i in range(n_rugbymen):
         placement_order[Noms[i]].set_pos_x(i+1)
         if color == Color.RED:
-            placement_order[Noms[i]].set_pos_y(random.randint(1, 5))
+            placement_order[Noms[i]].set_pos_y(5)
         else:
-            placement_order[Noms[i]].set_pos_y(random.randint(7, 11))
+            placement_order[Noms[i]].set_pos_y(7)
 
         R[i]=placement_order[Noms[i]]
         front.Graphique.display_rugbyman(Graphique,R[i])
     return R
-    ####    FIn a enlever
+    ####    FIn a enlever ####
     
-    ### A modifier avec nouvelle hitboxe ###    
-
+    
     while i < n_rugbymen:
-        print(
-            str(color).split(".")[-1] + " Player, Choose the position of the " + Noms[i]
-        )  # Changer Color.split(".")[-1] for the color to display as intended
-        pos = front.Graphique.get_hitbox_on_click(
-            Graphique
-        )  # Fonction de la classe graphique qui renvoie une liste de la forme [i,j] avec i et j les colonnes et lignes de la case cliquée
-        if pos in R:
+        # The Color.split(".")[-1] is for the color to display as intended
+        print( str(color).split(".")[-1] + " Player, Choose the position of the " + Noms[i])
+        # Fonction de la classe graphique qui renvoie une liste de la forme [i,j] avec i et j les colonnes et lignes de la case cliquée
+        pos,cond = front.Graphique.get_hitbox_on_click(Graphique)
+
+        #This step is necessary to ensure that player can resize the screen
+        while pos==False:
+            pos,cond = front.Graphique.get_hitbox_on_click(Graphique)
+
+        if pos in L_pos:
             cond_pos_already_taken = True
             while cond_pos_already_taken:
                 print("The position chosen is already taken, re choose the position")
-                pos = front.Graphique.get_hitbox_on_click(Graphique)
-                if not pos in R:
+                pos,cond = front.Graphique.get_hitbox_on_click(Graphique)
+                if not pos in L_pos:
                     cond_pos_already_taken = False
-        if (
-            color == Color.RED and pos[1] >= n_column // 2
-        ):  # Red characters should be placed on the left
+
+        if (color == Color.RED 
+            and (pos[1] > Constants.number_of_columns // 2
+            or pos[1]==0)):  # Red characters should be placed on the left
             cond_RED = True
             while cond_RED:
-                print(
-                    "The position isn't correct, the red team is suppose to be on the left, re choose the position"
-                )
-                pos = front.Graphique.get_hitbox_on_click(Graphique)
-                if pos[1] < n_column // 2:
+                print("The position isn't correct, the red team is suppose to be on the left of the field")
+                pos,cond = front.Graphique.get_hitbox_on_click(Graphique)
+                if pos[1] < Constants.number_of_columns // 2+1 and pos[1]!=0:
                     cond_RED = False
 
-        if color == Color.BLUE and pos[1] <= n_column // 2:
+        if (color == Color.BLUE 
+            and (pos[1] <= Constants.number_of_columns // 2+1
+            or pos[1]==Constants.number_of_columns+1)):  # Blue characters should be placed on the right
             cond_Blue = True
             while cond_Blue:
-                print(
-                    "The position isn't correct, the blue team is suppose to be on the right, re choose the position"
-                )
-                pos = front.Graphique.get_hitbox_on_click(Graphique)
-                if pos[1] > n_column // 2:
+                print("The position isn't correct, the blue team is suppose to be on the right, re choose the position")
+                pos,cond = front.Graphique.get_hitbox_on_click(Graphique)
+                if pos[1] > Constants.number_of_columns // 2+1 and pos[1]!=Constants.number_of_columns+1:
                     cond_Blue = False
-        front.Graphique.affiche_joueur(
-            Graphique,
-            pos[0] * n_column + pos[1],
-            front.path_convertor(placement_order[Noms[i]]),
-        )  # Display the newly placed rugbymen on the board
-        R[i] = [pos[0], pos[1]]
+        
+        #Toutes les conditions ont été vérifiées, on peut enregistrer les informations
+        placement_order[Noms[i]].set_pos(pos)
+        Graphique.display_rugbyman(placement_order[Noms[i]])  # Display the newly placed rugbymen on the board
+        R[i] =  placement_order[Noms[i]]
+        L_pos.append(pos)
+        front.pygame.display.flip()
         i += 1
-    R_with_rugbymen = []
-    # R_with_rugbymen is the list of the positions of the rugbymen with the type of the rugbymen
-    for i in range(n_rugbymen):
-        R_with_rugbymen.append(R[i] + [placement_order[Noms[i]]])
-
-    return R_with_rugbymen
+    print(R)
+    return R
 
 def move_rugbyman_after_succesfull_charging( Graphique,rugbyman,ball,Possible_moves):
         """
@@ -118,12 +120,23 @@ def move_rugbyman( pos,rugbyman,ball,cost):
 def charging(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
     #the condition is >=1 because once he is on him he has to be able to move
     if rugbyman_attacker.get_moves_left()- norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>=1:
-        print("Players have to choose their cards")
-        c_attacker=random.randint(1,6)
-        c_defenser=random.randint(1,6)
+        print("Red Player has to choose his card")
+        c_red=choose_cards(Graphique,Game.get_player_red())
+        Graphique.draw_board(Game)
+        print("Blue Player has to choose his card")
+        c_blue=choose_cards(Graphique,Game.get_player_blue())
+
+        print("Red chose"+str(c_red))
+        print("Blue chose"+str(c_blue))
+        if rugbyman_attacker.get_color()==Color.RED:
+            c_attacker=c_red
+            c_defender=c_blue
+        else:
+            c_attacker=c_blue
+            c_defender=c_red
 
         #If the attacker wins the charge
-        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defenser+rugbyman_defender.get_defense_bonus():
+        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
             #Defender is KO
             rugbyman_defender.set_KO()
 
@@ -141,7 +154,6 @@ def charging(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
             #We re-compute the list of possible moves for the attacker and make him move
             Graphique.draw_board(Game)
             Possible_moves=Game.available_move_position(rugbyman_attacker)
-            print(Possible_moves)
             Graphique.highlight_move_FElIX(Possible_moves)
             #This function forces the rugbyman to move
             move_rugbyman_after_succesfull_charging(Graphique,rugbyman_attacker,Game.get_ball(),Possible_moves)
@@ -201,9 +213,19 @@ def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
     
     print("Players have to choose their cards")
     if Game.is_rugbyman_on_ball()==rugbyman_defender:
-        c_attacker=random.randint(1,6)
-        c_defenser=random.randint(1,6)
-        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defenser+rugbyman_defender.get_defense_bonus():
+        print("Red Player has to choose his card")
+        c_red=choose_cards(Graphique,Game.get_player_red())
+        print("Blue Player has to choose his card")
+        Graphique.draw_board(Game)
+        c_blue=choose_cards(Graphique,Game.get_player_blue())
+
+        if rugbyman_attacker.get_color()==Color.RED:
+            c_attacker=c_red
+            c_defender=c_blue
+        else:
+            c_attacker=c_blue
+            c_defender=c_red
+        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
             rugbyman_defender.set_KO()
             rugbyman_defender.set_possesion(False)
             
@@ -386,3 +408,56 @@ def make_pass(Game,Graph,Possible_passes):
             Game.is_rugbyman_on_ball().set_possesion(True)
 
 
+def choose_cards( Graph, player):
+        #We draw the cards
+        Graph.draw_cards(player)
+        #We wait for the player to choose his cards
+        
+        is_card_returned=True
+        active_cards=player.get_deck_int()
+        pos,cond=Graph.get_hitbox_on_click()
+        while pos==False :
+            pos,cond=Graph.get_hitbox_on_click()
+        if player.get_color()==Color.RED:
+            print("Red player Chooses his cards")
+
+            while is_card_returned:
+                while pos[1]>=(Constants.number_of_columns+2)//2 or pos[0]<2 or pos[0]>Constants.number_of_rows-1: 
+                    print("Please Click on a card")
+                    pos,cond=Graph.get_hitbox_on_click()
+                    while pos==False :
+                        pos,cond=Graph.get_hitbox_on_click()
+                if pos[0]<=(Constants.number_of_rows+2)//2:
+                    card_number=pos[1]//2+1
+                else :
+                    card_number=pos[1]//2+4
+                if card_number in active_cards:
+                    player.choose_card(cards.convert_int_to_card(card_number))
+                    is_card_returned=False
+                else :
+                    print("You can't choose this card")
+                    pos,cond=Graph.get_hitbox_on_click()
+
+        if player.get_color()==Color.BLUE:
+            print("Blue player Chooses his cards")
+            while is_card_returned:
+                while pos[1]<=(Constants.number_of_columns+2)//2 or pos[0]<2 or pos[0]>Constants.number_of_rows-1: 
+                    print("Please Click on a card")
+                    pos,cond=Graph.get_hitbox_on_click()
+                    while pos==False :
+                        pos,cond=Graph.get_hitbox_on_click()
+                if pos[0]<=(Constants.number_of_rows+2)//2:
+                    card_number=pos[1]//2-3
+                else :
+                    card_number=pos[1]//2+1
+                if card_number in active_cards:
+                    player.choose_card(cards.convert_int_to_card(card_number))
+                    is_card_returned=False
+                else :
+                    print("You can't choose this card")
+                    pos,cond=Graph.get_hitbox_on_click()
+                    while pos==False :
+                        pos,cond=Graph.get_hitbox_on_click()
+
+        return card_number
+    

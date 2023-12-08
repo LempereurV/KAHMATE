@@ -7,6 +7,7 @@ import actions
 import color
 import random
 from constants import *
+import cards 
 
 # Initialisation de Pygame
 pygame.init()
@@ -87,6 +88,7 @@ class Graphique:
 
     ### FIn a supprimer #####
 
+
     def is_board_being_resized(self,event):
         if event.type == pygame.VIDEORESIZE:
             print("The window has been resized")
@@ -106,7 +108,7 @@ class Graphique:
                     raise ValueError("The player has quit the game")
                 elif self.is_board_being_resized(event):
                     return False,False
-                
+                    # usig continue works but i can t find a way to still display the board since i need Game
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     for i in range(len(self.hitbox)):
                         if self.hitbox[i].collidepoint(pygame.mouse.get_pos()):
@@ -125,8 +127,35 @@ class Graphique:
         self.screen.blit(ball_graph,self.hitbox[ball.get_pos_x()*(Constants.number_of_columns+2)+ball.get_pos_y()].center)
         pygame.display.flip()
         
-        
     
+    def draw_cards(self, player):
+        for i in range (6):
+
+            cond=False #Permet de savoir si la carte est dans le deck
+            for card in player.get_deck():
+                if cards.convert_card_to_int(card)==i+1:
+                    cond=True
+            if cond:
+                path="Images/Carte"+str(i+1)+".png"
+            else:
+                path="Images/Carte_Endurance.png"
+            card_graph = pygame.image.load(path)
+            card_graph = pygame.image.load(path)
+            card_graph = pygame.transform.scale(card_graph, (2*self.hitbox[0].width, 3*self.hitbox[0].height))
+
+            if player.get_color()==color.Color.RED:
+                if i<3:
+                    self.screen.blit(card_graph,self.hitbox[2*(Constants.number_of_columns+2)+2*i].topleft)
+                else:
+                    self.screen.blit(card_graph,self.hitbox[5*(Constants.number_of_columns+2)+2*(i-3)].topleft)
+            if player.get_color()==color.Color.BLUE:
+                if i<3:
+                    self.screen.blit(card_graph,self.hitbox[2*(Constants.number_of_columns+2)+(Constants.number_of_columns+2)//2+1+2*i].topleft)
+                else:
+                    self.screen.blit(card_graph,self.hitbox[5*(Constants.number_of_columns+2)+(Constants.number_of_columns+2)//2+1+2*(i-3)].topleft)
+        pygame.display.flip()
+
+
     def display_rugbyman(self, rugbyman):
         path=path_convertor(rugbyman)
         pos=rugbyman.get_pos()
@@ -135,14 +164,20 @@ class Graphique:
         
         self.screen.blit(player, self.hitbox[pos[0]*(Constants.number_of_columns+2)+pos[1]].topleft)
 
+    def draw_case(self):
+        for i in range (len(self.hitbox)):
+            if i//(Constants.number_of_columns+2)==Constants.number_of_rows+1:
+                pygame.draw.rect(self.screen, (255, 255, 255), self.hitbox[i], 0)
+        pygame.display.flip()
 
     def highlight_button_after_click(self, Color):
+        #A changer c'est moche
         if Color==color.Color.RED:
             for i in range(5):
                 pygame.draw.rect(self.screen, (255, 0, 0), self.hitbox[(Constants.number_of_rows+1)*(Constants.number_of_columns+2)+i], 0)
         elif Color==color.Color.BLUE:
             for i in range(5):
-                pygame.draw.rect(self.screen, (0, 0, 255), self.hitbox[i], 0)
+                pygame.draw.rect(self.screen, (0, 0, 255), self.hitbox[Constants.number_of_columns-i+1], 0)
         pygame.display.flip()
                 
 
@@ -229,6 +264,5 @@ def path_convertor(Rugbyman):
                 return "Images/Rapide_rouge.png"
             if Rugbyman.color == color.Color.BLUE:
                 return "Images/Rapide_bleu.png"
-
 
 

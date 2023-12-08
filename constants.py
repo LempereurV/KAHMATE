@@ -14,3 +14,5 @@ class Constants:
     number_of_columns = 11
     forward_pass_scope = 3
     back_pass_scope = 2
+
+    cards_ratio_height_width = 208/137
