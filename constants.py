@@ -2,7 +2,7 @@
 class Constants:
 
     #To change the size of the window, change the scale_factor
-    scale_factor = 1.5
+    scale_factor = 1.8
     
     edge_width_normalized = 45.2/700
     square_width_normalized = 46.8/700

@@ -83,11 +83,14 @@ class Game:
 
         L_RED_skip_button=[[Constants.number_of_rows+1,i] for i in range(5)]
         L_BLUE_skip_button=[[0,Constants.number_of_columns+1-i] for i in range(5)]
+
         if (pos in L_RED_skip_button
             and self.get_player_turn().get_color()==color.Color.RED):
+            Graph.highlight_button_after_click(color.Color.RED)
             return True
         if (pos in L_BLUE_skip_button
             and self.get_player_turn().get_color()==color.Color.BLUE):
+            Graph.highlight_button_after_click(color.Color.BLUE)
             return True
 
         if (self.which_rugbyman_in_pos(pos) in self.get_player_turn().get_rugbymen()
@@ -169,7 +172,7 @@ class Game:
                 and rugbyman.get_possesion()):
                 print("Game over, the blue team won")
                 return True
-            if (rugbyman.get_pos_y()==self.get_number_of_rows()+1 
+            if (rugbyman.get_pos_y()==self.get_number_of_columns()+1 
                 and rugbyman.get_color()==color.Color.RED
                 and rugbyman.get_possesion()):
                 print("Game over, the red team won")

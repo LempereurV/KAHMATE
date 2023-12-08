@@ -52,14 +52,24 @@ class Graphique:
 
         
         # Définition de la taille de la fenêtre
-        width = int(self.board.get_width() * Constants.scale_factor)
-        height = int(self.board.get_height() * Constants.scale_factor)
-        self.board = pygame.transform.scale(self.board, (width, height))
-        self.size = self.board.get_size()
+        #width = int(self.board.get_width() * Constants.scale_factor)
+        #height = int(self.board.get_height() * Constants.scale_factor)
+        
+
+        
 
 
         # Création de la fenêtre
-        self.screen = pygame.display.set_mode(self.size)
+        #self.screen = pygame.display.set_mode(self.size)
+        #self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN,pygame.RESIZABLE)
+
+        width=pygame.display.Info().current_w
+        height=pygame.display.Info().current_h
+        self.screen = pygame.display.set_mode((width, height),pygame.RESIZABLE)
+
+        self.board = pygame.transform.scale(self.board, (width, height))
+
+
 
         # Création de la hitbox
         self.hitbox = create_hitbox(self.screen)
@@ -76,13 +86,27 @@ class Graphique:
         pygame.display.flip()
 
     ### FIn a supprimer #####
-    
+
+    def is_board_being_resized(self,event):
+        if event.type == pygame.VIDEORESIZE:
+            print("The window has been resized")
+            size = event.size
+            self.screen = pygame.display.set_mode(size, pygame.RESIZABLE)
+            self.board = pygame.transform.scale(self.board, size)
+            self.hitbox = create_hitbox(self.screen)
+            return True
+        return False
+
+
     def get_hitbox_on_click(self):
         cond=False
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     raise ValueError("The player has quit the game")
+                elif self.is_board_being_resized(event):
+                    return False,False
+                
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     for i in range(len(self.hitbox)):
                         if self.hitbox[i].collidepoint(pygame.mouse.get_pos()):
@@ -107,14 +131,21 @@ class Graphique:
         path=path_convertor(rugbyman)
         pos=rugbyman.get_pos()
         player = pygame.image.load(path)
-        player = pygame.transform.scale(player,
-                                         (Constants.square_width_normalized*self.screen.get_width(),
-                                           Constants.square_height_normalized*self.screen.get_height()))
+        player = pygame.transform.scale(player,(self.hitbox[0].width,self.hitbox[0].height))
         
         self.screen.blit(player, self.hitbox[pos[0]*(Constants.number_of_columns+2)+pos[1]].topleft)
 
 
-    # Affiche un joueur au centre de la hitbox
+    def highlight_button_after_click(self, Color):
+        if Color==color.Color.RED:
+            for i in range(5):
+                pygame.draw.rect(self.screen, (255, 0, 0), self.hitbox[(Constants.number_of_rows+1)*(Constants.number_of_columns+2)+i], 0)
+        elif Color==color.Color.BLUE:
+            for i in range(5):
+                pygame.draw.rect(self.screen, (0, 0, 255), self.hitbox[i], 0)
+        pygame.display.flip()
+                
+
     
 
 
