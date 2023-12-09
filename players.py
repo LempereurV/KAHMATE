@@ -83,7 +83,8 @@ class Player:
             move_points = 0
             for rugbyman in self.get_chosen_rugbymen():
                 if (rugbyman.get_KO()==0 
-                    and rugbymen.Rugbyman.move_left(rugbyman)>0):
+                    and (rugbymen.Rugbyman.move_left(rugbyman)>0
+                         or rugbyman.has_ball())):
                     cond=True
                 move_points += rugbymen.Rugbyman.move_left(rugbyman)
             if not cond:

@@ -11,9 +11,13 @@ from constants import *
 
 
 class Game:
+    """
+    The Game class is the most "macroscopic" class of the code, it provides a general link between every class 
+    """
     def __init__(self,Graphique):
-        self._number_of_columns = Constants.number_of_columns 
-        self._number_of_rows = Constants.number_of_rows 
+        """
+        The Game class contain s 
+        """
 
         self._whose_turn = color.Color.RED
 
@@ -21,30 +25,16 @@ class Game:
         self._player_red = players.Player(color.Color.RED,self,self._whose_turn,Graphique) 
         self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,Graphique) 
 
-        
-        self._forward_pass_scope = Constants.forward_pass_scope
-        self._back_pass_scope = Constants.back_pass_scope
-        
+
         #A changer
-        #self._ball = ball.Ball(random.randint(0, number_of_rows - 1))
-        self._ball = ball.Ball(Constants.number_of_rows - 2)
+        self._ball = ball.Ball(random.randint(1, Constants.number_of_rows ))
 
 
-    def get_forward_pass_scope(self):
-        return self._forward_pass_scope
-
-    def get_back_pass_scope(self):
-        return self._back_pass_scope
     
     def is_position_correct(self, x, y):
-        return x >=1 and x <= self.get_number_of_rows() and y >= 0 and y <= self.get_number_of_columns()+1
+        return x >=1 and x <= Constants.number_of_rows and y >= 0 and y <= Constants.number_of_columns+1
 
 
-    def get_number_of_rows(self):
-        return self._number_of_rows
-    
-    def get_number_of_columns(self):
-        return self._number_of_columns
     
     def get_player_red(self):
         return self._player_red
@@ -78,7 +68,14 @@ class Game:
         return False
     
     def what_is_in_pos(self,Graph):
-
+        """
+        The role of what_is_in_pos is wait for the user to click on the board and return the object that the user has clicked on
+        These objects are either :
+        -A rugbyman --> returns a rugbyman  
+        -The ball --> returns the ball
+        -Nothing --> returns False 
+        -Skip button --> returns True 
+        """
         pos,cond = Graph.get_hitbox_on_click()
 
         L_RED_skip_button=[[Constants.number_of_rows+1,i] for i in range(5)]
@@ -115,11 +112,17 @@ class Game:
     #  available_move_position_recursif returns the list of all the possible positions (including the initial position) that a rugbyman can move to
     # Be aware that the elements of the list arent unique, the unicity will be given by available_move_position
     def available_move_position_recursif(self, rugbyman, x , y , scope, color, cond):
+        """
+        This function spread over on the board on all the reachable square (reachable squares are squares that are within the board limits 
+        and do not contain ally rugbyman )
+        The return shape is as follow :
+        [x position of the square, y position of the square, movement points left to get to this square, Bool (True if square is free/ False if it contains an ennemy) ]
+        """
         if scope < 0:
             return []
         else:
             R=[[x,y,scope,cond]]
-            if x + 1 <= self.get_number_of_rows() :
+            if x + 1 <= Constants.number_of_rows :
                 if self.is_square_empty(x + 1, y):
                     R = R + self.available_move_position_recursif(rugbyman,x + 1, y, scope - 1,color,True)
                 elif (self.which_rugbyman_in_pos([x + 1, y])!=False 
@@ -133,7 +136,7 @@ class Game:
                       and self.which_rugbyman_in_pos([x - 1, y]).get_color()!=color):
                     if scope>0:
                         R = R + [[x-1,y,scope-1,False]]
-            if y + 1 <= self.get_number_of_columns()+1 :
+            if y + 1 <= Constants.number_of_columns+1 :
                 if self.is_square_empty(x, y + 1):
                     R = R + self.available_move_position_recursif(rugbyman,x, y + 1, scope - 1,color,True)
                 elif ( self.which_rugbyman_in_pos([x , y+1])!=False 
@@ -166,13 +169,18 @@ class Game:
             
             return R
     def is_game_over(self):
+        """
+        The function is_game_over is over check one of the rugbymen is in the opposing goal with the ball:  
+        If there is one --> returns True
+        If not --> returns False
+        """
         for rugbyman in self.rugbymen():
             if (rugbyman.get_pos_y()==0
                 and rugbyman.get_color()==color.Color.BLUE
                 and rugbyman.get_possesion()):
                 print("Game over, the blue team won")
                 return True
-            if (rugbyman.get_pos_y()==self.get_number_of_columns()+1 
+            if (rugbyman.get_pos_y()==Constants.number_of_columns+1 
                 and rugbyman.get_color()==color.Color.RED
                 and rugbyman.get_possesion()):
                 print("Game over, the red team won")
@@ -184,6 +192,13 @@ class Game:
 
 
     def available_move_position(self,rugbyman):
+
+        """
+        The main role of this function if to filter the data returned by the available_move_position_recursif function.
+        This step is necessary since the data returned by available_move_position_recursif are not unique and are associated with
+        different cost of mouvement  
+
+        """
         
         Liste_untreated=self.available_move_position_recursif(rugbyman,rugbyman.get_pos_x(),rugbyman.get_pos_y(),rugbyman.get_moves_left(),rugbyman.get_color(),True)
         
@@ -213,19 +228,24 @@ class Game:
 
     
     def refresh_players_rugbymen_stats(self):
+        """
+        This function refresh the stats of every rugbyman of the game
+        """
         players.Player.refresh_rugbymen_stats(self._player_red)
         players.Player.refresh_rugbymen_stats(self._player_blue)
 
 
 
-    def forward_pass_scope(self):
-        return self.forward_pass_scope
+
 
 
     def get_ball(self):
         return self._ball
 
     def is_rugbyman_on_ball(self):
+        """
+        Check if there is a rugbyman on ball returns the rugbyman if there is return False otherwise
+        """
         for rugbyman in self.rugbymen():
             if rugbyman.get_pos() == self.get_ball().get_pos():
                 rugbyman.set_possesion(True)

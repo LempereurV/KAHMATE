@@ -12,6 +12,7 @@ class Constants:
 
     number_of_rows = 8
     number_of_columns = 11
+    
     forward_pass_scope = 3
     back_pass_scope = 2
 

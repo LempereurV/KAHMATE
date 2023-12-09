@@ -126,8 +126,8 @@ def charging(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
         print("Blue Player has to choose his card")
         c_blue=choose_cards(Graphique,Game.get_player_blue())
 
-        print("Red chose"+str(c_red))
-        print("Blue chose"+str(c_blue))
+        print("Red chose :"+str(c_red))
+        print("Blue chose :"+str(c_blue))
         if rugbyman_attacker.get_color()==Color.RED:
             c_attacker=c_red
             c_defender=c_blue
@@ -176,7 +176,7 @@ def charging(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
                         Game.get_ball().set_pos([rugbyman_attacker.get_pos_x()+1,rugbyman_attacker.get_pos_y()])
             else:
                 #Same but here the "behind" blue is towards the right 
-                if rugbyman_attacker.get_pos_y()<Game.get_number_of_columns() :
+                if rugbyman_attacker.get_pos_y()<Constants.number_of_columns :
                     Game.get_ball().set_pos([rugbyman_attacker.get_pos_x(),rugbyman_attacker.get_pos_y()-1])
                 else:
                     if rugbyman_attacker.get_pos_x()>1:
@@ -219,6 +219,9 @@ def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
         Graphique.draw_board(Game)
         c_blue=choose_cards(Graphique,Game.get_player_blue())
 
+        print("Red chose :"+str(c_red))
+        print("Blue chose :"+str(c_blue))
+
         if rugbyman_attacker.get_color()==Color.RED:
             c_attacker=c_red
             c_defender=c_blue
@@ -238,7 +241,7 @@ def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
                         else:
                             Game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
             else:
-                if rugbyman_defender.get_pos_y()<Game.get_number_of_columns() :
+                if rugbyman_defender.get_pos_y()<Constants.number_of_columns :
                     Game.get_ball().set_pos([rugbyman_defender.get_pos_x(),rugbyman_defender.get_pos_y()+1])
                 else:
                     if rugbyman_defender.get_pos_x()>0:
@@ -298,7 +301,7 @@ def available_backward_pass( rugbyman ,Game):
     current_x = rugbyman.get_pos_x()
     current_y = rugbyman.get_pos_y()
 
-    pass_scope = Game.get_back_pass_scope()
+    pass_scope = Constants.back_pass_scope
 
     if rugbyman.get_color() is Color.RED:
         for x in range(current_x - pass_scope, current_x + pass_scope+1):
@@ -320,7 +323,7 @@ def available_forward_pass( rugbyman ,Game):
     current_x = rugbyman.get_pos_x()
     current_y = rugbyman.get_pos_y()
 
-    pass_scope = Game.get_forward_pass_scope()
+    pass_scope = Constants.forward_pass_scope
 
     cond = True
     
@@ -427,7 +430,7 @@ def choose_cards( Graph, player):
                     pos,cond=Graph.get_hitbox_on_click()
                     while pos==False :
                         pos,cond=Graph.get_hitbox_on_click()
-                if pos[0]<=(Constants.number_of_rows+2)//2:
+                if pos[0]<(Constants.number_of_rows+2)//2:
                     card_number=pos[1]//2+1
                 else :
                     card_number=pos[1]//2+4
@@ -446,10 +449,10 @@ def choose_cards( Graph, player):
                     pos,cond=Graph.get_hitbox_on_click()
                     while pos==False :
                         pos,cond=Graph.get_hitbox_on_click()
-                if pos[0]<=(Constants.number_of_rows+2)//2:
-                    card_number=pos[1]//2-3
+                if pos[0]<(Constants.number_of_rows+2)//2:
+                    card_number=(pos[1]+1)//2-3
                 else :
-                    card_number=pos[1]//2+1
+                    card_number=(pos[1]+1)//2
                 if card_number in active_cards:
                     player.choose_card(cards.convert_int_to_card(card_number))
                     is_card_returned=False
