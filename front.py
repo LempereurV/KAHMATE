@@ -171,14 +171,16 @@ class Graphique:
         pygame.display.flip()
 
     def highlight_button_after_click(self, Color):
-        #A changer c'est moche
         if Color==color.Color.RED:
-            for i in range(5):
-                pygame.draw.rect(self.screen, (255, 0, 0), self.hitbox[(Constants.number_of_rows+1)*(Constants.number_of_columns+2)+i], 0)
+            button = pygame.image.load("Images/Khamate_red_highlited.png")
+            button = pygame.transform.scale(button,(4*self.hitbox[0].width,self.hitbox[0].height))
+            self.screen.blit(button, self.hitbox[(Constants.number_of_rows+1)*(Constants.number_of_columns+2)].topleft)
         elif Color==color.Color.BLUE:
-            for i in range(5):
-                pygame.draw.rect(self.screen, (0, 0, 255), self.hitbox[Constants.number_of_columns-i+1], 0)
+            button = pygame.image.load("Images/Khamate_blue_highlited.png")
+            button = pygame.transform.scale(button,(4*self.hitbox[0].width,self.hitbox[0].height))
+            self.screen.blit(button, self.hitbox[Constants.number_of_columns-2].topleft)
         pygame.display.flip()
+        pygame.time.delay(100)
                 
 
     

@@ -7,6 +7,9 @@ import actions
 
 
 
+### Initializations ###
+
+#The Graph 
 Graph = front.Graphique()
 Game=game.Game(Graph)
 Graph.display_ball(Game.get_ball())
@@ -16,11 +19,15 @@ Initialisation = False
 
 
 
+#This the main loop of the game, the function is_game_over of game is verifying each turn if one rugbyman is in the adversary camp
+
 
 while not Game.is_game_over():
+
     active_player = Game.get_player_turn()
 
     while active_player.get_can_play():
+        Graph.draw_board(Game)
 
         
         rugbyman_or_ball_or_bool=Game.what_is_in_pos(Graph)
