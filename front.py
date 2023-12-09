@@ -27,6 +27,10 @@ screen = pygame.display.set_mode(size)
 
 
 def create_hitbox(screen):
+
+    """
+        
+    """
     #La hitbox contient chaque case du terrain, ainsi que les bords du terrain (les bords sont des cases de tailles identiques au damier classique)
     #Chaque hitbox est divisé par 4 pour avoir une hitbox plus petite (permet de  cliquer sur le ballon )
     full_hitbox = []
