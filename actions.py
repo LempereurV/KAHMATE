@@ -228,9 +228,14 @@ def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
         else:
             c_attacker=c_blue
             c_defender=c_red
+
+
         if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
             rugbyman_defender.set_KO()
             rugbyman_defender.set_possesion(False)
+
+            if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
+                Game.get_ball().set_pos(rugbyman_attacker.get_pos())
             
             if rugbyman_defender.get_color()==Color.RED:
                     if rugbyman_defender.get_pos_y()>0:
@@ -263,6 +268,19 @@ def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
             if min_norm<100: #why not ???
                 rugbyman_attacker.set_pos(new_attacker_pos)
                 rugbyman_attacker.set_move_left(new_attacker_cost)
+
+            if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
+                print("Perfect tackle, the attacker keeps the ball ")
+                Game.get_ball().set_pos(new_attacker_pos)
+                Game.get_ball().set_carrier(rugbyman_attacker)
+                rugbyman_attacker.set_possesion(True)
+        else :
+            if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
+                print("Perfect tackle, the attacker keeps the ball ")
+                Game.get_ball().set_pos(rugbyman_attacker.get_pos())
+                Game.get_ball().set_carrier(rugbyman_attacker)
+                rugbyman_attacker.set_possesion(True)
+
         return rugbyman_attacker 
     else :
         print("You can only tackle the rugbyman with the ball")
