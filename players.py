@@ -12,20 +12,26 @@ class Player:
         self._placement_order= actions.placement_orders(color)
 
         # List of all the rugbymen of the player
-        self._rugbymen = actions.positions_rugbymen_player(color, Game.get_number_of_columns(), self._placement_order, Graphique)
+        self._rugbymen = actions.positions_rugbymen_player(self._placement_order, Graphique)
 
         # List of all the rugbymen chosen by the player for his turn 
         self._chosen_rugbymen = []
 
 
-        self._cards=cards.full_deck()
+        self._deck=cards.full_deck()
+
         self._color = color
         if color == turn_color:
             self.can_play = True
         else:
             self.can_play = False
 
-    ### Fonctions Felix ###
+    ### A supprimer ###
+
+    def get_color(self):
+        return self._color
+    
+    ####
 
     def has_ball(self):
         """
@@ -35,6 +41,7 @@ class Player:
             if rugbyman.has_ball():
                 return True
         return False
+
 
     
 
@@ -72,11 +79,14 @@ class Player:
 
     def actualize_can_play(self):
         cond=False
+        if self.get_deck()==[]:
+            self.refresh_deck()
         if self.get_n_rugbymen() >= 2:
             move_points = 0
             for rugbyman in self.get_chosen_rugbymen():
                 if (rugbyman.get_KO()==0 
-                    and rugbymen.Rugbyman.move_left(rugbyman)>0):
+                    and (rugbymen.Rugbyman.move_left(rugbyman)>0
+                         or rugbyman.has_ball())):
                     cond=True
                 move_points += rugbymen.Rugbyman.move_left(rugbyman)
             if not cond:
@@ -105,48 +115,36 @@ class Player:
     def show_rugbyman(self, i):
         return self._chosen_rugbymen[i]
     
+    def add_rugbyman(self, rugbyman):
+        self._chosen_rugbymen.append(rugbyman)
     
+    def refresh_deck(self):
+        self._deck=cards.full_deck()
 
     def refresh_rugbymen_stats(self):
         
+        if len(self.get_deck())==0 :
+            self._deck=cards.full_deck()
         for rugbyman in self.get_rugbymen():
             rugbymen.Rugbyman.refresh_stats(rugbyman)
         self._chosen_rugbymen= []
         self.can_play = True
 
 
-
-
-
-    ### Francois ###
-    def add_rugbyman(self, rugbyman):
-        self._chosen_rugbymen.append(rugbyman)
-
-
-    def place_rugbyman(self):
-        try:
-            rugbyman = self._unplaced_rugbymen.pop()
-            pass
-        except IndexError:
-            raise ("No rugbyman to place")
-
-    def pick_card(self):
-        """
-        Discard the card chosen by the player and reinitialize the deck if all cards have been played
-        """
-        while True:
-            picked_card = input("Which card do you pick ?")
-            for i in range(len(self._cards)):
-                if picked_card == self._cards[i]:
-                    self._cards.pop(i)
-                    if len(self._cards) == 0:
-                        self._cards = [
-                            Card.ONE,
-                            Card.TWO,
-                            Card.THREE,
-                            Card.FOUR,
-                            Card.FIVE,
-                            Card.SIX,
-                        ]
-                    return
+    def get_deck_int(self):
+        R=[]
+        for card in self._deck:
+            R.append(cards.convert_card_to_int(card))
+        return R
+    
+    def get_deck(self):
+        return self._deck
+    
+    def choose_card(self,card):
+        if card in self.get_deck():
+            self._deck.remove(card)
+            return True
+        else:
+            return False
+    
 

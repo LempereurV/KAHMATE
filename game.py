@@ -5,18 +5,19 @@ import actions
 import color
 import ball
 import front 
+from constants import *
 
 
-number_of_rows = 8
-number_of_columns = 11
-forward_pass_scope = 3
-back_pass_scope = 2
 
 
 class Game:
+    """
+    The Game class is the most "macroscopic" class of the code, it provides a general link between every class 
+    """
     def __init__(self,Graphique):
-        self._number_of_columns = number_of_columns 
-        self._number_of_rows = number_of_rows 
+        """
+        The Game class contain s 
+        """
 
         self._whose_turn = color.Color.RED
 
@@ -24,30 +25,16 @@ class Game:
         self._player_red = players.Player(color.Color.RED,self,self._whose_turn,Graphique) 
         self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,Graphique) 
 
-        
-        self._forward_pass_scope = forward_pass_scope
-        self._back_pass_scope = back_pass_scope
-        
+
         #A changer
-        #self._ball = ball.Ball(random.randint(0, number_of_rows - 1))
-        self._ball = ball.Ball(number_of_rows - 1)
+        self._ball = ball.Ball(random.randint(1, Constants.number_of_rows ))
 
 
-    def get_forward_pass_scope(self):
-        return self._forward_pass_scope
-
-    def get_back_pass_scope(self):
-        return self._back_pass_scope
     
     def is_position_correct(self, x, y):
-        return x >= 0 and x < self.get_number_of_rows() and y >= 0 and y < self.get_number_of_columns()
+        return x >=1 and x <= Constants.number_of_rows and y >= 0 and y <= Constants.number_of_columns+1
 
 
-    def get_number_of_rows(self):
-        return self._number_of_rows
-    
-    def get_number_of_columns(self):
-        return self._number_of_columns
     
     def get_player_red(self):
         return self._player_red
@@ -73,94 +60,150 @@ class Game:
     
 
     
-    def which_rugbyman_in_pos(self,Graph):
-        pos = Graph.get_hitbox_for_back()
-        x=pos[0]
-        y=pos[1]
+
+    def which_rugbyman_in_pos(self,pos):
         for rugbyman in self.rugbymen():
-            if rugbymen.Rugbyman.get_posx(rugbyman) == x and rugbymen.Rugbyman.get_posy(rugbyman) == y:
-                return rugbyman
-        return False
-    
-    def which_rugbyman_in_pos_annexe(self,pos):
-        x=pos[0]
-        y=pos[1]
-        for rugbyman in self.rugbymen():
-            if (rugbymen.Rugbyman.get_posx(rugbyman) == x 
-                and rugbymen.Rugbyman.get_posy(rugbyman) == y
-                and rugbyman.get_KO()==0):
+            if (rugbymen.Rugbyman.get_pos(rugbyman) == pos and rugbyman.get_KO()==0):
                 return rugbyman
         return False
     
     def what_is_in_pos(self,Graph):
-        pos = Graph.get_new_hitbox_for_back()
-        x=pos[0]
-        y=pos[1]
+        """
+        The role of what_is_in_pos is wait for the user to click on the board and return the object that the user has clicked on
+        These objects are either :
+        -A rugbyman --> returns a rugbyman  
+        -The ball --> returns the ball
+        -Nothing --> returns False 
+        -Skip button --> returns True 
+        """
+        pos,cond = Graph.get_hitbox_on_click()
 
-        converted_pos = front.convert_new_hitbox_to_hitbox(pos)
-        converted_x = converted_pos[0]
-        converted_y = converted_pos[1]
+        L_RED_skip_button=[[Constants.number_of_rows+1,i] for i in range(5)]
+        L_BLUE_skip_button=[[0,Constants.number_of_columns+1-i] for i in range(5)]
 
-        if (self.get_player_turn().has_ball() #Ne sert à rien avec le suivant 
-            and self.which_rugbyman_in_pos_annexe(converted_pos) in self.get_player_turn().get_rugbymen()
-            and front.is_pos_bottom_right(pos) 
-            and self.which_rugbyman_in_pos_annexe(converted_pos).get_possesion()
-        ):
+        if (pos in L_RED_skip_button
+            and self.get_player_turn().get_color()==color.Color.RED):
+            Graph.highlight_button_after_click(color.Color.RED)
+            return True
+        if (pos in L_BLUE_skip_button
+            and self.get_player_turn().get_color()==color.Color.BLUE):
+            Graph.highlight_button_after_click(color.Color.BLUE)
+            return True
+
+        if (self.which_rugbyman_in_pos(pos) in self.get_player_turn().get_rugbymen()
+            and cond
+            and self.which_rugbyman_in_pos(pos).get_possesion()
+            ):
             return self.get_ball()
         else :
             for rugbyman in self.rugbymen():
-                if rugbymen.Rugbyman.get_posx(rugbyman) == converted_x and rugbymen.Rugbyman.get_posy(rugbyman) == converted_y:
-                    if rugbyman.get_KO()==0:
+                if rugbymen.Rugbyman.get_pos(rugbyman) == pos :
+                    if not bool(rugbyman.get_KO()) and rugbyman.get_moves_left() > 0:
                         return rugbyman
                     else:
                         return False
             return False
 
-    def is_square_empty(self, x, y):
+    def is_square_empty(self, x,y):
         for rugbyman in self.rugbymen():
-            if rugbyman.get_posx() == x and rugbyman.get_posy() == y:
+            if rugbyman.get_pos_x() == x and rugbyman.get_pos_y() == y:
                 return False
         return True
     #  available_move_position_recursif returns the list of all the possible positions (including the initial position) that a rugbyman can move to
     # Be aware that the elements of the list arent unique, the unicity will be given by available_move_position
-    def available_move_position_recursif(self, x , y , scope, color, cond):
+    def available_move_position_recursif(self, rugbyman, x , y , scope, color, cond):
+        """
+        This function spread over on the board on all the reachable square (reachable squares are squares that are within the board limits 
+        and do not contain ally rugbyman )
+        The return shape is as follow :
+        [x position of the square, y position of the square, movement points left to get to this square, Bool (True if square is free/ False if it contains an ennemy) ]
+        """
         if scope < 0:
             return []
         else:
             R=[[x,y,scope,cond]]
-            if x + 1 < self.get_number_of_rows() :
+            if x + 1 <= Constants.number_of_rows :
                 if self.is_square_empty(x + 1, y):
-                    R = R + self.available_move_position_recursif(x + 1, y, scope - 1,color,True)
-                elif (self.which_rugbyman_in_pos_annexe([x + 1, y])!=False 
-                      and self.which_rugbyman_in_pos_annexe([x + 1, y]).get_color()!=color):
-                    R = R + R + [[x+1,y,scope-1,False]]
-            if x - 1 >= 0 :
+                    R = R + self.available_move_position_recursif(rugbyman,x + 1, y, scope - 1,color,True)
+                elif (self.which_rugbyman_in_pos([x + 1, y])!=False 
+                      and self.which_rugbyman_in_pos([x + 1, y]).get_color()!=color):
+                    if scope>0:
+                        R = R + R + [[x+1,y,scope-1,False]]
+            if x - 1 >= 1 :
                 if self.is_square_empty(x - 1, y):
-                    R = R + self.available_move_position_recursif(x - 1, y, scope - 1,color,True)
-                elif ( self.which_rugbyman_in_pos_annexe([x - 1, y])!=False
-                      and self.which_rugbyman_in_pos_annexe([x - 1, y]).get_color()!=color):
-                    
-                    R = R + [[x-1,y,scope-1,False]]
-            if y + 1 < self.get_number_of_columns() :
+                    R = R + self.available_move_position_recursif(rugbyman,x - 1, y, scope - 1,color,True)
+                elif ( self.which_rugbyman_in_pos([x - 1, y])!=False
+                      and self.which_rugbyman_in_pos([x - 1, y]).get_color()!=color):
+                    if scope>0:
+                        R = R + [[x-1,y,scope-1,False]]
+            if y + 1 <= Constants.number_of_columns+1 :
                 if self.is_square_empty(x, y + 1):
-                    R = R + self.available_move_position_recursif(x, y + 1, scope - 1,color,True)
-                elif ( self.which_rugbyman_in_pos_annexe([x , y+1])!=False 
-                      and self.which_rugbyman_in_pos_annexe([x, y + 1]).get_color()!=color):
-                    R = R + R + [[x,y+1,scope-1,False]]
+                    R = R + self.available_move_position_recursif(rugbyman,x, y + 1, scope - 1,color,True)
+                elif ( self.which_rugbyman_in_pos([x , y+1])!=False 
+                      and self.which_rugbyman_in_pos([x, y + 1]).get_color()!=color):
+                    if scope>0:
+                        R = R + R + [[x,y+1,scope-1,False]]
             if y - 1 >= 0 :
                 if self.is_square_empty(x, y - 1):
-                    R = R + self.available_move_position_recursif(x, y - 1, scope - 1,color,True)
-                elif ( self.which_rugbyman_in_pos_annexe([x , y-1])!=False and 
-                      self.which_rugbyman_in_pos_annexe([x, y - 1]).get_color()!=color):
-                    R = R + R + [[x,y-1,scope-1,False]]
+                    R = R + self.available_move_position_recursif(rugbyman,x, y - 1, scope - 1,color,True)
+                elif ( self.which_rugbyman_in_pos([x , y-1])!=False and 
+                      self.which_rugbyman_in_pos([x, y - 1]).get_color()!=color):
+                    if scope>0:
+                        R = R + R + [[x,y-1,scope-1,False]]
+
+            #La condition suivante est à enlever si on veut que le rugbyman ne puisse sortir du terrain qu'avec la balle
+            #Dans ce cas on ne peut pas gagner en passant dans la zone d'en-but adverse
+            """
+            #Case where the rughbyman is reaching outside of the board
+            if (y +1 == self.get_number_of_columns()
+                and scope>0
+                and rugbyman.has_ball()):
+                R = R + R + [[x,y+1,scope-1,True]]
+            
+            
+            if (y-1==-1
+                and scope>0
+                and rugbyman.has_ball()):
+                R = R + R + [[x,y-1,scope-1,True]]
+            """
             
             return R
-    
+    def is_game_over(self):
+        """
+        The function is_game_over is over check one of the rugbymen is in the opposing goal with the ball:  
+        If there is one --> returns True
+        If not --> returns False
+        """
+        for rugbyman in self.rugbymen():
+            if (rugbyman.get_pos_y()==0
+                and rugbyman.get_color()==color.Color.BLUE
+                and rugbyman.get_possesion()):
+                print("Game over, the blue team won")
+                return True
+            if (rugbyman.get_pos_y()==Constants.number_of_columns+1 
+                and rugbyman.get_color()==color.Color.RED
+                and rugbyman.get_possesion()):
+                print("Game over, the red team won")
+                return True
+        return False
+
+
+
+
+
     def available_move_position(self,rugbyman):
+
+        """
+        The main role of this function if to filter the data returned by the available_move_position_recursif function.
+        This step is necessary since the data returned by available_move_position_recursif are not unique and are associated with
+        different cost of mouvement  
+
+        """
         
-        Liste_untreated=self.available_move_position_recursif(rugbyman.get_posx(),rugbyman.get_posy(),rugbyman.get_moves_left(),rugbyman.get_color(),True)
+        Liste_untreated=self.available_move_position_recursif(rugbyman,rugbyman.get_pos_x(),rugbyman.get_pos_y(),rugbyman.get_moves_left(),rugbyman.get_color(),True)
         
-        #Deleting the first position of the list because it is the position of the rugbyman
+        #Liste_untreated is a list of list of the form [x,y,scope,cond]
+        #The goal here is to select the minimum distance for each position reachable
         Liste_untreated = sorted(Liste_untreated, key=lambda x: (x[0], x[1],x[2]), reverse=True)
         
         #Deleting the duplicates
@@ -185,21 +228,26 @@ class Game:
 
     
     def refresh_players_rugbymen_stats(self):
+        """
+        This function refresh the stats of every rugbyman of the game
+        """
         players.Player.refresh_rugbymen_stats(self._player_red)
         players.Player.refresh_rugbymen_stats(self._player_blue)
 
 
 
-    def forward_pass_scope(self):
-        return self.forward_pass_scope
+
 
 
     def get_ball(self):
         return self._ball
 
     def is_rugbyman_on_ball(self):
+        """
+        Check if there is a rugbyman on ball returns the rugbyman if there is return False otherwise
+        """
         for rugbyman in self.rugbymen():
-            if rugbyman.get_posx() == self.get_ball().get_position_x() and rugbyman.get_posy() == self.get_ball().get_position_y():
+            if rugbyman.get_pos() == self.get_ball().get_pos():
                 rugbyman.set_possesion(True)
                 return rugbyman
         return False

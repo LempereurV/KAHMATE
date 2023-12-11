@@ -18,7 +18,7 @@ class Rugbyman:
         self.defense_bonus = 0
         self.move_points = 3
         self.moves_left = self.move_points
-        self.posx = 0
+        self.pos_x = 0
         self.posy = 0
         self.spec = Spec.NORMAL
         self.possesion = False  # True if the player has the ball
@@ -35,22 +35,7 @@ class Rugbyman:
 
     def get_color(self):
         return self.color
-
-    def has_partners_in_front(self, game):
-        """
-        Renvoie la présence ou non de joueurs alliés devant le joueur.
-        Utilisé pour la passe en-avant
-        """
-        if self.color == board.Color.BLUE:
-            for rugbyman in game.blue_player():
-                if rugbyman.posx() < self.posx():
-                    return True
-        if self.color is board.Color.RED:
-            for rugbyman in game.red_player():
-                if rugbyman.posx() > self.posx():
-                    return True
-        return False
-
+    
     def set_KO(self):
         self.KO = 2
     
@@ -69,22 +54,22 @@ class Rugbyman:
     def move_left(self):
         return self.moves_left
 
-    def get_posx(self):
-        return self.posx
+    def get_pos_x(self):
+        return self.pos_x
 
-    def get_posy(self):
+    def get_pos_y(self):
         return self.posy
 
     def get_pos(self):
-        return [self.posx, self.posy]
+        return [self.pos_x, self.posy]
 
-    def set_posx(self, new_posx):  # utiliser une propriété
-        self.posx = new_posx
+    def set_pos_x(self, new_pos_x):  # utiliser une propriété
+        self.pos_x = new_pos_x
 
-    def set_posy(self, new_posy):  # utiliser une propriété
+    def set_pos_y(self, new_posy):  # utiliser une propriété
         self.posy = new_posy
     def set_pos(self, pos):
-        self.posx = pos[0]
+        self.pos_x = pos[0]
         self.posy = pos[1]
 
     def set_possesion(self, boolean):
@@ -97,7 +82,6 @@ class Rugbyman:
     def refresh_stats(self):
         self.moves_left = self.move_points
         if self.get_KO() > 0:
-            print(self.get_KO())
             self.KO -= 1
 
     def get_moves_left(self):

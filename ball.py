@@ -1,8 +1,8 @@
-
+from constants import *
 
 class Ball:
     def __init__(self, init_position):
-        self._position = [init_position, 5]
+        self._pos = [init_position, Constants.number_of_columns // 2+1 ]
         self._carrier = None
 
     def is_carried(self):
@@ -11,14 +11,14 @@ class Ball:
     def set_carrier(self, rugbyman):
         self._carrier = rugbyman
 
-    def get_position(self):
-        return self._position
+    def get_pos(self):
+        return self._pos
     
-    def get_position_x(self):
-        return self._position[0]
+    def get_pos_x(self):
+        return self._pos[0]
 
-    def get_position_y(self):
-        return self._position[1]
+    def get_pos_y(self):
+        return self._pos[1]
     
     def get_carrier(self):
         if self.is_carried():
@@ -27,8 +27,8 @@ class Ball:
             return False
     
     
-    def set_position(self, position):
-        self._position = position
+    def set_pos(self, position):
+        self._pos = position
     
     def left(self):
         self._carrier = None
