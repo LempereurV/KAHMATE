@@ -5,6 +5,7 @@ from color import Color
 import players
 import game
 import ball
+import cards
 
 def placement_orders(color):
     R = {
@@ -131,12 +132,16 @@ def move_rugbyman( pos,rugbyman,ball,cost):
         rugbyman.set_move_left(cost)
         return rugbyman
         
-def charging(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
+def charging(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves,deck_1, deck_2):
     #>=1 because once he is on him he has to be able to move
     if rugbyman_attacker.get_moves_left()- norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>=1:
         print("Players have to choose their cards")
-        c_attacker=random.randint(1,6)
-        c_defenser=random.randint(1,6)
+        hitboxes = front.Graphique.display_front_deck(Graphique, deck_1)
+        i=front.Graphique.get_hitbox_card(Graphique, hitboxes)
+        c_attacker=cards.card_selected(deck_1,i)
+        hitboxes = front.Graphique.display_front_deck(Graphique, deck_2)
+        i=front.Graphique.get_hitbox_card(Graphique, hitboxes)
+        c_defenser=cards.card_selected(deck_2,i)
         if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defenser+rugbyman_defender.get_defense_bonus():
             rugbyman_defender.set_KO()
             rugbyman_attacker.set_pos(rugbyman_defender.get_pos())
@@ -186,12 +191,16 @@ def charging(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
         print("You don't have enough move points left to charge this rugbyman")
         return False
 
-def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
+def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves, deck_1, deck_2):
     
     print("Players have to choose their cards")
     if Game.is_rugbyman_on_ball()==rugbyman_defender:
-        c_attacker=random.randint(1,6)
-        c_defenser=random.randint(1,6)
+        hitboxes = front.Graphique.display_front_deck(Graphique, deck_1)
+        i=front.Graphique.get_hitbox_card(Graphique, hitboxes)
+        c_attacker=cards.card_selected(deck_1,i)
+        hitboxes = front.Graphique.display_front_deck(Graphique, deck_2)
+        i=front.Graphique.get_hitbox_card(Graphique, hitboxes)
+        c_defenser=cards.card_selected(deck_2,i)
         if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defenser+rugbyman_defender.get_defense_bonus():
             rugbyman_defender.set_KO()
             rugbyman_defender.set_possesion(False)
@@ -232,7 +241,7 @@ def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
         print("You can only tackle the rugbyman with the ball")
         return False
 
-def action_rugbyman(Graphique,rugbyman, Game,Possible_moves, Graphisme):
+def action_rugbyman(Graphique,rugbyman, Game,Possible_moves, Graphisme, deck_1, deck_2):
 
     pos2 = front.Graphique.get_hitbox_for_back(Graphisme)
     new_posx=pos2[0]
@@ -247,9 +256,9 @@ def action_rugbyman(Graphique,rugbyman, Game,Possible_moves, Graphisme):
         else :
             
             if Game.is_rugbyman_on_ball()==rugbyman:
-                return charging(Graphique,Game,rugbyman,Game.which_rugbyman_in_pos_annexe(pos2),Possible_moves)
+                return charging(Graphique,Game,rugbyman,Game.which_rugbyman_in_pos_annexe(pos2),Possible_moves, deck_1, deck_2)
             elif Game.get_ball().get_position()==pos2:
-                return tackling(Graphique,Game,rugbyman,Game.which_rugbyman_in_pos_annexe(pos2),Possible_moves) 
+                return tackling(Graphique,Game,rugbyman,Game.which_rugbyman_in_pos_annexe(pos2),Possible_moves, deck_1, deck_2) 
             else :
                 print("You can only tackle the rugbyman with the ball")  
                 return False

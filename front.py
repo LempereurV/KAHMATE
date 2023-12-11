@@ -6,6 +6,7 @@ import rugbymen
 import actions
 import color
 import random
+import cards
 # Initialisation de Pygame
 pygame.init()
 clock = pygame.time.Clock()
@@ -177,6 +178,41 @@ class Graphique:
     # Rafraîchissement de la fenêtre
     def refresh(self):
         pygame.display.flip()
+
+    def display_back_decks(self):
+        back = pygame.image.load("Images/Carte_Endurance.png")
+        back = pygame.transform.scale(back, (100,200))
+        self.screen.blit(back, (570, 430))
+        self.screen.blit(back, (40, 430))
+
+    def display_front_deck(self, deck):
+        Cards_hitbox = []
+        for i in range(len(deck)):
+            self.screen.blit(pygame.transform.scale(pygame.image.load(deck[i].get_image()), (100, 180)), (27 + i * 108, 150))
+            Cards_hitbox.append(pygame.Rect(27 + i * 108, 150, 100, 180))
+        pygame.display.flip()
+        return Cards_hitbox
+
+    def get_hitbox_card(self, Cards_hitbox):
+        cond = True
+        while cond:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    cond = False
+                    for i in range(len(Cards_hitbox)):
+                        if Cards_hitbox[i].collidepoint(pygame.mouse.get_pos()):
+                            return i
+                    cond = True
+        return None
+    
+    def remove_card(self, i, Cards_hitbox):
+        new_hitboxes = []
+        for i in range(len(Cards_hitbox)):
+            new_hitbox = pygame.Rect(27 + i * 108, 150, 100, 180)
+            new_hitboxes.append(new_hitbox)
+        Cards_hitbox = new_hitboxes
 
 
 # Fonction qui renvoit la position de l'image correspondant au rugbyman (surement à merge avec path_to_player_type)

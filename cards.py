@@ -1,6 +1,12 @@
 import enum
 
 
+def card_selected(deck, n_hit):
+    value=convert_card_to_int(deck.pop(n_hit))
+    if is_deck_empty(deck):
+        deck = full_deck()
+    return value
+
 class Card(enum.Enum):
     ONE = "1"
     TWO = "2"
@@ -8,6 +14,22 @@ class Card(enum.Enum):
     FOUR = "4"
     FIVE = "5"
     SIX = "6"
+
+    def get_image(self):
+        if self == Card.ONE:
+            return "Images/Carte1.png"
+        if self == Card.TWO:
+            return "Images/Carte2.png"
+        if self == Card.THREE:
+            return "Images/Carte3.png"
+        if self == Card.FOUR:
+            return "Images/Carte4.png"
+        if self == Card.FIVE:
+            return "Images/Carte5.png"
+        if self == Card.SIX:
+            return "Images/Carte6.png"
+        raise ValueError("The card is not in the deck")
+
 
 
 def full_deck():
@@ -42,6 +64,8 @@ def is_card_in_deck(card, deck):
     return False
 
 
+
+
 def convert_int_to_card(card):
     if card == 1:
         return Card.ONE
@@ -71,3 +95,4 @@ def convert_card_to_int(card):
     if card == Card.SIX:
         return 6
     raise ValueError("The card is not in the deck")
+

@@ -20,7 +20,7 @@ class Player:
 
         self._cards=cards.full_deck()
         self._color = color
-        if color ==turn_color:
+        if color == turn_color:
             self.can_play = True
         else:
             self.can_play = False
