@@ -209,7 +209,7 @@ def charging(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
         print("You don't have enough move points left to charge this rugbyman")
         return False
 
-def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves, deck_1, deck_2):
+def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
     
     print("Players have to choose their cards")
     if Game.is_rugbyman_on_ball()==rugbyman_defender:
