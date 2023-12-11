@@ -1,5 +1,5 @@
 import pygame
-
+import actions
 
 class FloatingMenu(pygame.sprite.Sprite):
     # Class of floating menus, from which token actions can be selected
@@ -62,10 +62,10 @@ class FloatingMenu(pygame.sprite.Sprite):
     def is_on_screen(self, screen_size):
         # Return True if the menu is on screen, False overwise
         if (
-            self.pos[0] < screen[0]
-            and self.pos[1] < screen[1]
-            and self.pos[0] > 0
-            and self.pos[1] > 0
+            self.rect.x < screen_size[0]
+            and self.rect.y < screen_size[1]
+            and self.rect.x > 0
+            and self.rect.y > 0
         ):
             return True
         return False
@@ -82,6 +82,10 @@ class FloatingMenu(pygame.sprite.Sprite):
         self.rect.y = pos[1]
         self.update_rows_pos()
 
+    def move_next_to_case(self, pos, coords):
+        # Move the table next to the cases of index pos=(x, y) (x, y are the index in coords)
+        self.move(coords[actions.coord_to_hitbox((pos[0] + 1, pos[1]))])
+
     def draw(self, screen):
         # Display on scren the menu
         screen.blit(self.image, (self.rect.x, self.rect.y))
@@ -92,14 +96,12 @@ class FloatingMenu(pygame.sprite.Sprite):
         #  Check and return hitbox collision with the mouse (None if no hibox collided, # of the hitbox collided overwise)
         for i in range(self.size_menu):
             if self.rows_rect[i].collidepoint(pygame.mouse.get_pos()):
-                print(i)
                 return i
-        print(None)
         return None
 
     def is_option_available(self, id_option):
         # Return True if the option is available, False overwise
-        for i in range(size):
+        for i in range(self.size_menu):
             if i == id_option:
                 return self.availability[i]
         return None  # The id of the selected option does not correspond to the menu size (should never be triggered in normal use)

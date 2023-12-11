@@ -181,8 +181,12 @@ class Graphique:
                     return [i, (i % 11, i // 11)]
                 else:
                     return [i, i]
+<<<<<<< HEAD
             else:
                 print (None)
+=======
+        return None #No collision found with existing hitbox
+>>>>>>> 4b8a185e2a8c73b326b0fadfd480f55975f22752
 
     def get_hitbox_for_back(self, hitbox):
 =======
@@ -314,7 +318,7 @@ class Graphique:
         pygame.display.flip()
 
     # Affiche un joueur au centre de la hitbox
-    def affiche_joueur(self, n_hit, path):
+    def affiche_joueur(self, n_hit, path, coords):
         joueur = pygame.image.load(path)
         joueur = pygame.transform.scale(joueur, (46.8, 46.5))
         self.screen.blit(joueur, coords[n_hit])
@@ -347,12 +351,12 @@ class Graphique:
             # pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[move[0]*11+move[1]] )
         pygame.display.flip()
 
-    def draw_board(self, board):
+    def draw_board(self, board, coords):
         self.screen.blit(self.plateau, (0, 0))
         for i in range(len(board._board)):
             for j in range(len(board._board[0])):
                 if board._board[i][j] != None:
-                    self.affiche_joueur(i * 11 + j, path_convertor(board._board[i][j]))
+                    self.affiche_joueur(i * 11 + j, path_convertor(board._board[i][j]), coords)
         pygame.display.flip()
 
     def create_dropdown_menu(self, options, menu_pos, menu_size):
@@ -433,13 +437,19 @@ class Graphique:
                 "Kick the ball",
                 "Score",
             ],
-            (30, 40),
+            offscreen,
         )
-
+        screen.blit(image, (0, 0))
+        floating_menu.draw(screen)
+        tokens_group.draw(screen)
+        pygame.display.flip()
         # WIP
         while True:
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    
                     # Collision must be checked in order of screen visibility (menu -> token -> empty case)
                     if floating_menu.is_on_screen(size):
                         collided_menu_hitbox = floating_menu.get_collision()
@@ -449,32 +459,44 @@ class Graphique:
                             if floating_menu.is_option_available(collided_menu_hitbox):
                                 # DO THE CORRECT ACTION
                                 print(
-                                    """The action " """,
-                                    floating_menu,
-                                    """ " is triggered """,
+                                    """The action """,
+                                    collided_menu_hitbox,
+                                    """ is triggered """,
                                 )
                             else:
                                 print("This action is not available")
 
                         else:  # The menu is on screen but the user didn't click on it
-                            floating_menu.move(
-                                offscreen
-                            )  # The menu is offscreen and thus will be erased at the next screen refresh
+                            selected_hitbox = (self.get_hitbox(hitbox))  # An hitbox is selected, let's see if it correspond to a Token Hitbox
+                            flag_no_token_selected = True
+                            for token in tokens_group:
+                                if selected_hitbox == token.get_hitbox(hitbox):
+                                    floating_menu.move_next_to_case(selected_hitbox[1], coords)  # Setting the menu close to the token
+                                    flag_no_token_selected = False
+                            if flag_no_token_selected:  # If the user didn't click on a token nor an option of the menu
+                                floating_menu.move(
+                                    offscreen
+                                )  # The menu is offscreen and thus will be erased at the next screen refresh
 
                     else:  # The menu is offscreen (time for token collision check)
                         selected_hitbox = (
-                            self.get_hitbox
+                            self.get_hitbox(hitbox)
                         )  # An hitbox is selected, let's see if it correspond to a Token Hitbox
                         for token in tokens_group:
-                            if selected_hitbox == token.get_hitbox():
-                                None  # Il faut afficher le menu au bon endroit
+                            if selected_hitbox == token.get_hitbox(hitbox):
+                                floating_menu.move_next_to_case(selected_hitbox[1], coords)  # Setting the menu close to the token
+                    screen.blit(image, (0, 0))
+                    tokens_group.draw(screen)
+                    floating_menu.draw(screen)
+                    pygame.display.flip()
+                    clock.tick(5)
+
 
     def test_initialisation_board(self, game):
         coords = []
         for j in range(8):
             for i in range(11):
                 coords.append((92 + i * 46.8, 62 + j * 46.5))
-
         # Hitbox de chaque point
         hitbox = []
         for i in range(88):
@@ -544,7 +566,8 @@ class Graphique:
                                 break
                     flag_menu = 0
                     if test_menu.get_collision() == None and a:
-                        test_menu.move(pygame.mouse.get_pos())
+                        print(self.get_hitbox(hitbox)[1])
+                        test_menu.move_next_to_case(self.get_hitbox(hitbox)[1], coords)
                         flag_menu = 1
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -601,7 +624,7 @@ class Graphique:
                             break
                     print(a)
                     if test_menu.get_collision() == None and a:
-                        test_menu.move(pygame.mouse.get_pos())
+                        test_menu.move()
                         flag_menu = 1
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -658,3 +681,15 @@ def path_convertor(Rugbyman):
                 return "Images/Rapide_bleu.png"
 
 
+<<<<<<< HEAD
+=======
+if __name__ == "__main__":
+    graph = Graphique()
+
+    game = Game()
+    
+    graph.test_menu()
+    #graph.test_initialisation_board(game)
+    #graph.test_menu()
+    
+>>>>>>> 4b8a185e2a8c73b326b0fadfd480f55975f22752
