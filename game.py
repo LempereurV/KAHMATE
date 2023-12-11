@@ -251,3 +251,7 @@ class Game:
                 rugbyman.set_possesion(True)
                 return rugbyman
         return False
+    
+    ### Fonctions nécessaires pour l'IA ###
+
+    

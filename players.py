@@ -148,3 +148,6 @@ class Player:
             return False
     
 
+    ###Fonctions nécessaires pour l'IA ###
+    
+    
