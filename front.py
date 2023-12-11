@@ -262,7 +262,6 @@ class Graphique:
                             return i
                     cond = True
         return None
-<<<<<<< HEAD
 
     # Affiche un point rouge pour 5s quand on clique quelque part
     def display_point(self):
@@ -295,7 +294,7 @@ class Graphique:
             )
         pygame.display.flip()
 
-    def highlight_move_FElIX(self, list_move, hitbox):
+    def old_highlight_move_FElIX(self, list_move, hitbox):
         s = pygame.Surface(hitbox[0].size)  # the size of your rect
         s.set_alpha(128)  # alpha level
         s.fill((150, 150, 150))
@@ -304,14 +303,6 @@ class Graphique:
                 s, hitbox[move[0] * 11 + move[1]].topleft
             )  # (0,0) are the top-left coordinates
             # pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[move[0]*11+move[1]] )
-        pygame.display.flip()
-
-    def draw_board(self, board, coords):
-        self.screen.blit(self.plateau, (0, 0))
-        for i in range(len(board._board)):
-            for j in range(len(board._board[0])):
-                if board._board[i][j] != None:
-                    self.affiche_joueur(i * 11 + j, path_convertor(board._board[i][j]), coords)
         pygame.display.flip()
 
     def create_dropdown_menu(self, options, menu_pos, menu_size):
@@ -594,7 +585,6 @@ class Graphique:
                 test_menu.draw(screen)
             tokens_group.draw(screen)
             clock.tick(60)
-=======
     
     def remove_card(self, i, Cards_hitbox):
         new_hitboxes = []
@@ -602,7 +592,6 @@ class Graphique:
             new_hitbox = pygame.Rect(27 + i * 108, 150, 100, 180)
             new_hitboxes.append(new_hitbox)
         Cards_hitbox = new_hitboxes
->>>>>>> 1afeb4a6c764c9070392372f5b2e84d2cc54dde3
 
 
 # Fonction qui renvoit la position de l'image correspondant au rugbyman (surement à merge avec path_to_player_type)

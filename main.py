@@ -46,7 +46,7 @@ while not Game.is_game_over():
             
             #If the player hasnt chosen his two rugbyman yet
             elif active_player.get_n_rugbymen()<2:
-                Graph.highlight_move_FElIX( possible_move)
+                Graph.highlight_move_FElIX(possible_move)
                 
                 #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
                 #Note that the move itself is made in the function
