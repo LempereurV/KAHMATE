@@ -438,7 +438,9 @@ def choose_cards( Graph, player):
         active_cards=player.get_deck_int()
         pos,cond=Graph.get_hitbox_on_click()
         while pos==False :
+            Graph.draw_cards(player)
             pos,cond=Graph.get_hitbox_on_click()
+
         if player.get_color()==Color.RED:
             print("Red player Chooses his cards")
 
@@ -447,6 +449,7 @@ def choose_cards( Graph, player):
                     print("Please Click on a card")
                     pos,cond=Graph.get_hitbox_on_click()
                     while pos==False :
+                        Graph.draw_cards(player)
                         pos,cond=Graph.get_hitbox_on_click()
                 if pos[0]<(Constants.number_of_rows+2)//2:
                     card_number=pos[1]//2+1
@@ -466,6 +469,7 @@ def choose_cards( Graph, player):
                     print("Please Click on a card")
                     pos,cond=Graph.get_hitbox_on_click()
                     while pos==False :
+                        Graph.draw_cards(player)
                         pos,cond=Graph.get_hitbox_on_click()
                 if pos[0]<(Constants.number_of_rows+2)//2:
                     card_number=(pos[1]+1)//2-3
@@ -478,6 +482,7 @@ def choose_cards( Graph, player):
                     print("You can't choose this card")
                     pos,cond=Graph.get_hitbox_on_click()
                     while pos==False :
+                        Graph.draw_cards(player)
                         pos,cond=Graph.get_hitbox_on_click()
 
         return card_number

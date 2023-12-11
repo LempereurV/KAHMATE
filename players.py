@@ -79,6 +79,8 @@ class Player:
 
     def actualize_can_play(self):
         cond=False
+        if self.get_deck()==[]:
+            self.refresh_deck()
         if self.get_n_rugbymen() >= 2:
             move_points = 0
             for rugbyman in self.get_chosen_rugbymen():
@@ -116,6 +118,8 @@ class Player:
     def add_rugbyman(self, rugbyman):
         self._chosen_rugbymen.append(rugbyman)
     
+    def refresh_deck(self):
+        self._deck=cards.full_deck()
 
     def refresh_rugbymen_stats(self):
         

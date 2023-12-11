@@ -73,6 +73,7 @@ while not Game.is_game_over():
         Game.is_rugbyman_on_ball()
         active_player.actualize_can_play()
         Graph.draw_board(Game)
+        #Redraw cards does not suffice
 
     ### Partie reset quand le joueur a fini de jouer  ###
     Game.refresh_players_rugbymen_stats()
