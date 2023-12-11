@@ -4,6 +4,7 @@ import rugbymen
 from game import *
 import pygame
 from typing import Any
+import random
 
 image_path = "Images/plateau.png"
 image = pygame.image.load(image_path)
@@ -106,3 +107,50 @@ class RugbymanToken(pygame.sprite.Sprite):
                                 return False
         else:
             return True
+        
+
+def path_to_card(path):
+    if path == "Images/Carte1.png":
+        return 1
+    elif path == "Images/Carte2.png":
+        return 2
+    elif path == "Images/Carte3.png":
+        return 3
+    elif path == "Images/Carte4.png":
+        return 4
+    elif path == "Images/Carte5.png":
+        return 5
+    elif path == "Images/Carte6.png":
+        return 6
+    
+
+class Deck(pygame.sprite.Sprite):
+    # Class of the card tokens
+
+    def __init__(self):
+        ### CardToken attributes ###
+        #  image : surface of the token sprite (see pygame.sprite.Sprite)
+        #  rect : hitbox and position of the token sprite (see pygame.sprite.Sprite)
+        super().__init__()
+        self.image = pygame.image.load("Images/Carte_Endurance.png")
+        self.rect = self.image.get_rect()
+
+    def afficher(self, screen, position):
+        screen.blit(self.image, position)
+        pygame.display.flip()
+    
+    def draw_card(self, screen, position):
+        if self.rect.collidepoint(pygame.mouse.get_pos()):
+            i=random.randint(1,6)
+            self.image = pygame.image.load("Images/Carte"+str(i)+".png")
+            self.afficher(screen, position)
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                Deck()
+        Deck.afficher(self, screen, position)
+        return i
+
+
+    
+        

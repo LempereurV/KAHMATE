@@ -1,2 +1,2 @@
 # KAHMATE
-Vive le jambon (et la bière)
+Jeu de plateau sur le thème du rugby
