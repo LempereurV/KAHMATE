@@ -13,6 +13,7 @@ from menu import *
 pygame.init()
 clock = pygame.time.Clock()
 
+
 # Chargement de l'image, chemin relatif
 image_path = "Images/plateau.png"
 image = pygame.image.load(image_path)
@@ -22,6 +23,7 @@ size = image.get_size()
 
 # Création de la fenêtre
 screen = pygame.display.set_mode(size)
+
 
 
 class Graphique:
@@ -169,7 +171,7 @@ class Graphique:
     def refresh(self):
         pygame.display.flip()
 
-    def test_menu(self):
+    def test_menu(self, game):
         coords = []
         for j in range(8):
             for i in range(11):
@@ -213,6 +215,10 @@ class Graphique:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        print("Pause")
+                        game.state = 2
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     
                     # Collision must be checked in order of screen visibility (menu -> token -> empty case)

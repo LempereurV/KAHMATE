@@ -18,7 +18,10 @@ class Game:
         # forward_pass_scope = forward_pass_scope
         self.red_player = players.Player(Color.RED)
         self.blue_player = players.Player(Color.BLUE)
-        ball = players.Ball(random.randint(1, number_of_rows - 2))
+        self.ball = players.Ball(random.randint(1, number_of_rows - 2))
+
+        self.state = 0  # 0 is main menu, 1 is game, 2 is pause
+
 
     def is_over(self):
         pass
