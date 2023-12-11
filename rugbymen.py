@@ -16,15 +16,9 @@ class Rugbyman:
         self.color = color
         self.attack_bonus = 0
         self.defense_bonus = 0
-<<<<<<< HEAD
-        self.moves = 3 # Nombre de cases que le rugbyman peut parcourir à chaque tour
-        self.moves_left = self.moves # Nombre de cases que le rugbyman peut encore parcourir pendant le tour
-        self.posx = 0
-=======
         self.move_points = 3
         self.moves_left = self.move_points
         self.pos_x = 0
->>>>>>> branche_de_felix2
         self.posy = 0
         self.spec = Spec.NORMAL
         self.possesion = False  # True if the player has the ball
@@ -41,28 +35,6 @@ class Rugbyman:
 
     def get_color(self):
         return self.color
-<<<<<<< HEAD
-
-    def has_partners_in_front(self, game):
-        """
-        Renvoie la présence ou non de joueurs alliés devant le joueur.
-        Utilisé pour la passe en-avant
-        """
-        if self.color == board.Color.BLUE:
-            for rugbyman in game.blue_player():
-                if rugbyman.posx() < self.posx():
-                    return True
-        if self.color is board.Color.RED:
-            for rugbyman in game.red_player():
-                if rugbyman.posx() > self.posx():
-                    return True
-        return False
-
-    def moves(self):
-        return self.moves
-
-    def moves_left(self):
-=======
     
     def set_KO(self):
         self.KO = 2
@@ -80,7 +52,6 @@ class Rugbyman:
         return self.defense_bonus
     
     def move_left(self):
->>>>>>> branche_de_felix2
         return self.moves_left
 
     def get_pos_x(self):
@@ -129,12 +100,8 @@ class StrongRugbyman(Rugbyman):
         Rugbyman.__init__(self, color)
         self.attack_bonus = 2
         self.defense_bonus = 1
-<<<<<<< HEAD
-        self.moves = 2
-=======
         self.move_points = 2
         self.moves_left = self.move_points
->>>>>>> branche_de_felix2
         self.spec = Spec.STRONG
 
 
@@ -159,10 +126,6 @@ class FastRugbyman(Rugbyman):
         self.attack_bonus = -1
         #
         self.defense_bonus = -1
-<<<<<<< HEAD
-        self.moves = 4
-=======
         self.move_points = 4
         self.moves_left = self.move_points
->>>>>>> branche_de_felix2
         self.spec = Spec.FAST

@@ -2,25 +2,6 @@ import rugbymen
 import players
 import random
 import actions
-<<<<<<< HEAD
-from color import Color
-
-number_rugbymen = 6
-number_of_rows = 8
-number_of_columns = 11
-forward_pass_scope = 3
-
-
-class Game:
-    def __init__(self):
-        self.n_rugbymen = number_rugbymen
-        self.n_columns = number_of_columns
-        self.n_rows = number_of_rows
-        # forward_pass_scope = forward_pass_scope
-        self.red_player = players.Player(Color.RED)
-        self.blue_player = players.Player(Color.BLUE)
-        ball = players.Ball(random.randint(1, number_of_rows - 2))
-=======
 import color
 import ball
 import front 
@@ -37,40 +18,17 @@ class Game:
         """
         The Game class contain s 
         """
->>>>>>> branche_de_felix2
 
         self._whose_turn = color.Color.RED
 
-<<<<<<< HEAD
-    def max_x(self):
-        return self.n_columns - 1
-
-    def max_y(self):
-        return self.n_rows - 1
-=======
         #player ne s'initialise pas pour rouge et bleu
         self._player_red = players.Player(color.Color.RED,self,self._whose_turn,Graphique) 
         self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,Graphique) 
 
->>>>>>> branche_de_felix2
 
         #A changer
         self._ball = ball.Ball(random.randint(1, Constants.number_of_rows ))
 
-<<<<<<< HEAD
-    def player(self, color):
-        if color is Color.RED:
-            return self.red_player
-        if color is Color.BLUE:
-            return self.blue_player
-
-    def player_play(self, color):
-        player = self.player(color)
-        return player.play()
-
-    def all_rugbymen(self):
-        return self.player1.rugbymen() + self.player2.rugbymen()
-=======
 
     
     def is_position_correct(self, x, y):
@@ -100,7 +58,6 @@ class Game:
     def rugbymen(self):
         return players.Player.get_rugbymen( self.get_player_red()) + players.Player.get_rugbymen(self.get_player_blue())
     
->>>>>>> branche_de_felix2
 
     
 
