@@ -1,10 +1,7 @@
-import rugbymen
 import players
 import random
-import actions
 import color
 import ball
-import front 
 from constants import *
 
 
@@ -63,7 +60,7 @@ class Game:
 
     def which_rugbyman_in_pos(self,pos):
         for rugbyman in self.rugbymen():
-            if (rugbymen.Rugbyman.get_pos(rugbyman) == pos and rugbyman.get_KO()==0):
+            if (rugbyman.get_pos() == pos and rugbyman.get_KO()==0):
                 return rugbyman
         return False
     
@@ -97,7 +94,7 @@ class Game:
             return self.get_ball()
         else :
             for rugbyman in self.rugbymen():
-                if rugbymen.Rugbyman.get_pos(rugbyman) == pos :
+                if rugbyman.get_pos() == pos :
                     if not bool(rugbyman.get_KO()) and rugbyman.get_moves_left() > 0:
                         return rugbyman
                     else:
@@ -111,63 +108,77 @@ class Game:
         return True
     #  available_move_position_recursif returns the list of all the possible positions (including the initial position) that a rugbyman can move to
     # Be aware that the elements of the list arent unique, the unicity will be given by available_move_position
-    def available_move_position_recursif(self, rugbyman, x , y , scope, color, cond):
+    def available_move_position_recursif(self, rugbyman, x , y , scope, color, cond,moves_dictionnary):
         """
         This function spread over on the board on all the reachable square (reachable squares are squares that are within the board limits 
         and do not contain ally rugbyman )
         The return shape is as follow :
         [x position of the square, y position of the square, movement points left to get to this square, Bool (True if square is free/ False if it contains an ennemy) ]
         """
-        if scope < 0:
-            return []
-        else:
-            R=[[x,y,scope,cond]]
+        if scope >= 0:
+            
+            if tuple([x,y]) in moves_dictionnary:
+                moves_dictionnary[tuple([x,y])]=[max(moves_dictionnary[tuple([x,y])][0],scope),cond]
+            else:
+                moves_dictionnary[tuple([x,y])]=[scope,cond]
+
             if x + 1 <= Constants.number_of_rows :
                 if self.is_square_empty(x + 1, y):
-                    R = R + self.available_move_position_recursif(rugbyman,x + 1, y, scope - 1,color,True)
+                    self.available_move_position_recursif(rugbyman,x + 1, y, scope - 1,color,True,moves_dictionnary)
                 elif (self.which_rugbyman_in_pos([x + 1, y])!=False 
-                      and self.which_rugbyman_in_pos([x + 1, y]).get_color()!=color):
+                        and self.which_rugbyman_in_pos([x + 1, y]).get_color()!=color):
                     if scope>0:
-                        R = R + R + [[x+1,y,scope-1,False]]
+                        if tuple([x+1,y]) in moves_dictionnary:
+                            moves_dictionnary[tuple([x+1,y])]=[max(moves_dictionnary[tuple([x+1,y])][0],scope-1),False]
+                        else :
+                            moves_dictionnary[tuple([x+1,y])]=[scope-1,False]
             if x - 1 >= 1 :
                 if self.is_square_empty(x - 1, y):
-                    R = R + self.available_move_position_recursif(rugbyman,x - 1, y, scope - 1,color,True)
+                    self.available_move_position_recursif(rugbyman,x - 1, y, scope - 1,color,True,moves_dictionnary)
                 elif ( self.which_rugbyman_in_pos([x - 1, y])!=False
-                      and self.which_rugbyman_in_pos([x - 1, y]).get_color()!=color):
+                        and self.which_rugbyman_in_pos([x - 1, y]).get_color()!=color):
                     if scope>0:
-                        R = R + [[x-1,y,scope-1,False]]
+                        if tuple([x-1,y]) in moves_dictionnary:
+                            moves_dictionnary[tuple([x-1,y])]=[max(moves_dictionnary[tuple([x-1,y])][0],scope-1),False]
+                        else:
+                            moves_dictionnary[tuple([x-1,y])]=[scope-1,False]
+                            
             if y + 1 <= Constants.number_of_columns+1 :
                 if self.is_square_empty(x, y + 1):
-                    R = R + self.available_move_position_recursif(rugbyman,x, y + 1, scope - 1,color,True)
+                    self.available_move_position_recursif(rugbyman,x, y + 1, scope - 1,color,True,moves_dictionnary)
                 elif ( self.which_rugbyman_in_pos([x , y+1])!=False 
-                      and self.which_rugbyman_in_pos([x, y + 1]).get_color()!=color):
+                        and self.which_rugbyman_in_pos([x, y + 1]).get_color()!=color):
                     if scope>0:
-                        R = R + R + [[x,y+1,scope-1,False]]
+                        if tuple([x,y+1]) in moves_dictionnary:
+                            moves_dictionnary[tuple([x,y+1])]=[max(moves_dictionnary[tuple([x,y+1])][0],scope-1),False]
+                        else :
+                            moves_dictionnary[tuple([x,y+1])]=[scope-1,False]
             if y - 1 >= 0 :
                 if self.is_square_empty(x, y - 1):
-                    R = R + self.available_move_position_recursif(rugbyman,x, y - 1, scope - 1,color,True)
+                    self.available_move_position_recursif(rugbyman,x, y - 1, scope - 1,color,True,moves_dictionnary)
                 elif ( self.which_rugbyman_in_pos([x , y-1])!=False and 
-                      self.which_rugbyman_in_pos([x, y - 1]).get_color()!=color):
+                        self.which_rugbyman_in_pos([x, y - 1]).get_color()!=color):
                     if scope>0:
-                        R = R + R + [[x,y-1,scope-1,False]]
+                        if tuple([x,y-1]) in moves_dictionnary:
+                            moves_dictionnary[tuple([x,y-1])]=[max(moves_dictionnary[tuple([x,y-1])][0],scope-1),False]
+                        else :
+                            moves_dictionnary[tuple([x,y-1])]=[scope-1,False]
+            
+            
 
-            #La condition suivante est à enlever si on veut que le rugbyman ne puisse sortir du terrain qu'avec la balle
-            #Dans ce cas on ne peut pas gagner en passant dans la zone d'en-but adverse
-            """
-            #Case where the rughbyman is reaching outside of the board
-            if (y +1 == self.get_number_of_columns()
-                and scope>0
-                and rugbyman.has_ball()):
-                R = R + R + [[x,y+1,scope-1,True]]
-            
-            
-            if (y-1==-1
-                and scope>0
-                and rugbyman.has_ball()):
-                R = R + R + [[x,y-1,scope-1,True]]
-            """
-            
-            return R
+
+
+    def available_move_position(self,rugbyman):
+        
+        moves_dictionnary={}
+        self.available_move_position_recursif(rugbyman,rugbyman.get_pos_x(),rugbyman.get_pos_y(),rugbyman.get_moves_left(),rugbyman.get_color(),True,moves_dictionnary)
+        Liste_treated=[[key[0],key[1], value[0],value[1]] for key, value in moves_dictionnary.items() if (key[0]!=rugbyman,rugbyman.get_pos_x() and key[1]!=rugbyman.get_pos_y())] 
+
+        
+        return Liste_treated
+    
+
+        
     def is_game_over(self):
         """
         The function is_game_over is over check one of the rugbymen is in the opposing goal with the ball:  
@@ -187,42 +198,6 @@ class Game:
                 return True
         return False
 
-
-
-
-
-    def available_move_position(self,rugbyman):
-
-        """
-        The main role of this function if to filter the data returned by the available_move_position_recursif function.
-        This step is necessary since the data returned by available_move_position_recursif are not unique and are associated with
-        different cost of mouvement  
-
-        """
-        
-        Liste_untreated=self.available_move_position_recursif(rugbyman,rugbyman.get_pos_x(),rugbyman.get_pos_y(),rugbyman.get_moves_left(),rugbyman.get_color(),True)
-        
-        #Liste_untreated is a list of list of the form [x,y,scope,cond]
-        #The goal here is to select the minimum distance for each position reachable
-        Liste_untreated = sorted(Liste_untreated, key=lambda x: (x[0], x[1],x[2]), reverse=True)
-        
-        #Deleting the duplicates
-        Liste_treated=[]
-        i=0
-        while i<len(Liste_untreated):
-            if Liste_untreated[i][2]!=rugbyman.get_moves_left():
-                Liste_treated.append(Liste_untreated[i])
-            j=i
-            while (j<len(Liste_untreated) 
-                   and Liste_untreated[j][0]==Liste_untreated[i][0]
-                   and Liste_untreated[j][1]==Liste_untreated[i][1]):
-                j+=1
-            i=j
-        return Liste_treated
-    
-
-        
-    #def unavailable_moove_position(self,rugbyman):
 
     
 
@@ -254,4 +229,78 @@ class Game:
     
     ### Fonctions nécessaires pour l'IA ###
 
+    def award_function(self,player):
+        """
+        This function is used to evaluate the state of the game
+        """
+        Award=0
+        if player.get_color()==color.Color.RED:
+            for rugbyman in player.get_rugbymen():
+                Award+=rugbyman.get_pos_y()-(Constants.number_of_columns+1)//2
+            if player.has_ball():
+                Award+=10
+            
+            
+                    
+            
+            return Award
+
+        #The award is a number, the higher the better
+        if player.get_color()==color.Color.RED:
+            #The award is better the closer the ball is to the blue goal 
+            Award+=Constants.number_of_columns+1-self.get_ball().get_pos_y()
+        
+        if player.get_color()==color.Color.BLUE:
+            #The award is better the closer the ball is to the red goal 
+            Award+=self.get_ball().get_pos_y()
+        #The award is better the closer the rugbymen are to the ball
+        for rugbyman in player.get_rugbymen():
+            Award+=abs((self.get_ball().get_pos_y()-rugbyman.get_pos_y()))
+        #The award is better if the player has the ball
+        if player.has_ball():
+            Award+=1000
+            print("Awa")
+        
+        return Award
     
+
+    def available_move_position_one_depth(self,rugbyman):
+        """
+        This function returns the list of all the possible moves of a rugbyman
+        """
+        R=[]
+        if rugbyman.get_moves_left()==0:
+            return R
+        x=rugbyman.get_pos_x()
+        y=rugbyman.get_pos_y()
+        if x + 1 <= Constants.number_of_rows :
+            if self.is_square_empty(x + 1, y):
+                R.append([x+1,y])
+        if x - 1 >= 1 :
+            if self.is_square_empty(x - 1, y):
+                R.append([x-1,y])
+        if y + 1 <= Constants.number_of_columns+1 :
+            if self.is_square_empty(x, y + 1):
+                R.append([x,y+1])
+        if y - 1 >= 0 :
+            if self.is_square_empty(x, y - 1):
+                R.append([x,y-1])
+        return R
+        
+
+    def every_possible_move(self,player):
+        """
+        This function returns a list of all the possible moves of a player
+        """
+        R=[]
+        if player.get_moves_left()==2:
+            for rugbyman in player.get_chosen_rugbymen():
+                R=[[rugbyman]+self.available_move_position(rugbyman)]+R
+            return R
+        for rugbyman in player.get_rugbymen():
+            R=[[rugbyman]+self.available_move_position(rugbyman)]+R
+        return R
+    
+
+        
+

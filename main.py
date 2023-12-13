@@ -4,7 +4,8 @@ from color import Color
 import rugbymen
 import game
 import actions 
-
+import minimax
+import time
 
 
 ### Initializations ###
@@ -22,11 +23,33 @@ Initialisation = False
 #This the main loop of the game, the function is_game_over of game is verifying each turn if one rugbyman is in the adversary camp
 
 
+AI=True
+
 while not Game.is_game_over():
 
     active_player = Game.get_player_turn()
+    print(active_player.get_color())
 
+    
+    if AI and active_player.get_color()==Color.RED:
+            ### Partie IA####
+            moves=minimax.minimax(Game,active_player,Graph)
+            Graph.draw_board(Game)
+            for move in moves:
+                actions.move_rugbyman([move[1],move[2]],move[0],Game.get_ball(),move[3])
+                Graph.draw_board(Game)
+            active_player.set_can_play(False)
+            Game.refresh_players_rugbymen_stats()
+            Game.change_player_turn()
+            continue
+
+
+            ### ####
+
+    
     while active_player.get_can_play():
+        
+        
         Graph.draw_board(Game)
 
         
@@ -74,6 +97,8 @@ while not Game.is_game_over():
         active_player.actualize_can_play()
         Graph.draw_board(Game)
         #Redraw cards does not suffice
+
+        
 
     ### Partie reset quand le joueur a fini de jouer  ###
     Game.refresh_players_rugbymen_stats()

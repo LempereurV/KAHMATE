@@ -150,4 +150,12 @@ class Player:
 
     ###Fonctions nécessaires pour l'IA ###
     
-    
+    def get_moves_left(self):
+        if len(self.get_chosen_rugbymen())<2:
+            return 1
+        else:
+            for rugbyman in self.get_chosen_rugbymen():
+                if rugbyman.get_moves_left()>0:
+                    return 1
+            return 0
+                
