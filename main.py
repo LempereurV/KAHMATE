@@ -28,13 +28,14 @@ AI=True
 while not Game.is_game_over():
 
     active_player = Game.get_player_turn()
-    print(active_player.get_color())
 
-    
+ 
     if AI and active_player.get_color()==Color.RED:
             ### Partie IA####
-            moves=minimax.minimax(Game,active_player,Graph)
+            moves,ball_pos=minimax.minimax(Game,active_player,Graph)
             Graph.draw_board(Game)
+            if ball_pos!=False:
+                Game.get_ball().set_pos(ball_pos)
             for move in moves:
                 actions.move_rugbyman([move[1],move[2]],move[0],Game.get_ball(),move[3])
                 Graph.draw_board(Game)

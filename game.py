@@ -3,8 +3,7 @@ import random
 import color
 import ball
 from constants import *
-
-
+import actions
 
 
 class Game:
@@ -26,13 +25,9 @@ class Game:
         #A changer
         self._ball = ball.Ball(random.randint(1, Constants.number_of_rows ))
 
-
-    
     def is_position_correct(self, x, y):
         return x >=1 and x <= Constants.number_of_rows and y >= 0 and y <= Constants.number_of_columns+1
 
-
-    
     def get_player_red(self):
         return self._player_red
     
@@ -45,7 +40,6 @@ class Game:
         else:
             return self.get_player_blue()
 
-    
     def change_player_turn(self):
         if self._whose_turn == color.Color.RED:
             self._whose_turn = color.Color.BLUE
@@ -54,9 +48,6 @@ class Game:
 
     def rugbymen(self):
         return players.Player.get_rugbymen( self.get_player_red()) + players.Player.get_rugbymen(self.get_player_blue())
-    
-
-    
 
     def which_rugbyman_in_pos(self,pos):
         for rugbyman in self.rugbymen():
@@ -164,10 +155,6 @@ class Game:
                         else :
                             moves_dictionnary[tuple([x,y-1])]=[scope-1,False]
             
-            
-
-
-
     def available_move_position(self,rugbyman):
         
         moves_dictionnary={}
@@ -176,9 +163,7 @@ class Game:
 
         
         return Liste_treated
-    
-
-        
+      
     def is_game_over(self):
         """
         The function is_game_over is over check one of the rugbymen is in the opposing goal with the ball:  
@@ -198,21 +183,12 @@ class Game:
                 return True
         return False
 
-
-    
-
-    
     def refresh_players_rugbymen_stats(self):
         """
         This function refresh the stats of every rugbyman of the game
         """
         players.Player.refresh_rugbymen_stats(self._player_red)
         players.Player.refresh_rugbymen_stats(self._player_blue)
-
-
-
-
-
 
     def get_ball(self):
         return self._ball
@@ -234,59 +210,30 @@ class Game:
         This function is used to evaluate the state of the game
         """
         Award=0
-        if player.get_color()==color.Color.RED:
-            for rugbyman in player.get_rugbymen():
-                Award+=rugbyman.get_pos_y()-(Constants.number_of_columns+1)//2
-            if player.has_ball():
-                Award+=10
+        #The award is a number, the higher the better for the red player and the lower the better for the blue player
+
+        #The distance between the ball and the middle field can be viewed as the distance between the ball and the goal
+        #It is good for the ball to be close to the opponent goal and bad for the ball to be close to his own goal
+        Award += (self.get_ball().get_pos_y()-(Constants.number_of_columns+1)//2)
+
+        for rugbyman in player.get_rugbymen():
+            if rugbyman.get_possesion():
+                #It is better for the rugbyman that has the ball to be close to the goal
+                #But not too far from his teamates
+                Award+=(rugbyman.get_pos_y()-(Constants.number_of_columns+1)//2)*4.5
+                #Note that is equivalent to  the ball being close to the ball
+
+            #It is better for the rugbymen to be generally close to the ball but mostly behind
+            Award+=-actions.norm(rugbyman.get_pos(),self.get_ball().get_pos())
+
+
+        if player.has_ball():
+            Award+=10
             
             
                     
             
-            return Award
-
-        #The award is a number, the higher the better
-        if player.get_color()==color.Color.RED:
-            #The award is better the closer the ball is to the blue goal 
-            Award+=Constants.number_of_columns+1-self.get_ball().get_pos_y()
-        
-        if player.get_color()==color.Color.BLUE:
-            #The award is better the closer the ball is to the red goal 
-            Award+=self.get_ball().get_pos_y()
-        #The award is better the closer the rugbymen are to the ball
-        for rugbyman in player.get_rugbymen():
-            Award+=abs((self.get_ball().get_pos_y()-rugbyman.get_pos_y()))
-        #The award is better if the player has the ball
-        if player.has_ball():
-            Award+=1000
-            print("Awa")
-        
         return Award
-    
-
-    def available_move_position_one_depth(self,rugbyman):
-        """
-        This function returns the list of all the possible moves of a rugbyman
-        """
-        R=[]
-        if rugbyman.get_moves_left()==0:
-            return R
-        x=rugbyman.get_pos_x()
-        y=rugbyman.get_pos_y()
-        if x + 1 <= Constants.number_of_rows :
-            if self.is_square_empty(x + 1, y):
-                R.append([x+1,y])
-        if x - 1 >= 1 :
-            if self.is_square_empty(x - 1, y):
-                R.append([x-1,y])
-        if y + 1 <= Constants.number_of_columns+1 :
-            if self.is_square_empty(x, y + 1):
-                R.append([x,y+1])
-        if y - 1 >= 0 :
-            if self.is_square_empty(x, y - 1):
-                R.append([x,y-1])
-        return R
-        
 
     def every_possible_move(self,player):
         """
@@ -301,6 +248,7 @@ class Game:
             R=[[rugbyman]+self.available_move_position(rugbyman)]+R
         return R
     
+
 
         
 
