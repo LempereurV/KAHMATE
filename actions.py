@@ -32,11 +32,11 @@ def positions_rugbymen_player(placement_order, Graphique):
 
     
     for i in range(n_rugbymen):
-        placement_order[Noms[i]].set_pos_x(i+1)
+        placement_order[Noms[i]].set_pos_x(1)
         if color == Color.RED:
-            placement_order[Noms[i]].set_pos_y(0)
+            placement_order[Noms[i]].set_pos_y(i)
         else:
-            placement_order[Noms[i]].set_pos_y(11)
+            placement_order[Noms[i]].set_pos_y(7+i)
 
         R[i]=placement_order[Noms[i]]
         front.Graphique.display_rugbyman(Graphique,R[i])

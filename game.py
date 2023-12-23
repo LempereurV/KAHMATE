@@ -214,7 +214,7 @@ class Game:
 
         #The distance between the ball and the middle field can be viewed as the distance between the ball and the goal
         #It is good for the ball to be close to the opponent goal and bad for the ball to be close to his own goal
-        Award += (self.get_ball().get_pos_y()-(Constants.number_of_columns+1)//2)
+        Award += (self.get_ball().get_pos_y()-(Constants.number_of_columns+1)//2)*2
 
         for rugbyman in player.get_rugbymen():
             if rugbyman.get_possesion():
@@ -224,7 +224,7 @@ class Game:
                 #Note that is equivalent to  the ball being close to the ball
 
             #It is better for the rugbymen to be generally close to the ball but mostly behind
-            Award+=-actions.norm(rugbyman.get_pos(),self.get_ball().get_pos())
+            Award+=-actions.norm(rugbyman.get_pos(),self.get_ball().get_pos())*2
 
 
         if player.has_ball():

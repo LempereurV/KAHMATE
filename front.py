@@ -14,7 +14,7 @@ pygame.init()
 clock = pygame.time.Clock()
 
 # Chargement de l'image, chemin relatif
-image_path = "Images/plateau.png"
+image_path = "Images/plateau.jpg"
 image = pygame.image.load(image_path)
 # Définition de la taille de la fenêtre
 size = image.get_size()
@@ -50,15 +50,17 @@ class Graphique:
     def __init__(self):
         # Initialisation de Pygame
         pygame.init()
-
+        
+        
+        width=1000
         # Chargement de l'image, chemin relatif
-        image_path = "Images/plateau.png"
+        image_path = "Images/plateau.jpg"
         self.board = pygame.image.load(image_path)
 
         
         # Définition de la taille de la fenêtre
-        #width = int(self.board.get_width() * Constants.scale_factor)
-        #height = int(self.board.get_height() * Constants.scale_factor)
+        width = int(self.board.get_width() * Constants.scale_factor)
+        height = int(self.board.get_height() * Constants.scale_factor)
         
 
         
@@ -67,9 +69,8 @@ class Graphique:
         # Création de la fenêtre
         #self.screen = pygame.display.set_mode(self.size)
         #self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN,pygame.RESIZABLE)
-
-        width=pygame.display.Info().current_w
-        height=pygame.display.Info().current_h
+        
+        
         self.screen = pygame.display.set_mode((width, height),pygame.RESIZABLE)
 
         self.board = pygame.transform.scale(self.board, (width, height))

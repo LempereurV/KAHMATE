@@ -23,7 +23,7 @@ Initialisation = False
 #This the main loop of the game, the function is_game_over of game is verifying each turn if one rugbyman is in the adversary camp
 
 
-AI=True
+AI=False
 
 while not Game.is_game_over():
 

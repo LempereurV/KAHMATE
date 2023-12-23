@@ -2,13 +2,13 @@
 class Constants:
 
     #To change the size of the window, change the scale_factor
-    scale_factor = 1.8
+    scale_factor = 0.5
     
-    edge_width_normalized = 45.2/700
-    square_width_normalized = 46.8/700
+    edge_width_normalized = 170/2656
+    square_width_normalized = 178/2656
 
-    edge_height_normalized=15.5/492
-    square_height_normalized = 46.5/492
+    edge_height_normalized=53/1876
+    square_height_normalized = 177/1876
 
     number_of_rows = 8
     number_of_columns = 11
