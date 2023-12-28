@@ -8,7 +8,7 @@ class Constants:
     square_width_normalized = 178/2656
 
     edge_height_normalized=53/1876
-    square_height_normalized = 177/1876
+    square_height_normalized = 178/1876
 
     number_of_rows = 8
     number_of_columns = 11

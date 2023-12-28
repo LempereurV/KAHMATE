@@ -12,16 +12,19 @@ import random
 #His great great grand children have maximum 4 children (4 possible moves)
 #And so on until the maximum move points are reached
 
-
+#On pourrait évaluer les positions dans l'ordre de proximité à la balle 
+#En mettant une duréé maximale de calcul pour l'IA, on pourrait évaluer le plus de noeuds possibles dans le temps imparti       
 def minimax(game,player,Graphique):
+    count=0
+
+
     possible_moves=game.every_possible_move(player)
-    """
-    if len(possible_moves)==0 or depth==0:
-        #print(game.award_function(player))
-        return game.award_function(player)
-    """
+    
     maxeval=-1000
     ball_pos=False
+
+
+
     for i_1 in range(len(possible_moves)):
         
         actions1=possible_moves[i_1]
@@ -44,6 +47,8 @@ def minimax(game,player,Graphique):
 
                 if not actions1[j_1][-1]:
                     continue
+                    
+                    
                 
                 
                 actions.move_rugbyman([actions1[j_1][0],actions1[j_1][1]],actions1[0],game.get_ball(),actions1[j_1][2])
@@ -58,7 +63,10 @@ def minimax(game,player,Graphique):
                             if not actions2[j_2][-1]:
                                 continue
                             actions.move_rugbyman([actions2[j_2][0],actions2[j_2][1]],actions2[0],game.get_ball(),actions2[j_2][2])
+                            #Implementation of the minimax recursive function
+
                             Max=game.award_function(player)
+                            count+=1
                             if Max>maxeval or (Max==maxeval and random.randint(1,100)>50):
                                 maxeval=Max
                                 action1=[actions1[0]]+actions1[j_1]
@@ -81,6 +89,7 @@ def minimax(game,player,Graphique):
                     actions.move_rugbyman([actions2[j_2][0],actions2[j_2][1]],actions2[0],game.get_ball(),actions2[j_2][2])
                     Max=game.award_function(player)
                     if Max>maxeval or (Max==maxeval and random.randint(1,100)>50):
+                        count+=1
                         maxeval=Max
                         action1=[actions1[0]]+actions1[j_1]
                         action2=[actions2[0]]+actions2[j_2]
@@ -89,7 +98,7 @@ def minimax(game,player,Graphique):
                     actions.undo_move_rugbyman(former_pos_rugbyman_2,former_ball_pos,actions2[0],game.get_ball(),moove_points2)
                 actions.undo_move_rugbyman(former_pos_rugbyman_1,former_ball_pos,actions1[0],game.get_ball(),moove_points1)
 
-    
+    print("Nombre de noeuds évalués : ",count)
     return [action1,action2],ball_pos
 
 

@@ -117,7 +117,9 @@ class Game:
                 if self.is_square_empty(x + 1, y):
                     self.available_move_position_recursif(rugbyman,x + 1, y, scope - 1,color,True,moves_dictionnary)
                 elif (self.which_rugbyman_in_pos([x + 1, y])!=False 
-                        and self.which_rugbyman_in_pos([x + 1, y]).get_color()!=color):
+                        and self.which_rugbyman_in_pos([x + 1, y]).get_color()!=color
+                        and (self.which_rugbyman_in_pos([x + 1, y]).has_ball()
+                        or rugbyman.has_ball())):
                     if scope>0:
                         if tuple([x+1,y]) in moves_dictionnary:
                             moves_dictionnary[tuple([x+1,y])]=[max(moves_dictionnary[tuple([x+1,y])][0],scope-1),False]
@@ -127,7 +129,9 @@ class Game:
                 if self.is_square_empty(x - 1, y):
                     self.available_move_position_recursif(rugbyman,x - 1, y, scope - 1,color,True,moves_dictionnary)
                 elif ( self.which_rugbyman_in_pos([x - 1, y])!=False
-                        and self.which_rugbyman_in_pos([x - 1, y]).get_color()!=color):
+                        and self.which_rugbyman_in_pos([x - 1, y]).get_color()!=color
+                        and (self.which_rugbyman_in_pos([x - 1, y]).has_ball()
+                             or rugbyman.has_ball())):
                     if scope>0:
                         if tuple([x-1,y]) in moves_dictionnary:
                             moves_dictionnary[tuple([x-1,y])]=[max(moves_dictionnary[tuple([x-1,y])][0],scope-1),False]
@@ -138,7 +142,9 @@ class Game:
                 if self.is_square_empty(x, y + 1):
                     self.available_move_position_recursif(rugbyman,x, y + 1, scope - 1,color,True,moves_dictionnary)
                 elif ( self.which_rugbyman_in_pos([x , y+1])!=False 
-                        and self.which_rugbyman_in_pos([x, y + 1]).get_color()!=color):
+                        and self.which_rugbyman_in_pos([x, y + 1]).get_color()!=color
+                        and (self.which_rugbyman_in_pos([x, y + 1]).has_ball()
+                             or rugbyman.has_ball())):
                     if scope>0:
                         if tuple([x,y+1]) in moves_dictionnary:
                             moves_dictionnary[tuple([x,y+1])]=[max(moves_dictionnary[tuple([x,y+1])][0],scope-1),False]
@@ -148,7 +154,9 @@ class Game:
                 if self.is_square_empty(x, y - 1):
                     self.available_move_position_recursif(rugbyman,x, y - 1, scope - 1,color,True,moves_dictionnary)
                 elif ( self.which_rugbyman_in_pos([x , y-1])!=False and 
-                        self.which_rugbyman_in_pos([x, y - 1]).get_color()!=color):
+                        self.which_rugbyman_in_pos([x, y - 1]).get_color()!=color
+                        and (self.which_rugbyman_in_pos([x, y - 1]).has_ball()
+                             or rugbyman.has_ball())):
                     if scope>0:
                         if tuple([x,y-1]) in moves_dictionnary:
                             moves_dictionnary[tuple([x,y-1])]=[max(moves_dictionnary[tuple([x,y-1])][0],scope-1),False]
@@ -224,7 +232,7 @@ class Game:
                 #Note that is equivalent to  the ball being close to the ball
 
             #It is better for the rugbymen to be generally close to the ball but mostly behind
-            Award+=-actions.norm(rugbyman.get_pos(),self.get_ball().get_pos())*2
+            Award+=-actions.norm(rugbyman.get_pos(),self.get_ball().get_pos())*0.1
 
 
         if player.has_ball():

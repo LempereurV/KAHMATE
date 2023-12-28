@@ -23,7 +23,7 @@ Initialisation = False
 #This the main loop of the game, the function is_game_over of game is verifying each turn if one rugbyman is in the adversary camp
 
 
-AI=False
+AI=True
 
 while not Game.is_game_over():
 
@@ -32,7 +32,10 @@ while not Game.is_game_over():
  
     if AI and active_player.get_color()==Color.RED:
             ### Partie IA####
+            begin=time.time()
             moves,ball_pos=minimax.minimax(Game,active_player,Graph)
+            end=time.time()
+            print("Temps de calcul de l'IA : ",end-begin)
             Graph.draw_board(Game)
             if ball_pos!=False:
                 Game.get_ball().set_pos(ball_pos)

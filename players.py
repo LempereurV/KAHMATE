@@ -143,6 +143,8 @@ class Player:
     def choose_card(self,card):
         if card in self.get_deck():
             self._deck.remove(card)
+            if len(self.get_deck())==0:
+                self.refresh_deck()
             return True
         else:
             return False
