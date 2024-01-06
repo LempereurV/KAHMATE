@@ -203,7 +203,7 @@ def move_rugbyman_after_succesfull_charging( Graphique,rugbyman,ball,Possible_mo
                     print("You can't move to this position")
             
 
-def move_rugbyman( pos,rugbyman,ball,cost):
+def move_rugbyman(pos,rugbyman,ball,cost):
 
         if rugbyman.get_possesion():
             ball.set_pos(pos)
@@ -380,10 +380,9 @@ def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
         print("You can only tackle the rugbyman with the ball")
         return False
 
-def action_rugbyman(Graphique,rugbyman, Game,Possible_moves, Graphisme):
+def action_rugbyman(Graphique,rugbyman, Game,Possible_moves):
 
-    pos,cond = Graphisme.get_hitbox_on_click()
-
+    pos,cond = Graphique.get_hitbox_on_click()
     Possible_moves_without_scope_and_bool=[[k[0],k[1]] for k in Possible_moves]
 
     if pos in Possible_moves_without_scope_and_bool:
@@ -403,9 +402,23 @@ def action_rugbyman(Graphique,rugbyman, Game,Possible_moves, Graphisme):
         print("You can't move to this position")
         return False
 
-
-
-
+#An action function for the bot that only takes the position of the rugbyman and the game as arguments
+def action_rugbyman_bot(pos, rugbyman, Game, Graphique):
+    Possible_moves = Game.available_move_position(rugbyman)
+    Possible_moves_without_scope_and_bool = [[k[0],k[1]] for k in Possible_moves]
+    if pos in Possible_moves_without_scope_and_bool:
+        i=Possible_moves_without_scope_and_bool.index(pos)
+        if Possible_moves[i][3]:
+            return move_rugbyman(pos,rugbyman,Game.get_ball(),Possible_moves[i][2])
+        else :
+            if Game.is_rugbyman_on_ball() == rugbyman:
+                return charging(Graphique,Game,rugbyman,Game.which_rugbyman_in_pos(pos),Possible_moves)
+            elif Game.get_ball().get_pos() == pos:
+                return tackling(Graphique,Game,rugbyman,Game.which_rugbyman_in_pos(pos),Possible_moves) 
+            else : 
+                return False
+    else :
+        return False
 
 def available_backward_pass( rugbyman ,Game):
     available = []

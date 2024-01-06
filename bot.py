@@ -6,6 +6,7 @@ import game
 import numpy as np
 import constants
 import color
+import actions
 
 #Pour l'instant, les ordis ne peuvent être que rouges
 
@@ -70,9 +71,81 @@ def compute_reward(game):
     if S == 0:
         for i in range(constants.Constants.number_of_rows):
             for j in range(constants.Constants.number_of_columns):
-                #R croit vers le joueur adverse possédant la balle
+                #R croit vers la balle
                 R[i][j] = np.exp(-(j-y)**2/constants.Constants.number_of_columns)
                 R[i][j] += np.exp(-(i-x)**2/constants.Constants.number_of_rows)
     return R
    
-
+def compute_action(game, Graph):
+    R = compute_reward(game)
+    A = game.tour_joueurs()
+    B = game.tour_balle()
+    #if red has the ball, we want to know if we can advance with it or if we have to pass it
+    x,y = np.where(B == 1)
+    if len(x) > 0 and len(y) > 0:
+        x, y = x[0], y[0]
+        S = A[x, y]
+    nb_joueurs = 0
+    if S == 1:
+        Poss = game.is_rugbyman_on_ball()
+        #we want to go to the highest reward zone possible
+        MAP = []
+        COORD = []
+        for i in range(constants.Constants.number_of_rows):
+            for j in range(constants.Constants.number_of_columns):
+                MAP.append(R[i][j])
+                COORD.append((i,j))
+        #sort the rewards in descending order, then the coordinates in the same order
+        MAP, COORD = zip(*sorted(zip(MAP, COORD), reverse=True))
+        for i in range(len(MAP)):
+            #if we can move to the zone, we do it
+            if COORD[i] in game.available_move_position(Poss):
+                actions.action_rugbyman_bot(game, Poss, COORD[i], Graph)
+                nb_joueurs += 1
+                break
+            else:
+                Liste_rugbymen = []
+                #compute the list of rugbymen who can go to the best reward
+                for Rugbyman in game.rugbymen() and rugbymen.get_color() == color.Color.RED:
+                    if COORD[i] in game.available_move_position(Rugbyman) and Rugbyman not in Liste_rugbymen:
+                        Liste_rugbymen.append(Rugbyman)
+                for Rugbyman in Liste_rugbymen:
+                    if Rugbyman.get_pos() in actions.available_pass(game):
+                        game.get_ball().set_carrier(Rugbyman)
+                        game.get_ball().set_pos(Rugbyman.get_pos())
+                        Poss = Rugbyman
+                        break
+        #at most, only one rugbyman did move, so we repeat the process
+        R = compute_reward(game)
+        A = game.tour_joueurs()
+        B = game.tour_balle()
+        MAP = []
+        COORD = []
+        for i in range(constants.Constants.number_of_rows):
+            for j in range(constants.Constants.number_of_columns):
+                MAP.append(R[i][j])
+                COORD.append((i,j))
+        #sort the rewards in descending order, then the coordinates in the same order
+        MAP, COORD = zip(*sorted(zip(MAP, COORD), reverse=True))
+        for i in range(len(MAP)):
+            #if we can move to the zone, we do it
+            #we don't make a pass because we already did
+            if COORD[i] in game.available_move_position(Poss):
+                actions.action_rugbyman_bot(game, Poss, COORD[i], Graph)
+                nb_joueurs += 1
+                break
+        if nb_joueurs <= 2:
+            R = compute_reward(game)
+            MAP = []
+            COORD = []
+            for i in range(constants.Constants.number_of_rows):
+                for j in range(constants.Constants.number_of_columns):
+                    MAP.append(R[i][j])
+                    COORD.append((i,j))
+                for Rugbyman in game.rugbymen() and rugbymen.get_color() == color.Color.RED:
+                        if COORD[i] in game.available_move_position(Rugbyman):
+                            actions.action_rugbyman_bot(game, Rugbyman, COORD[i], Graph)
+                            nb_joueurs += 1
+                            break
+                        
+                        

@@ -43,8 +43,7 @@ while not Game.is_game_over():
                 Graph.highlight_move_FElIX( possible_move)
                 rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
                                                                     Game,
-                                                                    possible_move,
-                                                                    Graph)
+                                                                    possible_move)
             
             #If the player hasnt chosen his two rugbyman yet
             elif active_player.get_n_rugbymen()<2:
@@ -54,8 +53,7 @@ while not Game.is_game_over():
                 #Note that the move itself is made in the function
                 rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
                                                                     Game,
-                                                                    possible_move,
-                                                                    Graph)
+                                                                    possible_move)
                 
 
                 #We add the rugbyman to the list of chosen rugbyman if the move is made
