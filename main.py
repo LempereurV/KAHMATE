@@ -4,6 +4,7 @@ from color import Color
 import rugbymen
 import game
 import actions 
+import bot
 
 
 
@@ -23,7 +24,8 @@ Initialisation = False
 
 
 while not Game.is_game_over():
-
+    print(Game.tour_balle())
+    print(bot.compute_reward(Game))
     active_player = Game.get_player_turn()
 
     while active_player.get_can_play():

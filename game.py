@@ -6,6 +6,8 @@ import color
 import ball
 import front 
 from constants import *
+import numpy as np
+import constants
 
 
 
@@ -31,6 +33,31 @@ class Game:
 
 
     
+    def tour_joueurs(self):
+        #Renvoie une matrice indiquant la position des joueurs: +1 si rouge, -1 si bleu, 0 sinon
+        #utilisé pour l'ordi
+        A = np.zeros((constants.Constants.number_of_rows, constants.Constants.number_of_columns))
+        for i in range(constants.Constants.number_of_rows):
+            for j in range(constants.Constants.number_of_columns):
+                for Rugbymen in self.rugbymen():
+                    if Rugbymen.get_pos_x() == i+1 and Rugbymen.get_pos_y() == j+1:
+                        if Rugbymen.color == color.Color.RED:
+                            A[i][j] = 1
+                        else:
+                            A[i][j] = -1
+        return A
+    
+    def tour_balle(self):
+        #Renvoie une matrice indiquant la position de la balle: +1 
+        #utilisé pour l'ordi
+        A = np.zeros((constants.Constants.number_of_rows, constants.Constants.number_of_columns))
+        for i in range(constants.Constants.number_of_rows):
+            for j in range(constants.Constants.number_of_columns):
+                if self._ball.get_pos_x() == i+1 and self._ball.get_pos_y() == j+1:
+                    A[i][j] = 1
+        return A
+
+
     def is_position_correct(self, x, y):
         return x >=1 and x <= Constants.number_of_rows and y >= 0 and y <= Constants.number_of_columns+1
 
