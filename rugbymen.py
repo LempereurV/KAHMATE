@@ -93,6 +93,9 @@ class Rugbyman:
         self.moves_left = move_points
     def has_ball(self):
         return self.possesion
+    
+    def set_KO_0(self):
+        self.KO=0
 
 
 class StrongRugbyman(Rugbyman):

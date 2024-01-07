@@ -203,7 +203,7 @@ class Game:
 
     def is_rugbyman_on_ball(self):
         """
-        Check if there is a rugbyman on ball returns the rugbyman if there is return False otherwise
+        Check if there is a rugbyman on ball returns the rugbyman if True ; return False otherwise
         """
         for rugbyman in self.rugbymen():
             if rugbyman.get_pos() == self.get_ball().get_pos():
@@ -245,16 +245,17 @@ class Game:
 
     def every_possible_move(self,player):
         """
-        This function returns a list of all the possible moves of a player
+        This function returns a list of all the possible moves of a player sorted by proximity with the ball 
         """
         R=[]
+
         if player.get_moves_left()==2:
             for rugbyman in player.get_chosen_rugbymen():
                 R=[[rugbyman]+self.available_move_position(rugbyman)]+R
             return R
         for rugbyman in player.get_rugbymen():
             R=[[rugbyman]+self.available_move_position(rugbyman)]+R
-        return R
+        return sorted(R,key =lambda x:actions.norm(x[0].get_pos(),self.get_ball().get_pos()))
     
 
 
