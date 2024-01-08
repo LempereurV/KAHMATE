@@ -3,15 +3,6 @@ from pygame.sprite import _Group
 import actions
 import button
 
-class MainMenu(pygame.sprite.Sprite):
-    # Class of the Pause Menu
-    def __init__(self, window_x, window_y):
-
-        self.play_button = button.Button(window_x / 3)
-
-
-
-
 class FloatingMenu(pygame.sprite.Sprite):
     # Class of floating menus, from which token actions can be selected
 
