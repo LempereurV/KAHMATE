@@ -143,8 +143,21 @@ class Player:
     def choose_card(self,card):
         if card in self.get_deck():
             self._deck.remove(card)
+            if len(self.get_deck())==0:
+                self.refresh_deck()
             return True
         else:
             return False
     
 
+    ###Fonctions nécessaires pour l'IA ###
+    
+    def get_moves_left(self):
+        if len(self.get_chosen_rugbymen())<2:
+            return 1
+        else:
+            for rugbyman in self.get_chosen_rugbymen():
+                if rugbyman.get_moves_left()>0:
+                    return 1
+            return 0
+                

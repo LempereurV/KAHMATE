@@ -1,3 +1,10 @@
+import numpy as np
+import sys
+from six import StringIO, b
+from gym import utils
+from gym.envs.toy_text import discrete
+
+
 import pygame
 import front
 import rugbymen

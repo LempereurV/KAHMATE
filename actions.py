@@ -20,99 +20,6 @@ def placement_orders(color):
     }
     return R
 
-class Action(enum.Enum):
-    MOVE = "move"
-    PASS = "pass"
-    TACKLE = "tackle"
-    FORWARD_PASS = "forward_pass"
-    SCORE = "score"
-
-
-def placement_orders(color):
-    """
-    Returns the dictionary of the placement orders of the rugbymen during game initialization
-    """
-    R = {
-        "First Normal Rugbyman": rugbymen.Rugbyman(color),
-        "Second Normal Rugbyman": rugbymen.Rugbyman(color),
-        "Strong Rugbyman": rugbymen.StrongRugbyman(color),
-        "Hard Rugbyman": rugbymen.HardRugbyman(color),
-        "Smart Rugbyman": rugbymen.SmartRugbyman(color),
-        "Fast Rugbyman": rugbymen.FastRugbyman(color),
-    }
-    return R
-
-def positions_rugbymen_player(color, n_rugbymen, n_column, Graphique):
-    """ 
-    Returns the placement of the rugbymen during game initialization
-    """
-    placement_order = placement_orders(color)
-    
-    i = 0
-    R = [None] * n_rugbymen  # R is the list of the positions of the rugbymen
-    Noms = list(placement_order.keys())  # List of the names of the rugbymen
-
-    ### A enlever ###
-    for i in range(n_rugbymen):
-        if color == Color.RED:
-            R[i] = [i, random.randint(0, 4), placement_order[Noms[i]]]
-        else:
-            R[i] = [i, random.randint(6, 10), placement_order[Noms[i]]]
-        front.Graphique.affiche_joueur(
-            Graphique,
-            11 * R[i][0] + R[i][1],
-            front.path_convertor(placement_order[Noms[i]]),
-        )
-    return R
-    ### Fin a enlever ###
-    while i < n_rugbymen:
-        print(
-            str(color).split(".")[-1] + " Player, Choose the position of the " + Noms[i]
-        )  # Changer Color.split(".")[-1] for the color to display as intended
-        pos = front.Graphique.get_hitbox_for_back(
-            Graphique
-        )  # Fonction de la classe graphique qui renvoie une liste de la forme [i,j] avec i et j les colonnes et lignes de la case cliquée
-        if pos in R:
-            cond_pos_already_taken = True
-            while cond_pos_already_taken:
-                print("The position chosen is already taken, re choose the position")
-                pos = front.Graphique.get_hitbox_for_back(Graphique)
-                if not pos in R:
-                    cond_pos_already_taken = False
-        if (
-            color == Color.RED and pos[1] >= n_column // 2
-        ):  # Red characters should be placed on the left
-            cond_RED = True
-            while cond_RED:
-                print(
-                    "The position isn't correct, the red team is suppose to be on the left, re choose the position"
-                )
-                pos = front.Graphique.get_hitbox_for_back(Graphique)
-                if pos[1] < n_column // 2:
-                    cond_RED = False
-
-        if color == Color.BLUE and pos[1] <= n_column // 2:
-            cond_Blue = True
-            while cond_Blue:
-                print(
-                    "The position isn't correct, the blue team is suppose to be on the right, re choose the position"
-                )
-                pos = front.Graphique.get_hitbox_for_back(Graphique)
-                if pos[1] > n_column // 2:
-                    cond_Blue = False
-        front.Graphique.affiche_joueur(
-            Graphique,
-            pos[0] * n_column + pos[1],
-            front.path_convertor(placement_order[Noms[i]]),
-        )  # Display the newly placed rugbymen on the board
-        R[i] = [pos[0], pos[1]]
-        i += 1
-    R_with_rugbymen = []
-    # R_with_rugbymen is the list of the positions of the rugbymen with the type of the rugbymen
-    for i in range(n_rugbymen):
-        R_with_rugbymen.append(R[i] + [placement_order[Noms[i]]])
-
-    return R_with_rugbymen
 
 def positions_rugbymen_player(placement_order, Graphique):
 
@@ -124,20 +31,18 @@ def positions_rugbymen_player(placement_order, Graphique):
     color=placement_order[Noms[0]].get_color()
 
     
-    ### A enlever ####
     for i in range(n_rugbymen):
         placement_order[Noms[i]].set_pos_x(i+1)
         if color == Color.RED:
-            placement_order[Noms[i]].set_pos_y(5)
+            placement_order[Noms[i]].set_pos_y(random.randint(1, 5))
         else:
             placement_order[Noms[i]].set_pos_y(7)
 
         R[i]=placement_order[Noms[i]]
         front.Graphique.display_rugbyman(Graphique,R[i])
     return R
-    ####    FIn a enlever ####
     
-    
+    front.pygame.display.flip()
     while i < n_rugbymen:
         # The Color.split(".")[-1] is for the color to display as intended
         print( str(color).split(".")[-1] + " Player, Choose the position of the " + Noms[i])
@@ -183,7 +88,6 @@ def positions_rugbymen_player(placement_order, Graphique):
         L_pos.append(pos)
         front.pygame.display.flip()
         i += 1
-    print(R)
     return R
 
 def move_rugbyman_after_succesfull_charging( Graphique,rugbyman,ball,Possible_moves):
@@ -204,11 +108,18 @@ def move_rugbyman_after_succesfull_charging( Graphique,rugbyman,ball,Possible_mo
             
 
 def move_rugbyman( pos,rugbyman,ball,cost):
-
+        
+        
         if rugbyman.get_possesion():
             ball.set_pos(pos)
+        
         rugbyman.set_pos(pos)
         rugbyman.set_move_left(cost)
+
+        if rugbyman.get_pos()==ball.get_pos():
+            ball.set_carrier(rugbyman)
+            rugbyman.set_possesion(True)
+            
         return rugbyman
         
 def charging(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
@@ -355,7 +266,9 @@ def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
             min_norm=100
             for moves in Possible_moves:
                 if norm([moves[0],moves[1]],rugbyman_defender.get_pos())==1:
-                    if norm([moves[0],moves[1]],rugbyman_attacker.get_pos())<min_norm:
+                    if (norm([moves[0],moves[1]],rugbyman_attacker.get_pos())<min_norm
+                        and moves[3]): #moves[3] ensure that the square is free
+                     
                         min_norm=norm([moves[0],moves[1]],rugbyman_attacker.get_pos())
                         new_attacker_pos=[moves[0],moves[1]]
                         new_attacker_cost=moves[2]
@@ -402,10 +315,6 @@ def action_rugbyman(Graphique,rugbyman, Game,Possible_moves, Graphisme):
     else :
         print("You can't move to this position")
         return False
-
-
-
-
 
 def available_backward_pass( rugbyman ,Game):
     available = []
@@ -482,6 +391,7 @@ def make_pass(Game,Graph,Possible_passes):
             and pos[1] < former_owner.get_pos_y()):
 
             #For each rugbyman of the opposing team we have to check if they can catch the ball
+            min=100
             for rugbyman in Game.get_player_blue().get_rugbymen():
                 #We check if the rugbyman is in the right position to catch the ball
                 if (rugbyman.get_pos_y() < former_owner.get_pos_y() 
@@ -493,35 +403,44 @@ def make_pass(Game,Graph,Possible_passes):
                     if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
 
                         #We check if the rugbyman is closer to the ball than the former owner
-                        if norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos):
-                            rugbyman.set_possesion(True)
-                            former_owner.set_possesion(False)
-                            Game.get_ball().set_carrier(rugbyman)
-                            Game.get_ball().set_pos(rugbyman.get_pos())
-                            return True
+                        if (norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos)
+                            and min>norm(rugbyman.get_pos(),former_owner.get_pos())):
+                            rugbyman_closer=rugbyman
+                            min=norm(rugbyman.get_pos(),former_owner.get_pos()) 
+            if min<100:
+                rugbyman_closer.set_possesion(True)
+                former_owner.set_possesion(False)
+                Game.get_ball().set_carrier(rugbyman_closer)
+                Game.get_ball().set_pos(rugbyman_closer.get_pos())
+                return True
                         
         #Same with the blue the only difference is that the receiver has to be above the thrower
         if (former_owner.get_color() is Color.BLUE
             and pos[1] > former_owner.get_pos_y()):
+            min=100
             for rugbyman in Game.get_player_red().get_rugbymen():
                 if (rugbyman.get_pos_y() > former_owner.get_pos_y() 
                     and rugbyman.get_pos_y() <= pos[1]
                     and rugbyman.get_KO()==0):
                     #ensure there on the same side of the passing position set
                     if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
-                        if norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos):
-                            rugbyman.set_possesion(True)
-                            former_owner.set_possesion(False)
-                            Game.get_ball().set_carrier(rugbyman)
-                            Game.get_ball().set_pos(rugbyman.get_pos())
-                            return True
+                        
+                        if (norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos)
+                            and min>norm(rugbyman.get_pos(),former_owner.get_pos())):   
+                            rugbyman_closer=rugbyman
+                            min=norm(rugbyman.get_pos(),former_owner.get_pos())
+            if min<100:
+                rugbyman_closer.set_possesion(True)
+                former_owner.set_possesion(False)
+                Game.get_ball().set_carrier(rugbyman_closer)
+                Game.get_ball().set_pos(rugbyman_closer.get_pos())
+                return True
         
         Game.is_rugbyman_on_ball().set_possesion(False)
         Game.get_ball().set_pos(pos)
 
         if Game.is_rugbyman_on_ball()!=False:
             Game.is_rugbyman_on_ball().set_possesion(True)
-
 
 def choose_cards( Graph, player):
         #We draw the cards
@@ -580,4 +499,201 @@ def choose_cards( Graph, player):
                         pos,cond=Graph.get_hitbox_on_click()
 
         return card_number
+
+
+### IA Functions ###
+
+def undo_move_rugbyman( former_rugbyman_pos,former_ball_pos,rugbyman,ball,cost):
+        if cost==rugbyman.get_move_points():
+            return rugbyman
+        
+        rugbyman.set_pos(former_rugbyman_pos)
+        rugbyman.set_move_left(cost)
+        
+        if former_rugbyman_pos==former_ball_pos:
+            ball.set_pos(former_rugbyman_pos)
+        else :
+            rugbyman.set_possesion(False)
+
+
+def make_pass_AI(Game,pos):
+    #former_owner is the rugbyman who had the ball before the pass
+    former_owner=Game.is_rugbyman_on_ball()
     
+    #If the pass is backward (meaning it can be catched)
+    if (former_owner.get_color() is Color.RED
+        and pos[1] < former_owner.get_pos_y()):
+
+        #For each rugbyman of the opposing team we have to check if they can catch the ball
+        min=100
+        for rugbyman in Game.get_player_blue().get_rugbymen():
+            #We check if the rugbyman is in the right position to catch the ball
+            if (rugbyman.get_pos_y() < former_owner.get_pos_y() 
+                and rugbyman.get_pos_y() >= pos[1]
+                and rugbyman.get_KO()==0):
+
+                #Receiver and adversary are both above the thrower or both under 
+                #This condition this necessary since the norm alone isnt enough
+                if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
+
+                    #We check if the rugbyman is closer to the ball than the former owner
+                    if (norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos)
+                        and min>norm(rugbyman.get_pos(),former_owner.get_pos())):
+                        return False
+    #Same with the blue the only difference is that the receiver has to be above the thrower
+    if (former_owner.get_color() is Color.BLUE
+        and pos[1] > former_owner.get_pos_y()):
+        min=100
+        for rugbyman in Game.get_player_red().get_rugbymen():
+            if (rugbyman.get_pos_y() > former_owner.get_pos_y() 
+                and rugbyman.get_pos_y() <= pos[1]
+                and rugbyman.get_KO()==0):
+                #ensure there on the same side of the passing position set
+                if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
+                    
+                    if (norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos)
+                        and min>norm(rugbyman.get_pos(),former_owner.get_pos())):   
+                            return False
+                        
+    
+    Game.is_rugbyman_on_ball().set_possesion(False)
+    Game.get_ball().set_pos(pos)
+
+    if Game.is_rugbyman_on_ball()!=False:
+        Game.is_rugbyman_on_ball().set_possesion(True)
+
+
+def undo_pass_AI(Game,former_ball_pos,former_owner):
+    if Game.is_rugbyman_on_ball()!=False:
+        Game.is_rugbyman_on_ball().set_possesion(False)
+    
+    Game.get_ball().set_pos(former_ball_pos)
+    former_owner.set_possesion(True)
+    Game.get_ball().set_carrier(former_owner)    
+
+def action_rugbyman_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves):
+    if Game.is_rugbyman_on_ball()==rugbyman_attacker:
+        return charging_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves)
+    elif Game.get_ball().get_pos()==rugbyman_defender.get_pos():
+        return tackling_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves) 
+    return False
+
+def charging_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
+    """
+    This charging function is meant to be used by the minimax algorithm it does not do anything
+    """
+    #the condition is >=1 because once he is on him he has to be able to move
+    if rugbyman_attacker.get_moves_left()- norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>=1:
+        
+        #To simplify the logical choice is always the best card (at small depth)
+        #Optimization could be made here by making the AI choose the smallest card enabling him to win the charge
+        c_red=max(Game.get_player_red().get_deck_int()) 
+        c_blue= max(Game.get_player_blue().get_deck_int())
+
+        if rugbyman_attacker.get_color()==Color.RED:
+            c_attacker=c_red
+            c_defender=c_blue
+        else:
+            c_attacker=c_blue
+            c_defender=c_red
+
+        #If the attacker wins the charge
+        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
+            #Defender is KO
+            rugbyman_defender.set_KO()
+
+            #He loses the ball and attacker retreives it
+            rugbyman_defender.set_possesion(False)
+            Game.get_ball().set_pos(rugbyman_defender.get_pos()) #A bit useless here since the ball was already in the defender position
+            rugbyman_attacker.set_possesion(True)
+
+            #Rugbyman attacker is on defender position we then actualize his position and move left
+            rugbyman_attacker.set_pos(rugbyman_defender.get_pos())
+            for move in Possible_moves:
+                if move[:2]==rugbyman_defender.get_pos():
+                    rugbyman_attacker.set_move_left(move[2])
+            
+            #Here it is hard to choose the best move as it is outside the minimax evaluation yet we will pick the best move still
+            Possible_moves=Game.available_move_position(rugbyman_attacker)
+            award=-10000
+            for move in Possible_moves:
+                rugbyman_attacker.set_pos(move[:2])
+                if award<Game.award_function(Game.get_player_turn()):
+                    award=Game.award_function(Game.get_player_turn())
+                    best_move=move
+                rugbyman_attacker.set_pos(rugbyman_defender.get_pos())
+            rugbyman_attacker.set_pos(best_move[:2])
+            return True 
+            
+        else : 
+            #if the attacker has more chance of losing the battle then it is not worth it
+            return False
+    else:
+        return False
+    
+
+def tackling_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves,Graphique):
+
+    if Game.is_rugbyman_on_ball()==rugbyman_defender:
+        
+        c_blue= 1
+        c_red=max(Game.get_player_red().get_deck_int())
+
+
+        if rugbyman_attacker.get_color()==Color.RED:
+            c_attacker=c_red
+            c_defender=c_blue
+        else:
+            c_attacker=c_blue
+            c_defender=c_red
+
+        #If the attacker wins the charge
+        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
+            rugbyman_defender.set_KO()
+            rugbyman_defender.set_possesion(False)
+
+            if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
+                Game.get_ball().set_pos(rugbyman_attacker.get_pos())
+            
+            if rugbyman_defender.get_color()==Color.RED:
+                    if rugbyman_defender.get_pos_y()>0:
+                        Game.get_ball().set_pos([rugbyman_defender.get_pos_x(),rugbyman_defender.get_pos_y()-1])
+                    else:
+                        if rugbyman_defender.get_pos_x()>0:
+                            Game.get_ball().set_pos([rugbyman_defender.get_pos_x()-1,rugbyman_defender.get_pos_y()])
+                        else:
+                            Game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
+            else:
+                if rugbyman_defender.get_pos_y()<Constants.number_of_columns :
+                    Game.get_ball().set_pos([rugbyman_defender.get_pos_x(),rugbyman_defender.get_pos_y()+1])
+                else:
+                    if rugbyman_defender.get_pos_x()>0:
+                        Game.get_ball().set_pos([rugbyman_defender.get_pos_x()-1,rugbyman_defender.get_pos_y()])
+                    else:
+                        Game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
+            rugbyman_attacker.set_possesion(False)
+        else :
+            return False 
+        if norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>1:
+            min_norm=100
+            for moves in Possible_moves:
+                if norm([moves[0],moves[1]],rugbyman_defender.get_pos())==1:
+                    if (norm([moves[0],moves[1]],rugbyman_attacker.get_pos())<min_norm
+                        and moves[3]): #moves[3] ensure that the square is free
+                     
+                        min_norm=norm([moves[0],moves[1]],rugbyman_attacker.get_pos())
+                        new_attacker_pos=[moves[0],moves[1]]
+                        new_attacker_cost=moves[2]
+            if min_norm<100: #why not ???
+                rugbyman_attacker.set_pos(new_attacker_pos)
+                rugbyman_attacker.set_move_left(new_attacker_cost)
+
+        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
+            Game.get_ball().set_pos(new_attacker_pos)
+            Game.get_ball().set_carrier(rugbyman_attacker)
+            rugbyman_attacker.set_possesion(True)
+        
+
+        return True 
+    else :
+        return False
