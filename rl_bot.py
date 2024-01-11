@@ -6,45 +6,6 @@ import random
 import numpy as np
 import copy
 
-"""def policy_evaluation(env, policy, gamma=1, theta=1e-8):
-    V = np.zeros(env.nS)
-    while True:
-        delta = 0
-        for s in range(env.number_states):
-            Vs = 0
-            for a in enumerate(policy[s]): #politique déterministe donc une seule action possible
-                for next_state, reward in env[s][a]: #action déterministe donc une seule prochaine position possible de probabilité 1
-                    Vs += (reward + gamma * V[next_state])
-            delta = max(delta, np.abs(V[s]-Vs))
-            V[s] = Vs
-        if delta < theta:
-            break
-    return V
-
-def q_from_v(env, V, s, gamma=1):
-    q = np.zeros(env.number_actions)
-    for a in range(env.number_actions):
-        for next_state, reward in env[s][a]:
-            q[a] += (reward + gamma * V[next_state])
-    return q
-
-def policy_improvement(env, V, gamma=1):
-    policy = np.zeros([env.number_states, env.number_actions]) / env.number_actions
-    for s in range(env.number_states):
-        q = q_from_v(env, V, s, gamma)
-        best_action = np.argwhere(q==np.max(q)).flatten()
-        policy[s] = np.sum([np.eye(env.number_actions)[i] for i in best_action], axis=0)/len(best_action)
-    return policy
-
-def policy_iteration(env, gamma=1, theta=1e-8):
-    policy = np.ones([env.number_states, env.number_actions]) / env.number_actions
-    while True:
-        V = policy_evaluation(env, policy, gamma, theta)
-        new_policy = policy_improvement(env, V)
-        if (new_policy == policy).all():
-            break
-        policy = copy.copy(new_policy)
-    return policy, V"""
 
 class QLearningAgent:
     def __init__(self, learning_rate = 0.1, discount_factor = 0.9, exploration_rate = 0.1):
