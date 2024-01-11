@@ -29,17 +29,48 @@ def positions_rugbymen_player(placement_order, Graphique):
     Noms = list(placement_order.keys())  
     color=placement_order[Noms[0]].get_color()
 
+    if color == Color.RED:
+        placement_order[Noms[0]].set_pos_x(Constants.number_of_rows//2)
+        placement_order[Noms[0]].set_pos_y(Constants.number_of_columns // 2-1)
+        R[0]=placement_order[Noms[0]]
+        front.Graphique.display_rugbyman(Graphique,R[0])
+        
 
-    
-    for i in range(n_rugbymen):
-        placement_order[Noms[i]].set_pos_x(i+1)
-        if color == Color.RED:
-            placement_order[Noms[i]].set_pos_y(random.randint(1, 5))
-        else:
+        placement_order[Noms[1]].set_pos_x(Constants.number_of_rows//2+1)
+        placement_order[Noms[1]].set_pos_y(Constants.number_of_columns // 2-1)
+        R[1]=placement_order[Noms[1]]
+        front.Graphique.display_rugbyman(Graphique,R[1])
+
+        placement_order[Noms[2]].set_pos_x(Constants.number_of_rows//2)
+        placement_order[Noms[2]].set_pos_y(Constants.number_of_columns // 2)
+        R[2]=placement_order[Noms[2]]
+        front.Graphique.display_rugbyman(Graphique,R[2])
+
+        placement_order[Noms[3]].set_pos_x(Constants.number_of_rows//2+1)
+        placement_order[Noms[3]].set_pos_y(Constants.number_of_columns // 2)
+        R[3]=placement_order[Noms[3]]
+        front.Graphique.display_rugbyman(Graphique,R[3])
+
+        placement_order[Noms[4]].set_pos_x(Constants.number_of_rows//2-1)
+        placement_order[Noms[4]].set_pos_y(Constants.number_of_columns // 2)
+        R[4]=placement_order[Noms[4]]
+        front.Graphique.display_rugbyman(Graphique,R[4])
+
+        placement_order[Noms[5]].set_pos_x(Constants.number_of_rows//2+2)
+        placement_order[Noms[5]].set_pos_y(Constants.number_of_columns // 2)
+        R[5]=placement_order[Noms[5]]
+        front.Graphique.display_rugbyman(Graphique,R[5])
+        
+        
+
+    else:
+        for i in range(n_rugbymen):
+            placement_order[Noms[i]].set_pos_x(i+1)
             placement_order[Noms[i]].set_pos_y(7)
 
-        R[i]=placement_order[Noms[i]]
-        front.Graphique.display_rugbyman(Graphique,R[i])
+            R[i]=placement_order[Noms[i]]
+            front.Graphique.display_rugbyman(Graphique,R[i])
+    front.pygame.display.flip()
     return R
     
     front.pygame.display.flip()
@@ -119,7 +150,7 @@ def move_rugbyman( pos,rugbyman,ball,cost):
         if rugbyman.get_pos()==ball.get_pos():
             ball.set_carrier(rugbyman)
             rugbyman.set_possesion(True)
-            
+        
         return rugbyman
         
 def charging(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
@@ -261,7 +292,8 @@ def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
             rugbyman_attacker.set_possesion(False)
         else :
             rugbyman_attacker.set_KO()
-            #If the rugbyman doing the tackling was far from the the defender
+        
+        #If the rugbyman doing the tackling was far from the the defender
         if norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>1:
             min_norm=100
             for moves in Possible_moves:
@@ -281,6 +313,7 @@ def tackling(Graphique,Game,rugbyman_attacker, rugbyman_defender,Possible_moves)
                 Game.get_ball().set_pos(new_attacker_pos)
                 Game.get_ball().set_carrier(rugbyman_attacker)
                 rugbyman_attacker.set_possesion(True)
+        
         else :
             if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
                 print("Perfect tackle, the attacker keeps the ball ")
@@ -504,8 +537,6 @@ def choose_cards( Graph, player):
 ### IA Functions ###
 
 def undo_move_rugbyman( former_rugbyman_pos,former_ball_pos,rugbyman,ball,cost):
-        if cost==rugbyman.get_move_points():
-            return rugbyman
         
         rugbyman.set_pos(former_rugbyman_pos)
         rugbyman.set_move_left(cost)
@@ -554,8 +585,7 @@ def make_pass_AI(Game,pos):
                     if (norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos)
                         and min>norm(rugbyman.get_pos(),former_owner.get_pos())):   
                             return False
-                        
-    
+            
     Game.is_rugbyman_on_ball().set_possesion(False)
     Game.get_ball().set_pos(pos)
 
@@ -571,11 +601,11 @@ def undo_pass_AI(Game,former_ball_pos,former_owner):
     former_owner.set_possesion(True)
     Game.get_ball().set_carrier(former_owner)    
 
-def action_rugbyman_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves):
+def action_rugbyman_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves,Graphique):
     if Game.is_rugbyman_on_ball()==rugbyman_attacker:
         return charging_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves)
     elif Game.get_ball().get_pos()==rugbyman_defender.get_pos():
-        return tackling_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves) 
+        return tackling_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves,Graphique) 
     return False
 
 def charging_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
@@ -634,11 +664,13 @@ def charging_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
 
 def tackling_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves,Graphique):
 
+
     if Game.is_rugbyman_on_ball()==rugbyman_defender:
         
-        c_blue= 1
-        c_red=max(Game.get_player_red().get_deck_int())
-
+        print("Blue Player has to choose his card")
+        c_blue=choose_cards(Graphique,Game.get_player_blue())
+        
+        c_red=choose_cards_AI(Game.get_player_red())
 
         if rugbyman_attacker.get_color()==Color.RED:
             c_attacker=c_red
@@ -674,6 +706,10 @@ def tackling_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves,Graphiq
             rugbyman_attacker.set_possesion(False)
         else :
             return False 
+        
+        #If the rugbyman doing the tackling was far from the the defender
+        #We have to replace him so that the tackling makes sense 
+        
         if norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>1:
             min_norm=100
             for moves in Possible_moves:
@@ -689,11 +725,18 @@ def tackling_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves,Graphiq
                 rugbyman_attacker.set_move_left(new_attacker_cost)
 
         if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
-            Game.get_ball().set_pos(new_attacker_pos)
+            Game.get_ball().set_pos(rugbyman_attacker.get_pos())
             Game.get_ball().set_carrier(rugbyman_attacker)
             rugbyman_attacker.set_possesion(True)
-        
-
         return True 
     else :
         return False
+    
+
+def choose_cards_AI(player):
+        #We wait for the player to choose his cards
+        card_number=max(player.get_deck_int())
+        player.choose_card(cards.convert_int_to_card(max(player.get_deck_int())))
+        
+        return card_number
+

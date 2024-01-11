@@ -224,23 +224,20 @@ class Game:
         #It is good for the ball to be close to the opponent goal and bad for the ball to be close to his own goal
         Award += (self.get_ball().get_pos_y()-(Constants.number_of_columns+1)//2)*2
 
-        for rugbyman in player.get_rugbymen():
-            if rugbyman.get_possesion():
-                #It is better for the rugbyman that has the ball to be close to the goal
-                #But not too far from his teamates
-                Award+=(rugbyman.get_pos_y()-(Constants.number_of_columns+1)//2)*4.5
-                #Note that is equivalent to  the ball being close to the ball
+        if player.get_color()==color.Color.RED:
+            for rugbyman in player.get_rugbymen():
+                if rugbyman.get_possesion():
+                        Award+=10
+                #It is better for the rugbymen to be generally close to the ball 
+                Award+=-actions.norm(rugbyman.get_pos(),self.get_ball().get_pos())*0.1
 
-            #It is better for the rugbymen to be generally close to the ball but mostly behind
-            Award+=-actions.norm(rugbyman.get_pos(),self.get_ball().get_pos())*0.1
-
-
-        if player.has_ball():
-            Award+=10
-            
-            
-                    
-            
+        if player.get_color()==color.Color.BLUE:
+            for rugbyman in player.get_rugbymen():
+                if rugbyman.get_possesion():
+                        Award-=10
+                #It is better for the rugbymen to be generally close to the ball 
+                Award+=actions.norm(rugbyman.get_pos(),self.get_ball().get_pos())*0.1
+        
         return Award
 
     def every_possible_move(self,player):
@@ -249,15 +246,18 @@ class Game:
         """
         R=[]
 
-        if player.get_moves_left()==2:
-            for rugbyman in player.get_chosen_rugbymen():
-                R=[[rugbyman]+self.available_move_position(rugbyman)]+R
-            return R
         for rugbyman in player.get_rugbymen():
-            R=[[rugbyman]+self.available_move_position(rugbyman)]+R
-        return sorted(R,key =lambda x:actions.norm(x[0].get_pos(),self.get_ball().get_pos()))
+            if rugbyman.get_move_points()==rugbyman.get_moves_left():
+                R=[[rugbyman]+self.available_move_position(rugbyman)]+R
+        return R #sorted(R,key =lambda x:actions.norm(x[0].get_pos(),self.get_ball().get_pos()))
     
 
 
-        
+    def other_player(self,player):
+        """
+        This function returns the other player
+        """
+        if player==self._player_red:
+            return self._player_blue
+        return self._player_red
 

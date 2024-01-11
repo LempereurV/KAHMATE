@@ -7,7 +7,6 @@ import actions
 import minimax
 import time
 
-
 ### Initializations ###
 
 #The Graph 
@@ -23,25 +22,35 @@ Initialisation = False
 #This the main loop of the game, the function is_game_over of game is verifying each turn if one rugbyman is in the adversary camp
 
 
+
 AI=True
 
 while not Game.is_game_over():
+    #We record the time it takes
 
     active_player = Game.get_player_turn()
 
  
     if AI and active_player.get_color()==Color.RED:
             ### Partie IA####
+            moves=[None,None]
             begin=time.time()
-            moves,ball_pos=minimax.minimax(Game,active_player,Graph)
+            try :
+                minimax.minimax(Game,2,True,-1000,1000,Game.get_player_turn(),moves,Graph)
+            except TimeoutError:
+                print("caca")
             end=time.time()
             print("Temps de calcul de l'IA : ",end-begin)
+
             Graph.draw_board(Game)
+            """
             if ball_pos!=False:
                 Game.get_ball().set_pos(ball_pos)
+            """
+            print(moves)
             for move in moves:
                 actions.move_rugbyman([move[1],move[2]],move[0],Game.get_ball(),move[3])
-                Graph.draw_board(Game)
+            Graph.draw_board(Game)
             active_player.set_can_play(False)
             Game.refresh_players_rugbymen_stats()
             Game.change_player_turn()
