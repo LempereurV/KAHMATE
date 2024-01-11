@@ -217,12 +217,12 @@ class Game:
         """
         This function is used to evaluate the state of the game
         """
-        Award=0
+        Award=random.random()
         #The award is a number, the higher the better for the red player and the lower the better for the blue player
 
         #The distance between the ball and the middle field can be viewed as the distance between the ball and the goal
         #It is good for the ball to be close to the opponent goal and bad for the ball to be close to his own goal
-        Award += (self.get_ball().get_pos_y()-(Constants.number_of_columns+1)//2)*2
+        Award -= (self.get_ball().get_pos_x()-(Constants.number_of_columns+1)//2)*200
 
         if player.get_color()==color.Color.RED:
             for rugbyman in player.get_rugbymen():

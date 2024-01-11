@@ -88,13 +88,12 @@ def minimax(Game,depth,first_turn,alpha,beta,player,moves,Graphique):
                                     if not actions2[j_2][-1]:
                                         continue
                                     actions_for_game.move_rugbyman([actions2[j_2][0],actions2[j_2][1]],rugbyman2,Game.get_ball(),actions2[j_2][2])
-                                    #Implementation of the minimax recursive function
 
                                     eval=minimax(Game,depth-1,False,alpha,beta,Game.get_player_blue(),moves,Graphique)
 
                                     if eval>maxeval:
                                         maxeval=eval
-                                        if first_turn<=2:
+                                        if first_turn:
                                             moves[0]=[rugbyman1]+actions1[j_1]
                                             moves[1]=[rugbyman2]+actions2[j_2]
                                     
@@ -106,16 +105,17 @@ def minimax(Game,depth,first_turn,alpha,beta,player,moves,Graphique):
 
                                     if beta<=alpha:
                                         actions_for_game.undo_pass_AI(Game,former_ball_pos,rugbyman1)
+                                        actions_for_game.undo_move_rugbyman(former_pos_rugbyman_1,former_ball_pos,rugbyman1,Game.get_ball(),moove_points1)
                                         return maxeval
 
                                 actions_for_game.undo_pass_AI(Game,former_ball_pos,rugbyman1)
                             
-
+                    #Also necessary if rugbyman has ball
                     for j_2 in range(len(actions2)):
                         if not actions2[j_2][-1]:
                             continue
 
-                        #Ensure move 2 does not supepose move 1
+                        #Ensure move 2 does not superpose move 1
                         if [actions1[j_1][0],actions1[j_1][1]]==[actions2[j_2][0],actions2[j_2][1]]:
                             continue
                         actions_for_game.move_rugbyman([actions2[j_2][0],actions2[j_2][1]],rugbyman2,Game.get_ball(),actions2[j_2][2])
@@ -124,7 +124,7 @@ def minimax(Game,depth,first_turn,alpha,beta,player,moves,Graphique):
 
                         if eval>maxeval:
                             maxeval=eval
-                            if first_turn<=2:
+                            if first_turn:
                                 moves[0]=[rugbyman1]+actions1[j_1]
                                 moves[1]=[rugbyman2]+actions2[j_2]
                                     
@@ -222,6 +222,7 @@ def minimax(Game,depth,first_turn,alpha,beta,player,moves,Graphique):
 
                                     if beta<=alpha:
                                         actions_for_game.undo_pass_AI(Game,former_ball_pos,rugbyman1)
+                                        actions_for_game.undo_move_rugbyman(former_pos_rugbyman_1,former_ball_pos,rugbyman1,Game.get_ball(),moove_points1)
                                         return mineval
 
                                 actions_for_game.undo_pass_AI(Game,former_ball_pos,rugbyman1)

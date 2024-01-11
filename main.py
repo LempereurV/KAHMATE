@@ -36,7 +36,7 @@ while not Game.is_game_over():
             moves=[None,None]
             begin=time.time()
             try :
-                minimax.minimax(Game,2,True,-1000,1000,Game.get_player_turn(),moves,Graph)
+                minimax.minimax(Game,1,True,-float("inf"),float("inf"),Game.get_player_turn(),moves,Graph)
             except TimeoutError:
                 print("caca")
             end=time.time()
