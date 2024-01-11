@@ -39,16 +39,15 @@ class DQNAgent:
     def act(self, game, player, state):
         # epsilon-greedy approach
         available_actions = game.every_possible_move(player)
-        if np.random.rand() <= self.epsilon:
+        if np.random.rand() >= self.epsilon: #<=
             action_index = np.random.choice(len(available_actions))
             return available_actions[action_index]
-        q_values = self.model.predict(state)
+        q_values = self.model.predict(np.expand_dims(state, axis=0))[0]
         rugbyman_arrived = q_values[0:88]
         rugbyman_left = q_values[88:2*88]
         ball_arrived = q_values[2*88:3*88]
         ball_left = q_values[3*88:4*88]
         i_rugbyman_arrived = 0
-
         for i in range(1, 88):
             if rugbyman_arrived[i] > rugbyman_arrived[i_rugbyman_arrived]:
                 i_rugbyman_arrived = i
@@ -110,7 +109,8 @@ def rl_bot_tf(game, player):
     #RL_available_moves = RL_available_actions(available_moves)
     current_state = states.State(Constants.number_of_rows, Constants.number_of_columns)
     current_state.get_RL_state_from_game(game)
-    action = agent.act(current_state)
+    state = current_state.get_state()
+    action = agent.act(game, player, state)
     return action
 
 

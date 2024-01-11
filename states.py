@@ -34,10 +34,13 @@ class State:
         for rugbyman in game.rugbymen():
             color = rugbyman_color(rugbyman)
             type = rugbyman_type(rugbyman)
-            state[rugbyman.get_pos_x(), rugbyman.get_pos_y()] = color * type
+            state[rugbyman.get_pos_x() - 1, rugbyman.get_pos_y() - 1] = color * type
         ball = game.get_ball()
-        state[ball.get_pos_x(), ball.get_pos_y()] += 0.5
+        state[ball.get_pos_x() - 1, ball.get_pos_y() - 1] += 0.5
         self.state = state
+    
+    def get_state(self):
+        return self.state
 
     def next_step_from_action(self, action):
         "Converts the state into the next state given an action"
