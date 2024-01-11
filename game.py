@@ -255,7 +255,7 @@ class Game:
             return R
         for rugbyman in player.get_rugbymen():
             R=[[rugbyman]+self.available_move_position(rugbyman)]+R
-        return sorted(R,key =lambda x:actions.norm(x[0].get_pos(),self.get_ball().get_pos()))
+        return R
     
 
 

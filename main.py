@@ -7,6 +7,8 @@ import actions
 import rl_bot
 import time
 
+import os
+os.environ['SDL_VIDEODRIVER']='windlib'
 
 ### Initializations ###
 
@@ -33,7 +35,7 @@ while not Game.is_game_over():
     if AI and active_player.get_color()==Color.RED:
             ### Partie IA####
             begin=time.time()
-            moves,ball_pos=rl_bot.minimax(Game,active_player,Graph)
+            moves,ball_pos=rl_bot.rl_bot(Game,active_player,Graph)
             end=time.time()
             print("Temps de calcul de l'IA : ",end-begin)
             Graph.draw_board(Game)
