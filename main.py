@@ -27,7 +27,7 @@ Initialisation = False
 
 AI=True
 
-while not Game.is_game_over():
+while not Game.is_game_over():  
 
     active_player = Game.get_player_turn()
 

@@ -3,7 +3,6 @@ import random
 import numpy as np
 
 
-
 #On pourrait évaluer les positions dans l'ordre de proximité à la balle 
 #En mettant une duréé maximale de calcul pour l'IA, on pourrait évaluer le plus de noeuds possibles dans le temps imparti       
 def rl_bot(Game,player,env):
