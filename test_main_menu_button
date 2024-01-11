@@ -2,6 +2,14 @@ from main import main
 import sys
 from main_menu_button import Button
 
+### Initializations ###
+
+#The Graph 
+Graph = front.Graphique()
+Game=game.Game(Graph)
+Graph.display_ball(Game.get_ball())
+front.pygame.display.flip()
+
 BG = pygame.image.load("assets/Background.png")
 
 SCREEN = Graph.screen
@@ -43,7 +51,7 @@ def options():
 
         pygame.display.update()
 
-def main_menu(Graph, Game):
+def m_main_menu(Graph, Game):
     while True:
         SCREEN.blit(BG, (0, 0))
 
@@ -81,3 +89,5 @@ def main_menu(Graph, Game):
                     sys.exit()
 
         pygame.display.update()
+
+m_main_menu(Graph, Game)
