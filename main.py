@@ -23,7 +23,7 @@ Initialisation = False
 
 
 
-AI=True
+AI=False 
 
 while not Game.is_game_over():
     #We record the time it takes
@@ -36,9 +36,9 @@ while not Game.is_game_over():
             moves=[None,None]
             begin=time.time()
             try :
-                minimax.minimax(Game,1,True,-float("inf"),float("inf"),Game.get_player_turn(),moves,Graph)
+                minimax.minimax(Game,2,True,-float("inf"),float("inf"),Game.get_player_turn(),moves,Graph)
             except TimeoutError:
-                print("caca")
+                print("Temps trop long")
             end=time.time()
             print("Temps de calcul de l'IA : ",end-begin)
 

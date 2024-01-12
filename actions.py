@@ -21,14 +21,14 @@ def placement_orders(color):
 
 
 def positions_rugbymen_player(placement_order, Graphique):
-
+    
     i = 0
     n_rugbymen = len(placement_order)
     R = [None] * n_rugbymen 
     L_pos=[]
     Noms = list(placement_order.keys())  
     color=placement_order[Noms[0]].get_color()
-
+    
     if color == Color.RED:
         placement_order[Noms[0]].set_pos_x(Constants.number_of_rows//2)
         placement_order[Noms[0]].set_pos_y(Constants.number_of_columns // 2-1)
@@ -427,7 +427,7 @@ def make_pass(Game,Graph,Possible_passes):
             min=100
             for rugbyman in Game.get_player_blue().get_rugbymen():
                 #We check if the rugbyman is in the right position to catch the ball
-                if (rugbyman.get_pos_y() < former_owner.get_pos_y() 
+                if (rugbyman.get_pos_y() <= former_owner.get_pos_y() 
                     and rugbyman.get_pos_y() >= pos[1]
                     and rugbyman.get_KO()==0):
 
@@ -436,10 +436,10 @@ def make_pass(Game,Graph,Possible_passes):
                     if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
 
                         #We check if the rugbyman is closer to the ball than the former owner
-                        if (norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos)
-                            and min>norm(rugbyman.get_pos(),former_owner.get_pos())):
+                        if (norm(rugbyman.get_pos(),former_owner.get_pos())<norm(former_owner.get_pos(),pos)
+                            and min>norm(rugbyman.get_pos(),former_owner.get_pos())):   
                             rugbyman_closer=rugbyman
-                            min=norm(rugbyman.get_pos(),former_owner.get_pos()) 
+                            min=norm(rugbyman.get_pos(),former_owner.get_pos())
             if min<100:
                 rugbyman_closer.set_possesion(True)
                 former_owner.set_possesion(False)
@@ -452,13 +452,13 @@ def make_pass(Game,Graph,Possible_passes):
             and pos[1] > former_owner.get_pos_y()):
             min=100
             for rugbyman in Game.get_player_red().get_rugbymen():
-                if (rugbyman.get_pos_y() > former_owner.get_pos_y() 
+                if (rugbyman.get_pos_y() >= former_owner.get_pos_y() 
                     and rugbyman.get_pos_y() <= pos[1]
                     and rugbyman.get_KO()==0):
                     #ensure there on the same side of the passing position set
                     if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
                         
-                        if (norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos)
+                        if (norm(rugbyman.get_pos(),former_owner.get_pos())<norm(former_owner.get_pos(),pos)
                             and min>norm(rugbyman.get_pos(),former_owner.get_pos())):   
                             rugbyman_closer=rugbyman
                             min=norm(rugbyman.get_pos(),former_owner.get_pos())
@@ -543,6 +543,8 @@ def undo_move_rugbyman( former_rugbyman_pos,former_ball_pos,rugbyman,ball,cost):
         
         if former_rugbyman_pos==former_ball_pos:
             ball.set_pos(former_rugbyman_pos)
+            ball.set_carrier(rugbyman)
+            rugbyman.set_possesion(True)
         else :
             rugbyman.set_possesion(False)
 
