@@ -59,21 +59,24 @@ class State:
                     self.state[x, y] += 0.5  # la balle a rejoint cette case
 
 
-def RL_action_from_game(action):
+def RL_action_from_game(rugbyman, action):
     "Converts a game action into an action that can be used by the RL algorithm"
     # Only works for rugbyman moves, not ball moves yet
-    RL_action = np.zeros((len(action), len(action[0])))
-    rugbyman = action[0]
-    RL_action[rugbyman.get_pos_x(), rugbyman.get_pos_y()] = -1
-    RL_action[action[1], action[2]] = 1
+    RL_action = np.zeros((8, 11))
+    RL_action[rugbyman.get_pos_x() - 1, rugbyman.get_pos_y() - 1] = -1
+    RL_action[action[0], action[1]] = 1
     return RL_action
 
 
 def RL_available_actions(actions):
     "Converts the available actions into a set of actions that can be used by the RL algorithm"
-    RL_actions = np.array([])
-    for action in actions:
-        RL_actions.append(actions, RL_action_from_game(action))
+    RL_actions = []
+    for rugbyman_actions in actions: # actions contient une liste dont chaque élement est [rugbyman, action1, action2...]
+        rugbyman = rugbyman_actions[0]
+        for i in range(2, len(rugbyman_actions)): #indice 0: instance du rugbyman, indice 1: rugbyman ne bouge pas
+            action = [rugbyman_actions[i][0] - 1, rugbyman_actions[i][1] - 1]
+            RL_actions.append(RL_action_from_game(rugbyman, action))
+    RL_actions = np.array(RL_actions)
     return RL_actions
 
 
