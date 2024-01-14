@@ -27,7 +27,22 @@ def rugbyman_color(rugbyman):
 class State:
     def __init__(self, rows, columns):
         self.state = np.zeros((rows, columns))
+        self.rows = rows
+        self.columns = columns
     
+    def get_state(self):
+        return self.state
+
+    def random_state(self):
+        numbers = [1, 1, 2, 3, 4, 5, -1, -1, -2, -3, -4, -5]
+        grid = np.zeros((self.rows, self.columns))
+        np.random.shuffle(numbers)
+        indices = np.random.choice(self.rows * self.columns, len(numbers), replace=False)
+        grid.flat[indices] = numbers
+        random_index = np.random.choice(self.rows * self.columns)
+        grid.flat[random_index] += 0.5
+        self.state = grid
+
     def get_RL_state_from_game(self, game): 
         "Converts the current game state into a state that can be used by the RL algorithm"
         state = np.zeros((len(self.state), len(self.state[0])))
@@ -38,11 +53,8 @@ class State:
         ball = game.get_ball()
         state[ball.get_pos_x() - 1, ball.get_pos_y() - 1] += 0.5
         self.state = state
-    
-    def get_state(self):
-        return self.state
 
-    def next_step_from_action(self, action):
+    def next_state_from_action(self, action):
         "Converts the state into the next state given an action"
         for x in range(len(action)):
             for y in range(len(action[0])):
@@ -78,5 +90,30 @@ def RL_available_actions(actions):
             RL_actions.append(RL_action_from_game(rugbyman, action))
     RL_actions = np.array(RL_actions)
     return RL_actions
+
+def action_from_RL(game, action):
+    "Converts an action from the RL algorithm into an action that can be used by the game"
+    # Only works for rugbyman moves, not ball moves yet
+    for x in range(len(action)):
+        for y in range(len(action[0])):
+            if action[x, y] == -1:
+                rugbyman = game.which_rugbyman_in_pos([x + 1, y + 1])
+                if rugbyman == False:
+                    return False
+            if action[x, y] == -10:
+                ball = game.get_ball()
+                if ball.get_pos() != [x + 1, y + 1]:
+                    return False
+                
+    for x in range(len(action)):
+        for y in range(len(action[0])):
+            if action[x, y] == 1:
+                rugbyman.set_pos([x + 1, y + 1])
+                return True
+            if action[x, y] == 10:
+                ball = game.get_ball()
+                ball.set_pos([x + 1, y + 1])
+                return True
+    return False
 
 

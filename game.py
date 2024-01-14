@@ -183,13 +183,13 @@ class Game:
                 and rugbyman.get_color()==color.Color.BLUE
                 and rugbyman.get_possesion()):
                 print("Game over, the blue team won")
-                return True
+                return True, color.Color.BLUE
             if (rugbyman.get_pos_y()==Constants.number_of_columns+1 
                 and rugbyman.get_color()==color.Color.RED
                 and rugbyman.get_possesion()):
                 print("Game over, the red team won")
-                return True
-        return False
+                return True, color.Color.RED
+        return [False]
 
     def refresh_players_rugbymen_stats(self):
         """
@@ -256,6 +256,24 @@ class Game:
         for rugbyman in player.get_rugbymen():
             R=[[rugbyman]+self.available_move_position(rugbyman)]+R
         return R
+    
+    def play_from_RL(self, action): #action = [rugbyman, [x, y, moves_left_after_action, new_pos_occupied]]
+        pos = action[1][:2]
+        rugbyman = action[0]
+        ball = self.get_ball()
+        moves_left_after_action = action[1][2]
+        cost_action = rugbyman.get_move_points() - moves_left_after_action
+        is_new_pos_occupied = action[1][3]
+        if not is_new_pos_occupied:
+            actions.move_rugbyman(pos, rugbyman, self.get_ball(), cost_action)
+        else:
+            available_moves = self.every_possible_move(self.get_player_red())
+            for rugbyman_moves in available_moves:
+                if rugbyman_moves[0] == rugbyman:
+                    possible_moves_by_rugbyman = rugbyman_moves[1:]
+            actions.RL_action_rugbyman(self, rugbyman_attacker = rugbyman, rugbyman_defender = self.which_rugbyman_in_pos(pos), Possible_moves = possible_moves_by_rugbyman)
+
+
     
 
 

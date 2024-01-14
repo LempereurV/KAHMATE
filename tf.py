@@ -26,8 +26,11 @@ class DQNAgent:
         RL_available_actions = RL_available_actions(available_actions)
         self.available_actions = RL_available_actions
 
-    def masked_loss(self, y_true, y_pred):
+    def masked_loss(self, y_true, y_pred): #pénalise les actions impossibles 
         valid_mask = self.available_actions
+        masked_y_pred = y_pred * valid_mask
+        grid1_pred, grid2_pred = tf.split(masked_y_pred, 2, axis=-1)
+        grid1_true, grid2_true = tf.split(y_true, 2, axis=-1)
         masked_y_true = tf.boolean_mask(y_true, valid_mask)
         masked_y_pred = tf.boolean_mask(y_pred, valid_mask)
         loss = tf.keras.losses.mean_squared_error(masked_y_true, masked_y_pred)
@@ -39,27 +42,60 @@ class DQNAgent:
             tf.keras.layers.Flatten(),  # Aplatit le tableau en 1D
             tf.keras.layers.Dense(24, activation='relu'),
             tf.keras.layers.Dense(24, activation='relu'),
-            tf.keras.layers.Dense(88*4, activation='sigmoid')  # Couche de sortie linéaire pour la valeur Q
+            tf.keras.layers.Dense(88*4, activation='sigmoid')  # Couche de sortie entre 0 et 1 pour la Q-valeur de chaque action
         ])
 
-        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=self.learning_rate), loss = lambda y_true, y_pred: self.masked_loss(y_true, y_pred, self.available_actions))
+        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=self.learning_rate), loss = lambda y_true, y_pred: self.masked_loss(y_true, y_pred))
         return model
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
     def act(self, game, player, state):
-        # epsilon-greedy approach
+        """Renvoie l'action à effectuer par le joueur en fonction de l'état actuel du jeu avec une approche epsilon-greedy"""
         available_actions = game.every_possible_move(player)
         if np.random.rand() >= self.epsilon: #<=
             action_index = np.random.choice(len(available_actions))
             return available_actions[action_index]
+        
         q_values = self.model.predict(np.expand_dims(state, axis=0))[0]
         rugbyman_arrived = q_values[0:88]
         rugbyman_left = q_values[88:2*88]
         ball_arrived = q_values[2*88:3*88]
         ball_left = q_values[3*88:4*88]
-        i_rugbyman_arrived = 0
+
+        q_value_rugbyman_arrived = 0
+        q_value_rugbyman_left = 0
+        q_value_ball_arrived = 0
+        q_value_ball_left = 0
+        max_q_value = -np.inf
+
+        for action in available_actions:
+            for x in range(len(action)):
+                for y in range(len(action[0])):
+                    if action[x, y] == 1:
+                        q_value_rugbyman_arrived = rugbyman_arrived[x, y]
+                        x_arrived = x
+                        y_arrived = y
+                    if action[x, y] == -1:
+                        q_value_rugbyman_left = rugbyman_left[x, y]
+                        x_left = x
+                        y_left = y
+                    if action[x, y] == 10:
+                        q_value_ball_arrived = ball_arrived[x, y]
+                        x_arrived = x
+                        y_arrived = y
+                    if action[x, y] == -10:
+                        q_value_ball_left = ball_left[x, y]
+                        x_left = x
+                        y_left = y
+            q_value_action = (q_value_rugbyman_arrived + q_value_rugbyman_left + q_value_ball_arrived + q_value_ball_left)/2 #seules deux actions sont non nulles, donc on fait bien la moyenne
+            if q_value_action> max_q_value:
+                max_q_value = q_value_action
+                best_action = action
+        return best_action #, max_q_value, x_arrived, y_arrived, x_left, y_left
+                       
+        """i_rugbyman_arrived = 0
         for i in range(1, 88):
             if rugbyman_arrived[i] > rugbyman_arrived[i_rugbyman_arrived]:
                 i_rugbyman_arrived = i
@@ -85,7 +121,7 @@ class DQNAgent:
         else:
             action[i_ball_left // 11, i_ball_left % 11] = -10
             action[i_ball_arrived // 11, i_ball_arrived % 11] = 10
-            return action
+            return action"""
 
     def replay(self, batch_size):
         minibatch = np.random.choice(len(self.memory), batch_size, replace=True)
@@ -121,9 +157,17 @@ def rl_bot_tf(game, player):
     #RL_available_moves = RL_available_actions(available_moves)
     current_state = states.State(Constants.number_of_rows, Constants.number_of_columns)
     current_state.get_RL_state_from_game(game)
+    current_state.random_state()
     state = current_state.get_state()
+    action = RL_available_actions(game.every_possible_move(game.get_player_red()))[1]
+    print("L'état initial est: ")
     print(state)
-    print(RL_available_actions(game.every_possible_move(game.get_player_red()))[0])
+    print("L'action choisie est: ")
+    print(action)
+    current_state.next_step_from_action(action)
+    new_state = current_state.get_state()
+    print("L'état final est: ")
+    print(new_state)
     #action = agent.act(game, player, state)
     #return action
 

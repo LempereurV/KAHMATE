@@ -23,7 +23,7 @@ size = image.get_size()
 
 
 # Création de la fenêtre
-screen = pygame.display.set_mode(size)
+#screen = pygame.display.set_mode(size)
 # surf = pygame.surface.Surface(size)
 
 

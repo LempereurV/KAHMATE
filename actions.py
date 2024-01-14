@@ -1,4 +1,5 @@
 import rugbymen
+import numpy as np
 import front
 import random
 from color import Color
@@ -632,7 +633,7 @@ def charging_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
         return False
     
 
-def tackling_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves,Graphique):
+def tackling_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves):
 
     if Game.is_rugbyman_on_ball()==rugbyman_defender:
         
@@ -696,4 +697,140 @@ def tackling_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves,Graphiq
 
         return True 
     else :
+        return False
+
+
+#Fonctions pour le bot Deep Q Learning
+    
+def RL_action_rugbyman(game,rugbyman_attacker,rugbyman_defender,Possible_moves):
+    """
+    Effectue une action de rugbyman demandée par le bot Deep Q Learning dans le cas où il y a un ennemi. 
+    Si un ennemi est dans la nouvelle case, c'est un tacle si le rugbyman n'a pas la balle, une charge sinon. 
+    """
+    if game.is_rugbyman_on_ball() == rugbyman_attacker:
+        return RL_charging(game,rugbyman_attacker,rugbyman_defender,Possible_moves)
+    elif game.get_ball().get_pos() == rugbyman_defender.get_pos():
+        return RL_tackling(game,rugbyman_attacker,rugbyman_defender,Possible_moves) 
+    return False
+
+
+def RL_tackling(game,rugbyman_attacker, rugbyman_defender,Possible_moves):
+    """
+    Effectue un tacle demandé par le bot Deep Q Learning.
+    Contient en partie des élements du bot de Félix.
+    """
+    if game.is_rugbyman_on_ball()==rugbyman_defender:
+        
+        c_blue= 1
+        c_red=max(game.get_player_red().get_deck_int())
+
+
+        if rugbyman_attacker.get_color()==Color.RED:
+            c_attacker=c_red
+            c_defender=c_blue
+        else:
+            c_attacker=c_blue
+            c_defender=c_red
+
+        #If the attacker wins the charge
+        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
+            rugbyman_defender.set_KO()
+            rugbyman_defender.set_possesion(False)
+
+            if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
+                game.get_ball().set_pos(rugbyman_attacker.get_pos())
+            
+            if rugbyman_defender.get_color()==Color.RED:
+                    if rugbyman_defender.get_pos_y()>0:
+                        game.get_ball().set_pos([rugbyman_defender.get_pos_x(),rugbyman_defender.get_pos_y()-1])
+                    else:
+                        if rugbyman_defender.get_pos_x()>0:
+                            game.get_ball().set_pos([rugbyman_defender.get_pos_x()-1,rugbyman_defender.get_pos_y()])
+                        else:
+                            game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
+            else:
+                if rugbyman_defender.get_pos_y()<Constants.number_of_columns :
+                    game.get_ball().set_pos([rugbyman_defender.get_pos_x(),rugbyman_defender.get_pos_y()+1])
+                else:
+                    if rugbyman_defender.get_pos_x()>0:
+                        game.get_ball().set_pos([rugbyman_defender.get_pos_x()-1,rugbyman_defender.get_pos_y()])
+                    else:
+                        game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
+            rugbyman_attacker.set_possesion(False)
+        else :
+            return False 
+        if norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>1:
+            min_norm=100
+            for moves in Possible_moves:
+                if norm([moves[0],moves[1]],rugbyman_defender.get_pos())==1:
+                    if (norm([moves[0],moves[1]],rugbyman_attacker.get_pos())<min_norm
+                        and moves[3]): #moves[3] ensure that the square is free
+                     
+                        min_norm=norm([moves[0],moves[1]],rugbyman_attacker.get_pos())
+                        new_attacker_pos=[moves[0],moves[1]]
+                        new_attacker_cost=moves[2]
+            if min_norm<100: #why not ???
+                rugbyman_attacker.set_pos(new_attacker_pos)
+                rugbyman_attacker.set_move_left(new_attacker_cost)
+
+        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
+            game.get_ball().set_pos(new_attacker_pos)
+            game.get_ball().set_carrier(rugbyman_attacker)
+            rugbyman_attacker.set_possesion(True)
+        return True 
+    else :
+        return False
+    
+
+def RL_charging(game,rugbyman_attacker, rugbyman_defender,Possible_moves):
+    """
+    This charging function is meant to be used by the minimax algorithm it does not do anything
+    """
+    #the condition is >=1 because once he is on him he has to be able to move
+    if rugbyman_attacker.get_moves_left()- norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>=1:
+        
+        #To simplify the logical choice is always the best card (at small depth)
+        #Optimization could be made here by making the AI choose the smallest card enabling him to win the charge
+        c_red=max(game.get_player_red().get_deck_int()) 
+        c_blue= max(game.get_player_blue().get_deck_int())
+
+        if rugbyman_attacker.get_color()==Color.RED:
+            c_attacker=c_red
+            c_defender=c_blue
+        else:
+            c_attacker=c_blue
+            c_defender=c_red
+
+        #If the attacker wins the charge
+        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
+            #Defender is KO
+            rugbyman_defender.set_KO()
+
+            #He loses the ball and attacker retreives it
+            rugbyman_defender.set_possesion(False)
+            game.get_ball().set_pos(rugbyman_defender.get_pos()) #A bit useless here since the ball was already in the defender position
+            rugbyman_attacker.set_possesion(True)
+
+            #Rugbyman attacker is on defender position we then actualize his position and move left
+            rugbyman_attacker.set_pos(rugbyman_defender.get_pos())
+            for move in Possible_moves:
+                if move[:2]==rugbyman_defender.get_pos():
+                    rugbyman_attacker.set_move_left(move[2])
+            
+            #Here it is hard to choose the best move as it is outside the minimax evaluation yet we will pick the best move still
+            Possible_moves=game.available_move_position(rugbyman_attacker)
+            award=-10000
+            for move in Possible_moves:
+                rugbyman_attacker.set_pos(move[:2])
+                if award<game.award_function(game.get_player_turn()):
+                    award=game.award_function(game.get_player_turn())
+                    best_move=move
+                rugbyman_attacker.set_pos(rugbyman_defender.get_pos())
+            rugbyman_attacker.set_pos(best_move[:2])
+            return True 
+            
+        else : 
+            #if the attacker has more chance of losing the battle then it is not worth it
+            return False
+    else:
         return False
