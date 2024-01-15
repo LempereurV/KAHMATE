@@ -707,8 +707,11 @@ def RL_action_rugbyman(game,rugbyman_attacker,rugbyman_defender,Possible_moves):
     Effectue une action de rugbyman demandée par le bot Deep Q Learning dans le cas où il y a un ennemi. 
     Si un ennemi est dans la nouvelle case, c'est un tacle si le rugbyman n'a pas la balle, une charge sinon. 
     """
+    print("pos balle", game.get_ball().get_pos())
+    print("defenseur", rugbyman_defender)
     if game.is_rugbyman_on_ball() == rugbyman_attacker:
         return RL_charging(game,rugbyman_attacker,rugbyman_defender,Possible_moves)
+
     elif game.get_ball().get_pos() == rugbyman_defender.get_pos():
         return RL_tackling(game,rugbyman_attacker,rugbyman_defender,Possible_moves) 
     return False

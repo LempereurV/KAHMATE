@@ -58,7 +58,7 @@ class DQNAgent:
         # Select an action among possible actions of the selected rugbyman
         random_action_index = np.random.choice(len(random_rugbyman_choice) - 2)  # -2 to exclude rugbyman and his neutral action
         selected_action = random_rugbyman_choice[random_action_index + 2]  # +2 to exclude rugbyman and his neutral action
-        return random_rugbyman_choice[0], [selected_action[0] - 1, selected_action[1] - 1]
+        return random_rugbyman_choice[0], selected_action
 
     def exploitation(self, available_actions, state):
         """
@@ -68,11 +68,11 @@ class DQNAgent:
         for rugbyman_actions in available_actions: #ATTENTION, NE FONCTIONNE QUE POUR LES MOVES DE RUGBYMEN
             rugbyman = rugbyman_actions[0]
             for i in range(2, len(rugbyman_actions)):
-                action_position = [rugbyman_actions[i][0], rugbyman_actions[i][1]] #position de la case d'arrivée de l'action
+                action_position = [rugbyman_actions[i][0] - 1, rugbyman_actions[i][1] - 1] #position de la case d'arrivée de l'action
                 action = RL_action_from_game(rugbyman, action_position)
                 input_data = np.array([state, action])
                 q_value = self.model.predict(input_data.reshape(1, 2, 8, 11))[0][0]
-                if q_value > max_q_value:
+                if q_value >= max_q_value:
                     max_q_value = q_value
                     greedy_rugbyman = rugbyman
                     greedy_action = rugbyman_actions[i]
@@ -97,6 +97,7 @@ class DQNAgent:
         minibatch = np.random.choice(len(self.memory), batch_size, replace=True)
 
         for index in minibatch:
+            print("index")
             state, action, reward, next_state, next_state_actions, done = self.memory[index]
             input_data = [np.array([state, action]).reshape(1, 2, 8, 11) for action in next_state_actions]
             next_state_rewards = np.array([self.model.predict(input)[0][0] for input in input_data])
@@ -107,39 +108,13 @@ class DQNAgent:
             target_f = target
 
             # Entraînez le modèle avec l'échantillon
-            input_data = np.stack([state, action])
-            print(input_data)
-            print(target_f)
+            input_data = np.array([state, action])
             self.model.fit(input_data.reshape(1, 2, 8, 11), target_f.reshape(1))
 
         # Réduisez l'exploration au fil du temps
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
-"""
-def rl_bot_tf(game, player):
-    #available_moves = game.every_possible_move(player)
-    #RL_available_moves = RL_available_actions(available_moves)
-    current_state = states.State(Constants.number_of_rows, Constants.number_of_columns)
-    current_state.get_RL_state_from_game(game)
-    current_state.random_state()
-    state = current_state.get_state()
-    action = RL_available_actions(game.every_possible_move(game.get_player_red()))[1]
-    print("L'état initial est: ")
-    print(state)
-    print("L'action choisie est: ")
-    print(action)
-    current_state.next_step_from_action(action)
-    new_state = current_state.get_state()
-    print("L'état final est: ")
-    print(new_state)
-    print(game.every_possible_move(game.get_player_red()))
-    #action = agent.act(game, player, state)
-    #return action
-
-
-#print(rl_bot_tf(game, game.get_player_red()))
-"""
 
 input_shape = (2, 8, 11)
 agent = DQNAgent(input_shape, Color.RED)
@@ -150,20 +125,23 @@ next_state = State(Constants.number_of_rows, Constants.number_of_columns)
 
 # Entraînement de l'IA sur plusieurs épisodes
 for episode in range(1000):
-    game = game.Game(graphique)
-    player = game.get_player_red()
-    for time in range(100): 
-        done = game.is_game_over()
+    print("NEW GAME")
+    game_episode = game.Game(graphique)
+    player = game_episode.get_player_red()
+    for time in range(100):
+        done = game_episode.is_game_over()
         if not done[0]:
-            state.get_RL_state_from_game(game)
-            action = agent.act(game, player, state.get_state())
+            state.get_RL_state_from_game(game_episode)
+            action = agent.act(game_episode, player, state.get_state()) #game coordinates, not RL coordinates
             RL_action = RL_action_from_game(action[0], action[1])
             reward = -1
-            #game.play_from_RL(action) # A DEFINIR
-            next_state.get_RL_state_from_game(game)
-            next_state_actions = game.every_possible_move(game.get_player_red())
+            game_episode.play_from_RL(action)
+            next_state.get_RL_state_from_game(game_episode)
+            next_state_actions = game_episode.every_possible_move(game_episode.get_player_red())
             RL_next_state_actions = RL_available_actions(next_state_actions)
             done = False
+            print(state.get_state())
+        print(RL_action)
         else:
             action = None
             next_state = None
@@ -173,19 +151,6 @@ for episode in range(1000):
             else:
                 reward = -1000
             done = True
-        """if time == 0:
-            print("state")
-            print(state.get_state())
-            print("RL action")
-            print(RL_action)
-            print("Reward")
-            print(reward)
-            print("Next state")
-            print(next_state.get_state())
-            print("RL next state actions")
-            print(RL_next_state_actions)
-            print("Done")
-            print(done)"""
         agent.remember(state.get_state(), RL_action, reward, next_state.get_state(), RL_next_state_actions, done)
         state = next_state
         if done:

@@ -76,7 +76,7 @@ def RL_action_from_game(rugbyman, action):
     # Only works for rugbyman moves, not ball moves yet
     RL_action = np.zeros((8, 11))
     RL_action[rugbyman.get_pos_x() - 1, rugbyman.get_pos_y() - 1] = -1
-    RL_action[action[0], action[1]] = 1
+    RL_action[action[0] - 1, action[1] - 1] = 1
     return RL_action
 
 
@@ -86,7 +86,7 @@ def RL_available_actions(actions):
     for rugbyman_actions in actions: # actions contient une liste dont chaque élement est [rugbyman, action1, action2...]
         rugbyman = rugbyman_actions[0]
         for i in range(2, len(rugbyman_actions)): #indice 0: instance du rugbyman, indice 1: rugbyman ne bouge pas
-            action = [rugbyman_actions[i][0] - 1, rugbyman_actions[i][1] - 1]
+            action = [rugbyman_actions[i][0], rugbyman_actions[i][1]]
             RL_actions.append(RL_action_from_game(rugbyman, action))
     RL_actions = np.array(RL_actions)
     return RL_actions

@@ -258,14 +258,14 @@ class Game:
         return R
     
     def play_from_RL(self, action): #action = [rugbyman, [x, y, moves_left_after_action, new_pos_occupied]]
-        pos = action[1][:2]
+        pos = [action[1][0], action[1][1]]
         rugbyman = action[0]
         ball = self.get_ball()
         moves_left_after_action = action[1][2]
         cost_action = rugbyman.get_move_points() - moves_left_after_action
         is_new_pos_occupied = action[1][3]
-        if not is_new_pos_occupied:
-            actions.move_rugbyman(pos, rugbyman, self.get_ball(), cost_action)
+        if is_new_pos_occupied: #not?
+            actions.move_rugbyman(pos, rugbyman, ball, cost_action)
         else:
             available_moves = self.every_possible_move(self.get_player_red())
             for rugbyman_moves in available_moves:
