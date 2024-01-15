@@ -88,8 +88,13 @@ BG = pygame.image.load("assets/Background.png")
 SCREEN = Graph.screen
 pygame.display.set_caption("Menu")
 
-center_center_pos = (BG.get_size()[0]/2,BG.get_size()[1]/2)
-center_down_pos = ((BG.get_size()[0]/2,BG.get_size()[1]/10*9))
+center_center_pos = (BG.get_size()[0]/2,BG.get_size()[1]/2-30)
+center_down_pos = (BG.get_size()[0]/2,BG.get_size()[1]/10*9)
+left_center_pos = (BG.get_size()[0]/4+50,BG.get_size()[1]/2)
+right_center_pos = (BG.get_size()[0]/4*3,BG.get_size()[1]/2-20)
+right_center_upper_pos = (BG.get_size()[0]/4*3,BG.get_size()[1]/4*1)
+right_center_lower_pos = (BG.get_size()[0]/4*3,BG.get_size()[1]/4*2.5)
+center_up_pos = (BG.get_size()[0]/2,BG.get_size()[1]/10*2)
 
 def get_font(size): # Returns Press-Start-2P in the desired size
     return pygame.font.Font("assets/font.ttf", size)
@@ -101,18 +106,30 @@ def options():
 
         SCREEN.blit(BG, (0, 0))
 
+        page = Button(image=None, pos=(center_down_pos[0],center_down_pos[1]+30), 
+                            text_input="1 of 7", font=get_font(30), base_color="Black", hovering_color="Black")
+        
+        page.update(SCREEN)
+        
 
+        OPTIONS_TEXT_1 = pygame.image.load("assets/regle.png")
+        OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=center_center_pos)
+        
+        SCREEN.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
 
-        OPTIONS_TEXT = pygame.image.load("assets/regle.jpg")
-        OPTIONS_TEXT = pygame.transform.scale(OPTIONS_TEXT, (OPTIONS_TEXT.get_size()[0]/10*4,OPTIONS_TEXT.get_size()[1]/10*4))
-        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=center_center_pos)
-        SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
         OPTIONS_BACK = Button(image=None, pos=center_down_pos, 
                             text_input="BACK", font=get_font(50), base_color="Black", hovering_color="Green")
-
+        left_arrow = pygame.image.load("assets/arrow_left.png")
+        left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
+        OPTIONS_LEFT = Button(image=left_arrow, pos=(center_down_pos[0]-100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        right_arrow = pygame.image.load("assets/arrow_right.png")
+        right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
+        OPTIONS_RIGHT = Button(image=right_arrow, pos=(center_down_pos[0]+100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
         OPTIONS_BACK.update(SCREEN)
+        OPTIONS_LEFT.update(SCREEN)
+        OPTIONS_RIGHT.update(SCREEN)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -121,6 +138,317 @@ def options():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                     main_menu(Graph, Game)
+                if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_7()
+                if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_2()
+
+        pygame.display.update()
+
+def options_2():
+    while True:
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.blit(BG, (0, 0))
+
+        page = Button(image=None, pos=(center_down_pos[0],center_down_pos[1]+30), 
+                            text_input="2 of 7", font=get_font(30), base_color="Black", hovering_color="Black")
+        
+        page.update(SCREEN)
+
+        OPTIONS_TEXT_1 = pygame.image.load("assets/deplacer_1.png")
+        OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=(left_center_pos[0],left_center_pos[1]-30))
+        
+        SCREEN.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+
+        OPTIONS_TEXT_2 = pygame.image.load("assets/deplacer_2.png")
+        OPTIONS_TEXT_2 = pygame.transform.scale(OPTIONS_TEXT_2, (OPTIONS_TEXT_2.get_size()[0]/2,OPTIONS_TEXT_2.get_size()[1]/2))
+        
+        OPTIONS_RECT_2 = OPTIONS_TEXT_2.get_rect(center=right_center_upper_pos)
+        
+        SCREEN.blit(OPTIONS_TEXT_2, OPTIONS_RECT_2)
+
+        OPTIONS_TEXT_3 = pygame.image.load("assets/deplacer_3.png")
+        OPTIONS_TEXT_3 = pygame.transform.scale(OPTIONS_TEXT_3, (OPTIONS_TEXT_3.get_size()[0]/2,OPTIONS_TEXT_3.get_size()[1]/2))
+        
+        OPTIONS_RECT_3 = OPTIONS_TEXT_3.get_rect(center=right_center_lower_pos)
+        
+        SCREEN.blit(OPTIONS_TEXT_3, OPTIONS_RECT_3)
+
+        OPTIONS_BACK = Button(image=None, pos=center_down_pos, 
+                            text_input="BACK", font=get_font(50), base_color="Black", hovering_color="Green")
+        left_arrow = pygame.image.load("assets/arrow_left.png")
+        left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
+        OPTIONS_LEFT = Button(image=left_arrow, pos=(center_down_pos[0]-100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        right_arrow = pygame.image.load("assets/arrow_right.png")
+        right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
+        OPTIONS_RIGHT = Button(image=right_arrow, pos=(center_down_pos[0]+100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(SCREEN)
+        OPTIONS_LEFT.update(SCREEN)
+        OPTIONS_RIGHT.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu(Graph, Game)
+                if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
+                    options()
+                if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_3()
+
+        pygame.display.update()
+
+def options_3():
+    while True:
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.blit(BG, (0, 0))
+
+        page = Button(image=None, pos=(center_down_pos[0],center_down_pos[1]+30), 
+                            text_input="3 of 7", font=get_font(30), base_color="Black", hovering_color="Black")
+        
+        page.update(SCREEN)
+
+        OPTIONS_TEXT_1 = pygame.image.load("assets/forcer_1.png")
+        OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=(left_center_pos[0],left_center_pos[1]-30))
+        
+        SCREEN.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+
+        OPTIONS_TEXT_2 = pygame.image.load("assets/forcer_2.png")
+        OPTIONS_TEXT_2 = pygame.transform.scale(OPTIONS_TEXT_2, (OPTIONS_TEXT_2.get_size()[0]/2,OPTIONS_TEXT_2.get_size()[1]/2))
+        
+        OPTIONS_RECT_2 = OPTIONS_TEXT_2.get_rect(center=right_center_pos)
+        
+        SCREEN.blit(OPTIONS_TEXT_2, OPTIONS_RECT_2)
+
+        OPTIONS_BACK = Button(image=None, pos=center_down_pos, 
+                            text_input="BACK", font=get_font(50), base_color="Black", hovering_color="Green")
+        left_arrow = pygame.image.load("assets/arrow_left.png")
+        left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
+        OPTIONS_LEFT = Button(image=left_arrow, pos=(center_down_pos[0]-100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        right_arrow = pygame.image.load("assets/arrow_right.png")
+        right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
+        OPTIONS_RIGHT = Button(image=right_arrow, pos=(center_down_pos[0]+100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(SCREEN)
+        OPTIONS_LEFT.update(SCREEN)
+        OPTIONS_RIGHT.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu(Graph, Game)
+                if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_2()
+                if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_4()
+
+        pygame.display.update()
+
+def options_4():
+    while True:
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.blit(BG, (0, 0))
+        
+        page = Button(image=None, pos=(center_down_pos[0],center_down_pos[1]+30), 
+                            text_input="4 of 7", font=get_font(30), base_color="Black", hovering_color="Black")
+        
+        page.update(SCREEN)
+
+        OPTIONS_TEXT_1 = pygame.image.load("assets/passer_1.png")
+        OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=(left_center_pos[0],left_center_pos[1]-30))
+        
+        SCREEN.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+
+        OPTIONS_TEXT_2 = pygame.image.load("assets/passer_2.png")
+        OPTIONS_TEXT_2 = pygame.transform.scale(OPTIONS_TEXT_2, (OPTIONS_TEXT_2.get_size()[0]/2,OPTIONS_TEXT_2.get_size()[1]/2))
+        
+        OPTIONS_RECT_2 = OPTIONS_TEXT_2.get_rect(center=right_center_pos)
+
+        SCREEN.blit(OPTIONS_TEXT_2, OPTIONS_RECT_2)
+
+
+        OPTIONS_BACK = Button(image=None, pos=center_down_pos, 
+                            text_input="BACK", font=get_font(50), base_color="Black", hovering_color="Green")
+        left_arrow = pygame.image.load("assets/arrow_left.png")
+        left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
+        OPTIONS_LEFT = Button(image=left_arrow, pos=(center_down_pos[0]-100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        right_arrow = pygame.image.load("assets/arrow_right.png")
+        right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
+        OPTIONS_RIGHT = Button(image=right_arrow, pos=(center_down_pos[0]+100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(SCREEN)
+        OPTIONS_LEFT.update(SCREEN)
+        OPTIONS_RIGHT.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu(Graph, Game)
+                if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_3()
+                if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_5()
+
+        pygame.display.update()
+
+def options_5():
+    while True:
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.blit(BG, (0, 0))
+
+        OPTIONS_TEXT_1 = pygame.image.load("assets/interseption_1.png")
+        OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=center_center_pos)
+        SCREEN.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+
+        page = Button(image=None, pos=(center_down_pos[0],center_down_pos[1]+30), 
+                            text_input="5 of 7", font=get_font(30), base_color="Black", hovering_color="Black")
+        
+        page.update(SCREEN)
+
+        OPTIONS_BACK = Button(image=None, pos=center_down_pos, 
+                            text_input="BACK", font=get_font(50), base_color="Black", hovering_color="Green")
+        left_arrow = pygame.image.load("assets/arrow_left.png")
+        left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
+        OPTIONS_LEFT = Button(image=left_arrow, pos=(center_down_pos[0]-100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        right_arrow = pygame.image.load("assets/arrow_right.png")
+        right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
+        OPTIONS_RIGHT = Button(image=right_arrow, pos=(center_down_pos[0]+100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(SCREEN)
+        OPTIONS_LEFT.update(SCREEN)
+        OPTIONS_RIGHT.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu(Graph, Game)
+                if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_4()
+                if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_6()
+
+        pygame.display.update()
+
+def options_6():
+    while True:
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.blit(BG, (0, 0))
+
+        page = Button(image=None, pos=(center_down_pos[0],center_down_pos[1]+30), 
+                            text_input="6 of 7", font=get_font(30), base_color="Black", hovering_color="Black")
+        
+        page.update(SCREEN)
+
+        OPTIONS_TEXT_1 = pygame.image.load("assets/plaquer_1.png")
+        OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=(left_center_pos[0],left_center_pos[1]-30))
+        
+        SCREEN.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+
+        OPTIONS_TEXT_2 = pygame.image.load("assets/plaquer_2.png")
+        OPTIONS_TEXT_2 = pygame.transform.scale(OPTIONS_TEXT_2, (OPTIONS_TEXT_2.get_size()[0]/2,OPTIONS_TEXT_2.get_size()[1]/2))
+        
+        OPTIONS_RECT_2 = OPTIONS_TEXT_2.get_rect(center=right_center_upper_pos)
+        
+        SCREEN.blit(OPTIONS_TEXT_2, OPTIONS_RECT_2)
+
+        OPTIONS_TEXT_3 = pygame.image.load("assets/plaquer_3.png")
+        OPTIONS_TEXT_3 = pygame.transform.scale(OPTIONS_TEXT_3, (OPTIONS_TEXT_3.get_size()[0]/2,OPTIONS_TEXT_3.get_size()[1]/2))
+        
+        OPTIONS_RECT_3 = OPTIONS_TEXT_3.get_rect(center=right_center_lower_pos)
+        
+        SCREEN.blit(OPTIONS_TEXT_3, OPTIONS_RECT_3)
+
+        OPTIONS_BACK = Button(image=None, pos=center_down_pos, 
+                            text_input="BACK", font=get_font(50), base_color="Black", hovering_color="Green")
+        left_arrow = pygame.image.load("assets/arrow_left.png")
+        left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
+        OPTIONS_LEFT = Button(image=left_arrow, pos=(center_down_pos[0]-100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        right_arrow = pygame.image.load("assets/arrow_right.png")
+        right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
+        OPTIONS_RIGHT = Button(image=right_arrow, pos=(center_down_pos[0]+100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(SCREEN)
+        OPTIONS_LEFT.update(SCREEN)
+        OPTIONS_RIGHT.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu(Graph, Game)
+                if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_5()
+                if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_7()
+
+        pygame.display.update()
+
+def options_7():
+    while True:
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.blit(BG, (0, 0))
+
+        page = Button(image=None, pos=(center_down_pos[0],center_down_pos[1]+30), 
+                            text_input="7 of 7", font=get_font(30), base_color="Black", hovering_color="Black")
+        
+        page.update(SCREEN)
+
+        OPTIONS_TEXT_1 = pygame.image.load("assets/pied_1.png")
+        OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=(left_center_pos[0],left_center_pos[1]-30))
+        
+        SCREEN.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+
+        OPTIONS_TEXT_2 = pygame.image.load("assets/pied_2.png")
+        OPTIONS_TEXT_2 = pygame.transform.scale(OPTIONS_TEXT_2, (OPTIONS_TEXT_2.get_size()[0]/2,OPTIONS_TEXT_2.get_size()[1]/2))
+        
+        OPTIONS_RECT_2 = OPTIONS_TEXT_2.get_rect(center=right_center_pos)
+        
+        SCREEN.blit(OPTIONS_TEXT_2, OPTIONS_RECT_2)
+
+        OPTIONS_BACK = Button(image=None, pos=center_down_pos, 
+                            text_input="BACK", font=get_font(50), base_color="Black", hovering_color="Green")
+        left_arrow = pygame.image.load("assets/arrow_left.png")
+        left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
+        OPTIONS_LEFT = Button(image=left_arrow, pos=(center_down_pos[0]-100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        right_arrow = pygame.image.load("assets/arrow_right.png")
+        right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
+        OPTIONS_RIGHT = Button(image=right_arrow, pos=(center_down_pos[0]+100, center_down_pos[1] - 7),text_input="", font=get_font(50), base_color="Black", hovering_color="Green") 
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(SCREEN)
+        OPTIONS_LEFT.update(SCREEN)
+        OPTIONS_RIGHT.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu(Graph, Game)
+                if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_6()
+                if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
+                    options()
 
         pygame.display.update()
 
@@ -138,7 +466,7 @@ def main_menu(Graph, Game):
         PLAY_BUTTON = Button(image=pygame.image.load("assets/rect.png"), pos=(BG.get_size()[0]/2, BG.get_size()[1]/8*3), 
                             text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
         OPTIONS_BUTTON = Button(image=pygame.image.load("assets/rect.png"), pos=(BG.get_size()[0]/2, BG.get_size()[1]/8*5), 
-                            text_input="OPTIONS", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+                            text_input="RULES", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
         QUIT_BUTTON = Button(image=pygame.image.load("assets/rect.png"), pos=(BG.get_size()[0]/2, BG.get_size()[1]/8*7), 
                             text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
