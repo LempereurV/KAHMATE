@@ -125,13 +125,13 @@ next_state = State(Constants.number_of_rows, Constants.number_of_columns)
 
 # Entraînement de l'IA sur plusieurs épisodes
 for episode in range(1000):
-    print("NEW GAME")
     game_episode = game.Game(graphique)
     player = game_episode.get_player_red()
     for time in range(100):
         done = game_episode.is_game_over()
         if not done[0]:
             state.get_RL_state_from_game(game_episode)
+            print(state.get_state())
             action = agent.act(game_episode, player, state.get_state()) #game coordinates, not RL coordinates
             RL_action = RL_action_from_game(action[0], action[1])
             reward = -1
@@ -140,8 +140,7 @@ for episode in range(1000):
             next_state_actions = game_episode.every_possible_move(game_episode.get_player_red())
             RL_next_state_actions = RL_available_actions(next_state_actions)
             done = False
-            print(state.get_state())
-        print(RL_action)
+            print(RL_action)
         else:
             action = None
             next_state = None
