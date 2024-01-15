@@ -96,4 +96,32 @@
     \end{center}
 \end{titlepage}
 
+\section{Bot utilisant le Deep Reinforcement Learning}
+
+L'idée de ce bot est de combiner les fonctionnalités du Deep Learning et du Reinforcement Learning. 
+
+
+D'une part, un réseau de neurones permet d'estimer la Q-valeur Q(s,a) d'une action a à partir d'un état s donné. La Q-valeur permet d'estimer la pertinence d'une action dans un état donné: plus elle est élevée, plus l'action est bonne et maximise les chances de gagner la partie. 
+
+
+D'autre part, le Reinforcement Learning permet de trouver fournir une estimation plus précise de la Q-valeur Q(s,a) d'une action à partir des estimations des Q-valeurs par le réseau de neurones. Cette estimation plus précise de la Q-valeur est ensuite retournée au réseau de neurones afin de mettre à jour ses paramètres afin d'améliorer ses prédictions.
+
+L'équation de Reinforcement Learning utilisée est la suivante:\\
+
+$Q(s_{t},a_{t}) = Q(s_{t},a_{t}) + \gamma \max_{a_{t+1} \in A_{t+1}} Q(s_{t},a_{t})$
+\newline
+
+où:
+\item $s_{t}$ est l'état actuel de la partie
+\item $a_{t}$ est l'action choisie par le bot
+\item $s_{t+1}$ est l'état suivant après avoir effectué l'action $a_{t}$
+\item $A_{t+1}$ est l'ensemble des actions légales pour le bot dans l'état suivant
+\item $\gamma$ est le facteur de remise. Proche de 0 il prend peu en compte les états lointains, proche de 1 il y est sensible.
+
+Il serait bien trop complexe de parcourir toutes les actions possibles dans chaque état et d'apprendre tout de suite tout ce qu'on peut apprendre sur chacune de ces actions. L'algorithme utilise préfère travailler avec des épisodes. Le bot joue donc avec sa stratégie toute une partie. Une fois la partie finie, chaque action choisie par le bot est analysée par l'algorithme de Reinforcement Learning puis sert d'entrainement pour le réseau de neurones.
+
+Afin de traduire l'état de la partie et une action d'une manière compréhensible pour le réseau de neurones, on traduit un état de la partie par un tableau 2D ayant les dimensions de la grille de jeu. Les cases où se trouvent des rugbyman contiennent les nombres -1, -2, -3, -4, -5, 1, 2, 3, 4, 5 selon le type de rugbyman et le joueur (nombres négatifs pour le joueur rouge, nombres positifs pour le joueur bleu). On ajoute 0.5 dans la case où se trouve la balle. Les autres cases contiennent des 0.\\
+Une action est également traduite comme un tableau 2D ayant aussi les dimensions de la grille de jeu. Si l'action est un déplacement de rugbyman, la case d'où part le rugbyman contient -1 et celle où il arrive contient 1. Si on déplace la balle, la case de départ contient -10 et la case d'arrivée contient 10. Toutes les autres cases contiennent des 0.\\
+
+
 \end{document}
