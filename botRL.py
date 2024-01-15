@@ -8,7 +8,7 @@ import front
 
 
 class DQNAgent:
-    def __init__(self, input_shape, color):
+    def __init__(self, input_shape, color, model = None):
         self.player = color
         self.input_size = input_shape
         self.memory = []  # Utilisez une structure de mémoire pour stocker les expériences passées
@@ -17,8 +17,14 @@ class DQNAgent:
         self.epsilon_decay = 0.995  # Taux de décroissance de l'exploration
         self.epsilon_min = 0.01  # Taux d'exploration minimum
         self.learning_rate = 0.001
-        self.model = self.build_model() # Modèle du réseau neuronal
+        if model is None:
+            self.model = self.build_model() #Modèle du réseau neuronal
+        else:
+            self.model = model
 
+    def get_model(self):
+        return self.model
+    
     def build_model(self):
         """
         Creation of the neural network model: 2 hidden layers of 24 neurons with relu activation function and a linear output layer.
@@ -187,6 +193,8 @@ for episode in range(1000):
         if done:
             agent_red.remember(memorize_red_if_game_finished)
             agent_blue.remember(memorize_blue_if_game_finished)
+            agent_red.get_model().save('agent_red.keras')
+            agent_blue.get_model().save('agent_blue.keras')
             break
     if len(agent_red.memory) > 32:  # Taille minimale de la mémoire pour commencer la formation
         agent_red.replay(32)  # Taille du lot pour la formation

@@ -716,7 +716,6 @@ def RL_action_rugbyman(game,rugbyman_attacker,rugbyman_defender,Possible_moves):
 
 
 def RL_tackling(game,rugbyman_attacker, rugbyman_defender,Possible_moves):
-    print(Possible_moves)
     """
     Effectue un tacle demandé par le bot Deep Q Learning.
     Contient en partie des élements du bot de Félix.
