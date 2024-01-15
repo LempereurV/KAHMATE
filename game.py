@@ -254,7 +254,8 @@ class Game:
                 R=[[rugbyman]+self.available_move_position(rugbyman)]+R
             return R
         for rugbyman in player.get_rugbymen():
-            R=[[rugbyman]+self.available_move_position(rugbyman)]+R
+            if rugbyman.get_KO()==0:
+                R=[[rugbyman]+self.available_move_position(rugbyman)]+R
         return R
     
     def play_from_RL(self, action): #action = [rugbyman, [x, y, moves_left_after_action, new_pos_occupied]]
@@ -267,7 +268,7 @@ class Game:
         if is_new_pos_occupied: #not?
             actions.move_rugbyman(pos, rugbyman, ball, cost_action)
         else:
-            available_moves = self.every_possible_move(self.get_player_red())
+            available_moves = self.every_possible_move(self.get_player_turn())
             for rugbyman_moves in available_moves:
                 if rugbyman_moves[0] == rugbyman:
                     possible_moves_by_rugbyman = rugbyman_moves[1:]

@@ -74,7 +74,7 @@ class State:
 def RL_action_from_game(rugbyman, action):
     "Converts a game action into an action that can be used by the RL algorithm"
     # Only works for rugbyman moves, not ball moves yet
-    RL_action = np.zeros((8, 11))
+    RL_action = np.zeros((8, 13))
     RL_action[rugbyman.get_pos_x() - 1, rugbyman.get_pos_y() - 1] = -1
     RL_action[action[0] - 1, action[1] - 1] = 1
     return RL_action

@@ -1,3 +1,8 @@
+x = 0
+y = 0
+import os
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+
 from typing import Any
 import pygame
 import sys
@@ -8,6 +13,8 @@ import color
 import random
 from constants import *
 import cards 
+import os 
+
 
 # Initialisation de Pygame
 pygame.init()
@@ -23,8 +30,8 @@ size = image.get_size()
 
 
 # Création de la fenêtre
-#screen = pygame.display.set_mode(size)
-# surf = pygame.surface.Surface(size)
+screen = pygame.display.set_mode(size)
+surf = pygame.surface.Surface(size)
 
 
 def create_hitbox(screen):
@@ -53,7 +60,6 @@ class Graphique:
         pygame.init()
         
         
-        width=1000
         # Chargement de l'image, chemin relatif
         image_path = "Images/plateau.jpg"
         self.board = pygame.image.load(image_path)
@@ -71,8 +77,7 @@ class Graphique:
         #self.screen = pygame.display.set_mode(self.size)
         #self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN,pygame.RESIZABLE)
         
-        
-        self.screen = pygame.display.set_mode((width, height),pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((width, height))
 
         self.board = pygame.transform.scale(self.board, (width, height))
 
