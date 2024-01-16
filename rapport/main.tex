@@ -3,6 +3,7 @@
 
 % Dictionnaire français, pour caractères spéciaux, tirets, caractères accentués
 \usepackage[french]{babel}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
 \usepackage[utf8]{inputenc}
 %Toujours plus d'accents
 \usepackage[T1]{fontenc}
@@ -123,4 +124,64 @@ Il serait bien trop complexe de parcourir toutes les actions possibles dans chaq
 
 Afin de traduire l'état de la partie et une action d'une manière compréhensible pour le réseau de neurones, on traduit un état de la partie par un tableau 2D ayant les dimensions de la grille de jeu. Les cases où se trouvent des rugbyman contiennent les nombres -1, -2, -3, -4, -5, 1, 2, 3, 4, 5 selon le type de rugbyman et le joueur (nombres négatifs pour le joueur rouge, nombres positifs pour le joueur bleu). On ajoute 0.5 dans la case où se trouve la balle. Les autres cases contiennent des 0.\\
 Une action est également traduite comme un tableau 2D ayant aussi les dimensions de la grille de jeu. Si l'action est un déplacement de rugbyman, la case d'où part le rugbyman contient -1 et celle où il arrive contient 1. Si on déplace la balle, la case de départ contient -10 et la case d'arrivée contient 10. Toutes les autres cases contiennent des 0.\\
+
+\section{Bot 'traditionnel'}
+L'idée de ce bot est de déterminer quelle action choisir sans apprendre de ses parties passées.\\
+Il faut donc pour cela quantifier chaque situation dans la partie et pouvoir calculer l'action optimale à effectuer en fonction de la situation décrite. POur cela on s'appuie sur une fonction de calcul de récompense rudimentaire. Celle-ci en fonction de qui a la balle va décrire des résultats différents. Si le bot a la balle, les récompenses vont croître vers la ligne d'essai et décroître a proximité des ennemis adverses; sinon, les récompenses vont croître vers la balle, qu'elle soit possédée par l'ennemi ou non. La stratégie du bot est alors relativement simple:
+\begin{algorithm}
+  \caption{Traditional Bot}
+  \KwData{Game state}
+  \KwResult{Bot's move}
+  \textit{S} $\leftarrow$ Indicator of ball ownership\;
+  \textit{R} $\leftarrow$ Reward map\;
+  \If{S=1, the bot has the ball}{
+    \textit{Rugbymen} $\leftarrow$ List of rugby players sorted by the best attainable reward\;
+    \If{Owner = Rugbymen[0]}{
+      Move the owner\;
+      Move Rugbymen[1]\;
+      End of turn\;
+    }
+    \Else{
+      \For{Rugbyman in Rugbymen}{
+        \If{Owner can pass to Rugbyman}{
+          Owner passes to Rugbyman\;
+          \textbf{break}\;
+        }
+      }
+      Move the remaining rugby players according to the order of \textit{Rugbymen}\;
+    }
+  }
+  End of turn\;
+  \If{S=0, nobody has the ball}{
+    \For{Rugbyman in Rugbymen}{
+      \If{the ball is reachable by Rugbyman}{
+        Move Rugbyman to the ball\;
+        \If{Rugbyman can still move}{
+          Move Rugbyman to the best reward\;
+          \textbf{break}\;
+        }
+        \Else{
+          \textbf{break}\;
+        }
+      }
+    }
+    \textit{Rugbymen} $\leftarrow$ List of rugby players sorted by the best reward\;
+    Move the remaining rugby players according to the order of \textit{Rugbymen}\;
+  }
+  \If{S=-1, the enemy has the ball}{
+    \textit{Rugbymen} $\leftarrow$ List of rugby players sorted by the best reward\;
+    Action of \textit{Rugbyman}[0]\;
+    \textit{S} $\leftarrow$ Indicator of ball ownership\;
+    \If{S=1, we have recovered the ball}{
+      Execute \textbf{3}\;
+    }
+    \Else{
+      Action of \textit{Rugbymen}[1]\;
+    }
+  }
+  \Return{Game instance}\;
+\end{algorithm}
+
+
+
 \end{document}
