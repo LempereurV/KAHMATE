@@ -97,6 +97,32 @@
     \end{center}
 \end{titlepage}
 
+\section{Menu principal}
+
+Avant le lancement du jeu (\texttt{main()}), l'utilisateur se retrouve sur un écran de sélection. Il consiste en une fonction \texttt{main\_menu()} sous forme d'une boucle pouvant être quittée seulement lorsque l'option "QUIT" est sélectionnée.
+Les 3 boutons à l'écran ("PLAY", "RULES" et "QUIT") sont des éléments de la classe \texttt{Button} de \texttt{main\_menu\_Button.py}. Cette classe consiste en un texte qui peut être associé à une image, et contient trois méthodes :
+
+
+
+\begin{itemize}
+  \item \texttt{Button.update(self, screen)}, qui fait apparaitre le texte et l'image à l'écran.
+  \item \texttt{Button.checkForInput(self, position)}, qui vérifie si la coordonnée "position" (généralement la position du curseur) est dans le rectangle de Button.
+  \item \texttt{Button.changeColor(self, position)}, qui fait changer la couleur du texte (par exemple dans le cas où le curseur passe au dessus du Button).
+\end{itemize} 
+Si l'évènement \texttt{pygame.MOUSEBUTTONDOWN} est activé (click souris), les collisions avec les boutons sont vérifiées :
+\begin{itemize}
+  \item Dans le cas où le bouton "PLAY" est pressé, \texttt{main()} est executée et le jeu commence. Lorsque la partie est terminée, l'utilisateur est ramené au menu principal.
+  \item Dans le cas où le bouton "RULES" est pressé, \texttt{option()} est executée. Il s'agit d'une nouvelle page où les règles sont expliquées, il est possible de naviger parmis 7 pages associées à 7 fonctions \texttt{option()}. Lorsque le bouton "BACK" est pressé, \texttt{main\_menu()} est executé et l'utilisateur retourne sur le menu principal.
+  \item Dans le cas où "QUIT" est pressé, la fenêtre se ferme.
+\end{itemize}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.45\linewidth]{main_menu_1.png}
+  \includegraphics[width=0.45\linewidth]{main_menu_2.png}
+  \caption{Le menu principal à gauche avec un des menu de règles}
+\end{figure}
+
 \section{Bot utilisant le Deep Reinforcement Learning}
 
 L'idée de ce bot est de combiner les fonctionnalités du Deep Learning et du Reinforcement Learning.
@@ -128,7 +154,7 @@ Une action est également traduite comme un tableau 2D ayant aussi les dimension
 \section{Bot 'traditionnel'}
 L'idée de ce bot est de déterminer quelle action choisir sans apprendre de ses parties passées.\\
 Il faut donc pour cela quantifier chaque situation dans la partie et pouvoir calculer l'action optimale à effectuer en fonction de la situation décrite. POur cela on s'appuie sur une fonction de calcul de récompense rudimentaire. Celle-ci en fonction de qui a la balle va décrire des résultats différents. Si le bot a la balle, les récompenses vont croître vers la ligne d'essai et décroître a proximité des ennemis adverses; sinon, les récompenses vont croître vers la balle, qu'elle soit possédée par l'ennemi ou non. La stratégie du bot est alors relativement simple:
-\begin{algorithm}
+\begin{algorithm}[h!]
   \caption{Traditional Bot}
   \KwData{Game state}
   \KwResult{Bot's move}
@@ -181,6 +207,12 @@ Il faut donc pour cela quantifier chaque situation dans la partie et pouvoir cal
   }
   \Return{Game instance}\;
 \end{algorithm}
+\newpage
+\section{Element non présent dans la version finale}
+\subsection{Menu flottant}
+Initialement, les interractions entre l'utilisateur et les jetons de joueurs se faisaient via un menu flottant s'affichant à coté de la case contenant le jeton.
+Ces menus étaient gérés par la classe \texttt{FloatingMenu} définie dans \texttt{menu.py}. 
+La classe était fonctionnelle, mais nous avons préféré permettre au joueur de directement sélectionner les options via un click sur le jeton ou sur le ballon.
 
 
 
