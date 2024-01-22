@@ -6,8 +6,14 @@ import game
 import actions 
 import minimax
 import time
-
+import cProfile
+import matplotlib.pyplot as plt
+import pstats
 ### Initializations ###
+from io import StringIO
+
+import pandas as pd
+
 
 #The Graph 
 Graph = front.Graphique()
@@ -16,14 +22,13 @@ Graph.display_ball(Game.get_ball())
 front.pygame.display.flip()
 Initialisation = False
 
-
+#Outils de profiling python : profiler 
 
 
 #This the main loop of the game, the function is_game_over of game is verifying each turn if one rugbyman is in the adversary camp
 
 
-
-AI=False 
+AI=False    
 
 while not Game.is_game_over():
     #We record the time it takes
@@ -33,23 +38,45 @@ while not Game.is_game_over():
  
     if AI and active_player.get_color()==Color.RED:
             ### Partie IA####
-            moves=[None,None]
+            moves=[None,None,None]
             begin=time.time()
             try :
+                profiler = cProfile.Profile()
+                profiler.enable()
+
                 minimax.minimax(Game,2,True,-float("inf"),float("inf"),Game.get_player_turn(),moves,Graph)
+                profiler.disable()
+
+
+                profiler.disable()
+
+                # Save stats to a string
+                stats_stream = StringIO()
+                stats = pstats.Stats(profiler, stream=stats_stream)
+                stats.sort_stats('cumulative')
+                stats.print_stats()
+
+
+
+
+
+                # Print the raw content of the profiling statistics
+                print(stats_stream.getvalue())
+                
+
             except TimeoutError:
                 print("Temps trop long")
             end=time.time()
             print("Temps de calcul de l'IA : ",end-begin)
 
             Graph.draw_board(Game)
-            """
-            if ball_pos!=False:
-                Game.get_ball().set_pos(ball_pos)
-            """
-            print(moves)
-            for move in moves:
-                actions.move_rugbyman([move[1],move[2]],move[0],Game.get_ball(),move[3])
+            
+            if moves[2]!=None:
+                Game.get_ball().set_pos(moves[2])
+            
+            for move in moves[:2]:
+                if move!=False:
+                    actions.move_rugbyman([move[1],move[2]],move[0],Game.get_ball(),move[3])
             Graph.draw_board(Game)
             active_player.set_can_play(False)
             Game.refresh_players_rugbymen_stats()

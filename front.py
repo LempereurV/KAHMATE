@@ -26,22 +26,6 @@ screen = pygame.display.set_mode(size)
 # surf = pygame.surface.Surface(size)
 
 
-def create_hitbox(screen):
-
-    """
-        
-    """
-    #La hitbox contient chaque case du terrain, ainsi que les bords du terrain (les bords sont des cases de tailles identiques au damier classique)
-    #Chaque hitbox est divisé par 4 pour avoir une hitbox plus petite (permet de  cliquer sur le ballon )
-    full_hitbox = []
-    for j in range((Constants.number_of_rows+2)):
-        for i in range((Constants.number_of_columns+2)):
-            full_hitbox.append(pygame.Rect((Constants.edge_width_normalized + i * Constants.square_width_normalized)*screen.get_width(), 
-                                        (Constants.edge_height_normalized + j * Constants.square_height_normalized)*screen.get_height(),
-                                        Constants.square_width_normalized*screen.get_width(), 
-                                        Constants.square_height_normalized*screen.get_height()))
-    return full_hitbox
-        
 
 
 
@@ -83,16 +67,13 @@ class Graphique:
         # Affichage de l'image dans la fenêtre
         self.screen.blit(self.board, (0, 0))
 
-    ### A supprrimer###
 
-    def draw_last_row(self):
-        for i in range (len(self.hitbox)):
-            if i//(Constants.number_of_columns+2)==Constants.number_of_rows+1:
-                pygame.draw.rect(self.screen, (255, 255, 255), self.hitbox[i], 0)
+    def draw_board_init(self,list_rugbyman):
+        if len(list_rugbyman)>0:
+            for rugbyman in list_rugbyman:
+                self.display_rugbyman(rugbyman)
+        
         pygame.display.flip()
-
-    ### FIn a supprimer #####
-
 
     def is_board_being_resized(self,event):
         if event.type == pygame.VIDEORESIZE:
@@ -104,11 +85,11 @@ class Graphique:
             return True
         return False
 
-
     def get_hitbox_on_click(self):
         cond=False
         while True:
             for event in pygame.event.get():
+                
                 if event.type == pygame.QUIT:
                     raise ValueError("The player has quit the game")
                 elif self.is_board_being_resized(event):
@@ -124,7 +105,6 @@ class Graphique:
                                 cond=True
                             return [i//(Constants.number_of_columns+2),i%(Constants.number_of_columns+2)],cond
 
-    
     def display_ball(self, ball):
         ball_graph = pygame.image.load("Images/Ballon.png")
         ball_graph = pygame.transform.scale(ball_graph, (self.hitbox[0].width/2, self.hitbox[0].height/2))
@@ -132,7 +112,6 @@ class Graphique:
         self.screen.blit(ball_graph,self.hitbox[ball.get_pos_x()*(Constants.number_of_columns+2)+ball.get_pos_y()].center)
         pygame.display.flip()
         
-    
     def draw_cards(self, player):
         for i in range (6):
 
@@ -160,7 +139,6 @@ class Graphique:
                     self.screen.blit(card_graph,self.hitbox[5*(Constants.number_of_columns+2)+(Constants.number_of_columns+2)//2+1+2*(i-3)].topleft)
         pygame.display.flip()
 
-
     def display_rugbyman(self, rugbyman):
         path=path_convertor(rugbyman)
         pos=rugbyman.get_pos()
@@ -186,10 +164,6 @@ class Graphique:
             self.screen.blit(button, self.hitbox[Constants.number_of_columns-2].topleft)
         pygame.display.flip()
         pygame.time.delay(100)
-                
-
-    
-
 
     def highlight_pass(self, passes):
         s = pygame.Surface(self.hitbox[0].size)  # the size of your rect
@@ -199,7 +173,6 @@ class Graphique:
             screen.blit(s, self.hitbox[pass_[0]*(Constants.number_of_columns+2) + pass_[1]].topleft)
         pygame.display.flip()
 
-
     def highlight_move_FElIX(self, list_move):
         for move in list_move:
             if move[3]:
@@ -208,14 +181,11 @@ class Graphique:
                 self.highlight_move_annexe(move,(72, 0, 72))
         pygame.display.flip()
 
-
     def highlight_move_annexe(self, move,color):
         s = pygame.Surface(self.hitbox[0].size)  # the size of your rect
         s.set_alpha(125)  # alpha level
         s.fill(color)
-        screen.blit(s, self.hitbox[move[0] * (Constants.number_of_columns+2) + move[1]].topleft)  
-        
-
+        screen.blit(s, self.hitbox[move[0] * (Constants.number_of_columns+2) + move[1]].topleft)     
 
     def draw_board(self, G):
         self.screen.blit(self.board, (0, 0))
@@ -232,8 +202,6 @@ class Graphique:
         self.display_ball(game.Game.get_ball(G))
         pygame.display.flip()
 
-
-    # Rafraîchissement de la fenêtre
     def refresh(self):
         pygame.display.flip()
 
@@ -272,4 +240,19 @@ def path_convertor(Rugbyman):
             if Rugbyman.color == color.Color.BLUE:
                 return "Images/Rapide_bleu.png"
 
+def create_hitbox(screen):
 
+    """
+        
+    """
+    #La hitbox contient chaque case du terrain, ainsi que les bords du terrain (les bords sont des cases de tailles identiques au damier classique)
+    #Chaque hitbox est divisé par 4 pour avoir une hitbox plus petite (permet de  cliquer sur le ballon )
+    full_hitbox = []
+    for j in range((Constants.number_of_rows+2)):
+        for i in range((Constants.number_of_columns+2)):
+            full_hitbox.append(pygame.Rect((Constants.edge_width_normalized + i * Constants.square_width_normalized)*screen.get_width(), 
+                                        (Constants.edge_height_normalized + j * Constants.square_height_normalized)*screen.get_height(),
+                                        Constants.square_width_normalized*screen.get_width(), 
+                                        Constants.square_height_normalized*screen.get_height()))
+    return full_hitbox
+        

@@ -7,7 +7,7 @@ import game
 import ball
 from constants import *
 import cards   
-
+import time 
 def placement_orders(color):
     R = {
         "First Normal Rugbyman": rugbymen.Rugbyman(color),
@@ -21,7 +21,6 @@ def placement_orders(color):
 
 
 def positions_rugbymen_player(placement_order, Graphique):
-    
     i = 0
     n_rugbymen = len(placement_order)
     R = [None] * n_rugbymen 
@@ -64,6 +63,7 @@ def positions_rugbymen_player(placement_order, Graphique):
         
 
     else:
+
         for i in range(n_rugbymen):
             placement_order[Noms[i]].set_pos_x(i+1)
             placement_order[Noms[i]].set_pos_y(7)
@@ -71,15 +71,19 @@ def positions_rugbymen_player(placement_order, Graphique):
             R[i]=placement_order[Noms[i]]
             front.Graphique.display_rugbyman(Graphique,R[i])
     front.pygame.display.flip()
+    
     return R
     
-    front.pygame.display.flip()
+
+    
+    
     while i < n_rugbymen:
         # The Color.split(".")[-1] is for the color to display as intended
         print( str(color).split(".")[-1] + " Player, Choose the position of the " + Noms[i])
         # Fonction de la classe graphique qui renvoie une liste de la forme [i,j] avec i et j les colonnes et lignes de la case cliquée
         pos,cond = front.Graphique.get_hitbox_on_click(Graphique)
 
+        Graphique.draw_board_init(R[:i])
         #This step is necessary to ensure that player can resize the screen
         while pos==False:
             pos,cond = front.Graphique.get_hitbox_on_click(Graphique)
@@ -114,9 +118,10 @@ def positions_rugbymen_player(placement_order, Graphique):
         
         #Toutes les conditions ont été vérifiées, on peut enregistrer les informations
         placement_order[Noms[i]].set_pos(pos)
-        Graphique.display_rugbyman(placement_order[Noms[i]])  # Display the newly placed rugbymen on the board
+        #Graphique.display_rugbyman(placement_order[Noms[i]])  # Display the newly placed rugbymen on the board
         R[i] =  placement_order[Noms[i]]
         L_pos.append(pos)
+        Graphique.draw_board_init(R[:i])
         front.pygame.display.flip()
         i += 1
     return R
@@ -550,8 +555,16 @@ def undo_move_rugbyman( former_rugbyman_pos,former_ball_pos,rugbyman,ball,cost):
 
 
 def make_pass_AI(Game,pos):
+
     #former_owner is the rugbyman who had the ball before the pass
     former_owner=Game.is_rugbyman_on_ball()
+    #print(former_owner)
+    #It is useless to send the ball to an adversary
+    if (Game.which_rugbyman_in_pos(pos)!=False 
+        and Game.which_rugbyman_in_pos(pos).get_color()!=former_owner.get_color()):
+        return False
+    
+    
     
     #If the pass is backward (meaning it can be catched)
     if (former_owner.get_color() is Color.RED
@@ -587,7 +600,8 @@ def make_pass_AI(Game,pos):
                     if (norm(rugbyman.get_pos(),pos)<norm(former_owner.get_pos(),pos)
                         and min>norm(rugbyman.get_pos(),former_owner.get_pos())):   
                             return False
-            
+    
+    
     Game.is_rugbyman_on_ball().set_possesion(False)
     Game.get_ball().set_pos(pos)
 
@@ -603,8 +617,9 @@ def undo_pass_AI(Game,former_ball_pos,former_owner):
     former_owner.set_possesion(True)
     Game.get_ball().set_carrier(former_owner)    
 
-def action_rugbyman_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves,Graphique):
+def  action_rugbyman_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves,Graphique):
     if Game.is_rugbyman_on_ball()==rugbyman_attacker:
+        return False
         return charging_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves)
     elif Game.get_ball().get_pos()==rugbyman_defender.get_pos():
         return tackling_AI(Game,rugbyman_attacker,rugbyman_defender,Possible_moves,Graphique) 
@@ -707,7 +722,7 @@ def tackling_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves,Graphiq
                         Game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
             rugbyman_attacker.set_possesion(False)
         else :
-            return False 
+            rugbyman_attacker.set_KO()
         
         #If the rugbyman doing the tackling was far from the the defender
         #We have to replace him so that the tackling makes sense 
@@ -732,7 +747,7 @@ def tackling_AI(Game,rugbyman_attacker, rugbyman_defender,Possible_moves,Graphiq
             rugbyman_attacker.set_possesion(True)
         return True 
     else :
-        return False
+        rugbyman_attacker.set_KO()
     
 
 def choose_cards_AI(player):

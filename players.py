@@ -26,12 +26,6 @@ class Player:
         else:
             self.can_play = False
 
-    ### A supprimer ###
-
-    def get_color(self):
-        return self._color
-    
-    ####
 
     def has_ball(self):
         """
@@ -42,7 +36,8 @@ class Player:
                 return True
         return False
 
-
+    def get_color(self):
+        return self._color
     
 
     def add_choosen_rugbymen(self, rugbyman):
@@ -160,4 +155,11 @@ class Player:
                 if rugbyman.get_moves_left()>0:
                     return 1
             return 0
+
+    def undo_chosen_rugbymen(self):
+        new_chosen_rugbymen=[]
+        for rugbyman in self.get_chosen_rugbymen():
+            if not rugbyman.get_moves_left()==rugbyman.get_move_points():
+                new_chosen_rugbymen.append(rugbyman)
+        self._chosen_rugbymen=new_chosen_rugbymen
                 
