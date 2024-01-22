@@ -14,7 +14,7 @@ pygame.init()
 clock = pygame.time.Clock()
 
 # Chargement de l'image, chemin relatif
-image_path = "Images/plateau.png"
+image_path = "Images/plateau.jpg"
 image = pygame.image.load(image_path)
 # Définition de la taille de la fenêtre
 size = image.get_size()
@@ -50,15 +50,17 @@ class Graphique:
     def __init__(self):
         # Initialisation de Pygame
         pygame.init()
-
+        
+        
+        width=1000
         # Chargement de l'image, chemin relatif
-        image_path = "Images/plateau.png"
+        image_path = "Images/plateau.jpg"
         self.board = pygame.image.load(image_path)
 
         
         # Définition de la taille de la fenêtre
-        #width = int(self.board.get_width() * Constants.scale_factor)
-        #height = int(self.board.get_height() * Constants.scale_factor)
+        width = int(self.board.get_width() * Constants.scale_factor)
+        height = int(self.board.get_height() * Constants.scale_factor)
         
 
         
@@ -67,9 +69,8 @@ class Graphique:
         # Création de la fenêtre
         #self.screen = pygame.display.set_mode(self.size)
         #self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN,pygame.RESIZABLE)
-
-        width=pygame.display.Info().current_w
-        height=pygame.display.Info().current_h
+        
+        
         self.screen = pygame.display.set_mode((width, height),pygame.RESIZABLE)
 
         self.board = pygame.transform.scale(self.board, (width, height))
@@ -82,6 +83,12 @@ class Graphique:
         # Affichage de l'image dans la fenêtre
         self.screen.blit(self.board, (0, 0))
 
+
+    def draw_board_init(self,list_rugbyman):
+        if len(list_rugbyman)>0:
+            for rugbyman in list_rugbyman:
+                self.display_rugbyman(rugbyman)
+        
     ### A supprrimer###
 
     def draw_last_row(self):
@@ -89,9 +96,6 @@ class Graphique:
             if i//(Constants.number_of_columns+2)==Constants.number_of_rows+1:
                 pygame.draw.rect(self.screen, (255, 255, 255), self.hitbox[i], 0)
         pygame.display.flip()
-
-    ### FIn a supprimer #####
-
 
     def is_board_being_resized(self,event):
         if event.type == pygame.VIDEORESIZE:
@@ -103,11 +107,11 @@ class Graphique:
             return True
         return False
 
-
     def get_hitbox_on_click(self):
         cond=False
         while True:
             for event in pygame.event.get():
+                
                 if event.type == pygame.QUIT:
                     raise ValueError("The player has quit the game")
                 elif self.is_board_being_resized(event):
@@ -123,7 +127,6 @@ class Graphique:
                                 cond=True
                             return [i//(Constants.number_of_columns+2),i%(Constants.number_of_columns+2)],cond
 
-    
     def display_ball(self, ball):
         ball_graph = pygame.image.load("Images/Ballon.png")
         ball_graph = pygame.transform.scale(ball_graph, (self.hitbox[0].width/2, self.hitbox[0].height/2))
@@ -131,7 +134,6 @@ class Graphique:
         self.screen.blit(ball_graph,self.hitbox[ball.get_pos_x()*(Constants.number_of_columns+2)+ball.get_pos_y()].center)
         pygame.display.flip()
         
-    
     def draw_cards(self, player):
         for i in range (6):
 
@@ -159,7 +161,6 @@ class Graphique:
                     self.screen.blit(card_graph,self.hitbox[5*(Constants.number_of_columns+2)+(Constants.number_of_columns+2)//2+1+2*(i-3)].topleft)
         pygame.display.flip()
 
-
     def display_rugbyman(self, rugbyman):
         path=path_convertor(rugbyman)
         pos=rugbyman.get_pos()
@@ -184,6 +185,7 @@ class Graphique:
             button = pygame.transform.scale(button,(4*self.hitbox[0].width,self.hitbox[0].height))
             self.screen.blit(button, self.hitbox[Constants.number_of_columns-2].topleft)
         pygame.display.flip()
+        pygame.time.delay(100)
         pygame.time.delay(100)   
 
 
@@ -204,14 +206,11 @@ class Graphique:
                 self.highlight_move_annexe(move,(72, 0, 72))
         pygame.display.flip()
 
-
     def highlight_move_annexe(self, move,color):
         s = pygame.Surface(self.hitbox[0].size)  # the size of your rect
         s.set_alpha(125)  # alpha level
         s.fill(color)
-        screen.blit(s, self.hitbox[move[0] * (Constants.number_of_columns+2) + move[1]].topleft)  
-        
-
+        screen.blit(s, self.hitbox[move[0] * (Constants.number_of_columns+2) + move[1]].topleft)     
 
     def draw_board(self, G):
         self.screen.blit(self.board, (0, 0))
@@ -228,8 +227,6 @@ class Graphique:
         self.display_ball(game.Game.get_ball(G))
         pygame.display.flip()
 
-
-    # Rafraîchissement de la fenêtre
     def refresh(self):
         pygame.display.flip()
 
@@ -303,4 +300,19 @@ def path_convertor(Rugbyman):
             if Rugbyman.color == color.Color.BLUE:
                 return "Images/Rapide_bleu.png"
 
+def create_hitbox(screen):
 
+    """
+        
+    """
+    #La hitbox contient chaque case du terrain, ainsi que les bords du terrain (les bords sont des cases de tailles identiques au damier classique)
+    #Chaque hitbox est divisé par 4 pour avoir une hitbox plus petite (permet de  cliquer sur le ballon )
+    full_hitbox = []
+    for j in range((Constants.number_of_rows+2)):
+        for i in range((Constants.number_of_columns+2)):
+            full_hitbox.append(pygame.Rect((Constants.edge_width_normalized + i * Constants.square_width_normalized)*screen.get_width(), 
+                                        (Constants.edge_height_normalized + j * Constants.square_height_normalized)*screen.get_height(),
+                                        Constants.square_width_normalized*screen.get_width(), 
+                                        Constants.square_height_normalized*screen.get_height()))
+    return full_hitbox
+        

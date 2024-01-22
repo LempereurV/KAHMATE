@@ -31,7 +31,7 @@ class Rugbyman:
         return self.spec
 
     def get_move_points(self):
-        return self.moves_left
+        return self.move_points
 
     def get_color(self):
         return self.color
@@ -68,6 +68,7 @@ class Rugbyman:
 
     def set_pos_y(self, new_posy):  # utiliser une propriété
         self.posy = new_posy
+    
     def set_pos(self, pos):
         self.pos_x = pos[0]
         self.posy = pos[1]
@@ -77,7 +78,6 @@ class Rugbyman:
     
     def get_possesion(self):
         return self.possesion
-
 
     def refresh_stats(self):
         self.moves_left = self.move_points
@@ -89,10 +89,15 @@ class Rugbyman:
     
     def actualize_move_left(self, move_points):
         self.moves_left -= move_points
+    
     def set_move_left(self, move_points):
         self.moves_left = move_points
+    
     def has_ball(self):
         return self.possesion
+    
+    def set_KO_0(self):
+        self.KO=0
 
 
 class StrongRugbyman(Rugbyman):
