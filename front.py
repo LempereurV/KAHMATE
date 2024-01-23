@@ -27,26 +27,6 @@ screen = pygame.display.set_mode(size)
 # surf = pygame.surface.Surface(size)
 
 
-def create_hitbox(screen):
-
-    """
-        
-    """
-    #La hitbox contient chaque case du terrain, ainsi que les bords du terrain (les bords sont des cases de tailles identiques au damier classique)
-    #Chaque hitbox est divisé par 4 pour avoir une hitbox plus petite (permet de  cliquer sur le ballon )
-    full_hitbox = []
-    for j in range((Constants.number_of_rows+2)):
-        for i in range((Constants.number_of_columns+2)):
-            full_hitbox.append(pygame.Rect((Constants.edge_width_normalized + i * Constants.square_width_normalized)*screen.get_width(), 
-                                        (Constants.edge_height_normalized + j * Constants.square_height_normalized)*screen.get_height(),
-                                        Constants.square_width_normalized*screen.get_width(), 
-                                        Constants.square_height_normalized*screen.get_height()))
-    return full_hitbox
-        
-
-
-
-
 
 class Graphique:
     def __init__(self):
@@ -85,19 +65,10 @@ class Graphique:
         # Affichage de l'image dans la fenêtre
         self.screen.blit(self.board, (0, 0))
 
-
     def draw_board_init(self,list_rugbyman):
         if len(list_rugbyman)>0:
             for rugbyman in list_rugbyman:
                 self.display_rugbyman(rugbyman)
-        
-    ### A supprrimer###
-
-    def draw_last_row(self):
-        for i in range (len(self.hitbox)):
-            if i//(Constants.number_of_columns+2)==Constants.number_of_rows+1:
-                pygame.draw.rect(self.screen, (255, 255, 255), self.hitbox[i], 0)
-        pygame.display.flip()
 
     def is_board_being_resized(self,event):
         if event.type == pygame.VIDEORESIZE:
@@ -190,7 +161,6 @@ class Graphique:
         pygame.time.delay(100)
         pygame.time.delay(100)   
 
-
     def highlight_pass(self, passes):
         s = pygame.Surface(self.hitbox[0].size)  # the size of your rect
         s.set_alpha(100)  # alpha level
@@ -198,7 +168,6 @@ class Graphique:
         for pass_ in passes:
             screen.blit(s, self.hitbox[pass_[0]*(Constants.number_of_columns+2) + pass_[1]].topleft)
         pygame.display.flip()
-
 
     def highlight_move_FElIX(self, list_move):
         for move in list_move:
@@ -275,8 +244,15 @@ class Graphique:
         self.screen.blit(joueur, coords[n_hit])
         pygame.display.flip()
 
-    # Met en surbrillance les cases où le joueur peut se déplacer
     def highlight_move(self, list_move):
+        """
+        Takes a list of moves in argument that should have the following strcuture:
+
+        list_move = [(x1,y1),(x2,y2),...,(xn,yn)]
+
+        and highlight the corresponding cases on the board in transparent gray
+        """
+
         for i in range(len(list_move)):
             pygame.draw.circle(
                 self.screen,
@@ -292,6 +268,14 @@ class Graphique:
         pygame.display.flip()
 
     def old_highlight_move_FElIX(self, list_move, hitbox):
+        """
+        Takes a list of moves in argument that should have the following strcuture:
+
+        list_move = [(x1,y1),(x2,y2),...,(xn,yn)]
+
+        and highlight the corresponding hitbox cases on the board in transparent gray
+        """
+
         s = pygame.Surface(hitbox[0].size)  # the size of your rect
         s.set_alpha(128)  # alpha level
         s.fill((150, 150, 150))
@@ -438,7 +422,6 @@ class Graphique:
                     pygame.display.flip()
                     clock.tick(5)
 
-
     def test_initialisation_board(self, game):
         coords = []
         for j in range(8):
@@ -527,7 +510,6 @@ class Graphique:
             blue_tokens_group.draw(screen)
             clock.tick(60)
 
-    # Boucle principale
     def main_loop(self, game):
         # Players tokens sprites initialisation
         coords = []
@@ -589,7 +571,6 @@ class Graphique:
             new_hitbox = pygame.Rect(27 + i * 108, 150, 100, 180)
             new_hitboxes.append(new_hitbox)
         Cards_hitbox = new_hitboxes
-
 
 # Fonction qui renvoit la position de l'image correspondant au rugbyman (surement à merge avec path_to_player_type)
 def path_convertor(Rugbyman):

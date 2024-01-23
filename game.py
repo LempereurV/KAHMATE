@@ -24,15 +24,13 @@ class Game:
         self._whose_turn = color.Color.RED
 
         #player ne s'initialise pas pour rouge et bleu
-        self._player_red = players.Player(color.Color.RED,self,self._whose_turn,Graphique) 
-        self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,Graphique) 
+        self._player_red = players.Player(color.Color.RED,self,self._whose_turn,graphique) 
+        self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,graphique) 
 
 
         #A changer
         self._ball = ball.Ball(random.randint(1, Constants.number_of_rows ))
-
-
-    
+ 
     def tour_joueurs(self):
         #Renvoie une matrice indiquant la position des joueurs: +1 si rouge, -1 si bleu, 0 sinon
         #utilisé pour l'ordi
@@ -56,7 +54,6 @@ class Game:
                 if self._ball.get_pos_x() == i+1 and self._ball.get_pos_y() == j+1:
                     A[i][j] = 1
         return A
-
 
     def is_position_correct(self, x, y):
         """
@@ -85,9 +82,6 @@ class Game:
     def rugbymen(self):
         return players.Player.get_rugbymen( self.get_player_red()) + players.Player.get_rugbymen(self.get_player_blue())
     
-
-    
-
     def which_rugbyman_in_pos(self,pos):
         for rugbyman in self.rugbymen():
             if (rugbyman.get_pos() == pos and rugbyman.get_KO()==0):
@@ -299,21 +293,3 @@ class Game:
         if player==self._player_red:
             return self._player_blue
         return self._player_red
-
-def every_possible_move_naif(self,player):
-    """
-    This function returns a list of all the cases directly adjacent to the player
-    """
-    R=[]
-    for rugbyman in player.get_rugbymen():
-        if rugbyman.get_move_points()==rugbyman.get_moves_left():
-            if rugbyman.get_pos_x()+1<=Constants.number_of_rows and self.is_square_empty(rugbyman.get_pos_x()+1,rugbyman.get_pos_y()):
-                R.append([rugbyman.get_pos_x()+1,rugbyman.get_pos_y(),rugbyman.get_move_points()-1,True])
-            if rugbyman.get_pos_x()-1>=1 and self.is_square_empty(rugbyman.get_pos_x()-1,rugbyman.get_pos_y()):
-                R.append([rugbyman.get_pos_x()-1,rugbyman.get_pos_y(),rugbyman.get_move_points()-1,True])
-            if rugbyman.get_pos_y()+1<=Constants.number_of_columns+1 and self.is_square_empty(rugbyman.get_pos_x(),rugbyman.get_pos_y()+1):
-                R.append([rugbyman.get_pos_x(),rugbyman.get_pos_y()+1,rugbyman.get_move_points()-1,True])
-            if rugbyman.get_pos_y()-1>=0 and self.is_square_empty(rugbyman.get_pos_x(),rugbyman.get_pos_y()-1):
-                R.append([rugbyman.get_pos_x(),rugbyman.get_pos_y()-1,rugbyman.get_move_points()-1,True])
-    return [rugbyman]+R
-            
