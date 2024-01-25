@@ -125,20 +125,20 @@ class Game:
                         return False
             return False
 
-    def is_square_empty(self, x,y):
+    def is_square_empty(self, pos):
         for rugbyman in self.rugbymen():
-            if rugbyman.get_pos_x() == x and rugbyman.get_pos_y() == y:
+            if rugbyman.get_pos()==pos:
                 return False
         return True
     
-    def available_move_position_recursif(self, rugbyman, x,y , scope, color, cond,moves_dictionnary):
+    def available_move_position_recursif(self, rugbyman, pos , scope, color, cond,moves_dictionnary):
         """
         This function spread over on the board on all the reachable square (reachable squares are squares that are within the board limits 
         and do not contain ally rugbyman )
         The return shape is as follow :
         [x position of the square, y position of the square, movement points left to get to this square, Bool (True if square is free/ False if it contains an ennemy) ]
         """
-        pos=[x,y]
+
         if scope >= 0:
             
             if tuple(pos) in moves_dictionnary:
@@ -146,60 +146,64 @@ class Game:
             else:
                 moves_dictionnary[tuple(pos)]=[scope,cond]
 
-            if x + 1 <= Constants.number_of_rows :
-                if self.is_square_empty(x + 1, y):
-                    self.available_move_position_recursif(rugbyman,x + 1, y, scope - 1,color,True,moves_dictionnary)
-                elif (self.which_rugbyman_in_pos([x + 1, y])!=False 
-                        and self.which_rugbyman_in_pos([x + 1, y]).get_color()!=color
-                        and (self.which_rugbyman_in_pos([x + 1, y]).has_ball()
+            if pos[0] + 1 <= Constants.number_of_rows :
+                new_pos=[pos[0]+1,pos[1]]
+                if self.is_square_empty(new_pos):
+                    self.available_move_position_recursif(rugbyman,new_pos, scope - 1,color,True,moves_dictionnary)
+                elif (self.which_rugbyman_in_pos(new_pos)!=False 
+                        and self.which_rugbyman_in_pos(new_pos).get_color()!=color
+                        and (self.which_rugbyman_in_pos(new_pos).has_ball()
                         or rugbyman.has_ball())):
                     if scope>0:
-                        if tuple([x+1,y]) in moves_dictionnary:
-                            moves_dictionnary[tuple([x+1,y])]=[max(moves_dictionnary[tuple([x+1,y])][0],scope-1),False]
+                        if tuple(new_pos) in moves_dictionnary:
+                            moves_dictionnary[tuple(new_pos)]=[max(moves_dictionnary[tuple(new_pos)][0],scope-1),False]
                         else :
-                            moves_dictionnary[tuple([x+1,y])]=[scope-1,False]
-            if x - 1 >= 1 :
-                if self.is_square_empty(x - 1, y):
-                    self.available_move_position_recursif(rugbyman,x - 1, y, scope - 1,color,True,moves_dictionnary)
-                elif ( self.which_rugbyman_in_pos([x - 1, y])!=False
-                        and self.which_rugbyman_in_pos([x - 1, y]).get_color()!=color
-                        and (self.which_rugbyman_in_pos([x - 1, y]).has_ball()
+                            moves_dictionnary[tuple(new_pos)]=[scope-1,False]
+            if pos[0] - 1 >= 1 :
+                new_pos=[pos[0]-1,pos[1]]   
+                if self.is_square_empty(new_pos):
+                    self.available_move_position_recursif(rugbyman,new_pos, scope - 1,color,True,moves_dictionnary)
+                elif ( self.which_rugbyman_in_pos(new_pos)!=False
+                        and self.which_rugbyman_in_pos(new_pos).get_color()!=color
+                        and (self.which_rugbyman_in_pos(new_pos).has_ball()
                              or rugbyman.has_ball())):
                     if scope>0:
-                        if tuple([x-1,y]) in moves_dictionnary:
-                            moves_dictionnary[tuple([x-1,y])]=[max(moves_dictionnary[tuple([x-1,y])][0],scope-1),False]
+                        if tuple(new_pos) in moves_dictionnary:
+                            moves_dictionnary[tuple(new_pos)]=[max(moves_dictionnary[tuple(new_pos)][0],scope-1),False]
                         else:
-                            moves_dictionnary[tuple([x-1,y])]=[scope-1,False]
+                            moves_dictionnary[tuple(new_pos)]=[scope-1,False]
                             
-            if y + 1 <= Constants.number_of_columns+1 :
-                if self.is_square_empty(x, y + 1):
-                    self.available_move_position_recursif(rugbyman,x, y + 1, scope - 1,color,True,moves_dictionnary)
-                elif ( self.which_rugbyman_in_pos([x , y+1])!=False 
-                        and self.which_rugbyman_in_pos([x, y + 1]).get_color()!=color
-                        and (self.which_rugbyman_in_pos([x, y + 1]).has_ball()
+            if pos[1] + 1 <= Constants.number_of_columns+1 :
+                new_pos=[pos[0],pos[1]+1]
+                if self.is_square_empty(new_pos):
+                    self.available_move_position_recursif(rugbyman,new_pos, scope - 1,color,True,moves_dictionnary)
+                elif ( self.which_rugbyman_in_pos(new_pos)!=False 
+                        and self.which_rugbyman_in_pos(new_pos).get_color()!=color
+                        and (self.which_rugbyman_in_pos(new_pos).has_ball()
                              or rugbyman.has_ball())):
                     if scope>0:
-                        if tuple([x,y+1]) in moves_dictionnary:
-                            moves_dictionnary[tuple([x,y+1])]=[max(moves_dictionnary[tuple([x,y+1])][0],scope-1),False]
+                        if tuple(new_pos) in moves_dictionnary:
+                            moves_dictionnary[tuple(new_pos)]=[max(moves_dictionnary[tuple(new_pos)][0],scope-1),False]
                         else :
-                            moves_dictionnary[tuple([x,y+1])]=[scope-1,False]
-            if y - 1 >= 0 :
-                if self.is_square_empty(x, y - 1):
-                    self.available_move_position_recursif(rugbyman,x, y - 1, scope - 1,color,True,moves_dictionnary)
-                elif ( self.which_rugbyman_in_pos([x , y-1])!=False and 
-                        self.which_rugbyman_in_pos([x, y - 1]).get_color()!=color
-                        and (self.which_rugbyman_in_pos([x, y - 1]).has_ball()
+                            moves_dictionnary[tuple(new_pos)]=[scope-1,False]
+            if pos[1] - 1 >= 0 :
+                new_pos=[pos[0],pos[1]-1]
+                if self.is_square_empty(new_pos):
+                    self.available_move_position_recursif(rugbyman,new_pos, scope - 1,color,True,moves_dictionnary)
+                elif ( self.which_rugbyman_in_pos(new_pos)!=False and 
+                        self.which_rugbyman_in_pos(new_pos).get_color()!=color
+                        and (self.which_rugbyman_in_pos(new_pos).has_ball()
                              or rugbyman.has_ball())):
                     if scope>0:
-                        if tuple([x,y-1]) in moves_dictionnary:
-                            moves_dictionnary[tuple([x,y-1])]=[max(moves_dictionnary[tuple([x,y-1])][0],scope-1),False]
+                        if tuple(new_pos) in moves_dictionnary:
+                            moves_dictionnary[tuple(new_pos)]=[max(moves_dictionnary[tuple(new_pos)][0],scope-1),False]
                         else :
-                            moves_dictionnary[tuple([x,y-1])]=[scope-1,False]
+                            moves_dictionnary[tuple(new_pos)]=[scope-1,False]
     
     def available_move_position(self,rugbyman):
         
         moves_dictionnary={}
-        self.available_move_position_recursif(rugbyman,rugbyman.get_pos_x(),rugbyman.get_pos_y(),rugbyman.get_moves_left(),rugbyman.get_color(),True,moves_dictionnary)
+        self.available_move_position_recursif(rugbyman,rugbyman.get_pos(),rugbyman.get_moves_left(),rugbyman.get_color(),True,moves_dictionnary)
         Liste_treated=[[key[0],key[1], value[0],value[1]] for key, value in moves_dictionnary.items() if (key[0]!=rugbyman,rugbyman.get_pos_x() and key[1]!=rugbyman.get_pos_y())] 
 
         

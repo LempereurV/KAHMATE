@@ -28,7 +28,7 @@ screen = pygame.display.set_mode(size)
 
 
 
-class Graphique:
+class Graphic:
     def __init__(self):
         # Initialisation de Pygame
         pygame.init()
