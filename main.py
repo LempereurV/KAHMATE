@@ -4,42 +4,22 @@ from color import Color
 import rugbymen
 import game
 import actions 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 import bot
 import pygame
->>>>>>> 2a6d24f01f492b87b7674d78e65dcdd8c231e92d
 
-
-
-=======
 import minimax
 import time
 import cProfile
 import matplotlib.pyplot as plt
 import pstats
->>>>>>> branche_minimax_avant_merge
 ### Initializations ###
 from io import StringIO
 
-<<<<<<< HEAD
-=======
-import pandas as pd
-
-
->>>>>>> branche_minimax_avant_merge
 #The Graph 
 Graph = front.Graphique()
 Game=game.Game(Graph)
 Graph.display_ball(Game.get_ball())
 front.pygame.display.flip()
-<<<<<<< HEAD
-Initialisation = False
-
-#Outils de profiling python : profiler 
-=======
->>>>>>> 2a6d24f01f492b87b7674d78e65dcdd8c231e92d
 
 
 #This the main loop of the game, the function is_game_over of game is verifying each turn if one rugbyman is in the adversary camp
@@ -50,12 +30,8 @@ def main(Graph, Game):
         print(bot.compute_reward(Game))
         active_player = Game.get_player_turn()
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 AI=False    
 
->>>>>>> branche_minimax_avant_merge
 while not Game.is_game_over():
     #We record the time it takes
 
@@ -132,11 +108,9 @@ while not Game.is_game_over():
                                                                     Game,
                                                                     possible_move,
                                                                     Graph)
-=======
         while active_player.get_can_play():
             Graph.draw_board(Game)
 
->>>>>>> 2a6d24f01f492b87b7674d78e65dcdd8c231e92d
             
             rugbyman_or_ball_or_bool=Game.what_is_in_pos(Graph)
 
@@ -181,17 +155,11 @@ while not Game.is_game_over():
             Graph.draw_board(Game)
             #Redraw cards does not suffice
 
-<<<<<<< HEAD
         
 
     ### Partie reset quand le joueur a fini de jouer  ###
     Game.refresh_players_rugbymen_stats()
     Game.change_player_turn()
-=======
-        ### Partie reset quand le joueur a fini de jouer  ###
-        Game.refresh_players_rugbymen_stats()
-        Game.change_player_turn()
->>>>>>> 2a6d24f01f492b87b7674d78e65dcdd8c231e92d
 
     print("Fin du jeu")
 

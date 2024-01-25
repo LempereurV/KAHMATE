@@ -237,8 +237,6 @@ def move_rugbyman_after_succesfull_charging( Graphique,rugbyman,ball,Possible_mo
                 else :
                     print("You can't move to this position")
             
-
-def move_rugbyman( pos,rugbyman,ball,cost):
         
         
 def move_rugbyman(pos,rugbyman,ball,cost):
