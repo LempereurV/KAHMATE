@@ -20,7 +20,7 @@ Graph = front.Graphique()
 Game=game.Game(Graph)
 Graph.display_ball(Game.get_ball())
 front.pygame.display.flip()
-
+print("Initialisation terminée")
 
 #This the main loop of the game, the function is_game_over of game is verifying each turn if one rugbyman is in the adversary camp
 
@@ -30,85 +30,69 @@ def main(Graph, Game):
         print(bot.compute_reward(Game))
         active_player = Game.get_player_turn()
 
-AI=False    
+   
+def main2(Graph, Game):
+    AI=False 
+    while not Game.is_game_over():
+        #We record the time it takes
 
-while not Game.is_game_over():
-    #We record the time it takes
-
-    active_player = Game.get_player_turn()
-
- 
-    if AI and active_player.get_color()==Color.RED:
-            ### Partie IA####
-            moves=[None,None,None]
-            begin=time.time()
-            try :
-                profiler = cProfile.Profile()
-                profiler.enable()
-
-                minimax.minimax(Game,2,True,-float("inf"),float("inf"),Game.get_player_turn(),moves,Graph)
-                profiler.disable()
-
-
-                profiler.disable()
-
-                # Save stats to a string
-                stats_stream = StringIO()
-                stats = pstats.Stats(profiler, stream=stats_stream)
-                stats.sort_stats('cumulative')
-                stats.print_stats()
-
-
-
-
-
-                # Print the raw content of the profiling statistics
-                print(stats_stream.getvalue())
-                
-
-            except TimeoutError:
-                print("Temps trop long")
-            end=time.time()
-            print("Temps de calcul de l'IA : ",end-begin)
-
-            Graph.draw_board(Game)
-            
-            if moves[2]!=None:
-                Game.get_ball().set_pos(moves[2])
-            
-            for move in moves[:2]:
-                if move!=False:
-                    actions.move_rugbyman([move[1],move[2]],move[0],Game.get_ball(),move[3])
-            Graph.draw_board(Game)
-            active_player.set_can_play(False)
-            Game.refresh_players_rugbymen_stats()
-            Game.change_player_turn()
-            continue
-
-
-            ### ####
+        active_player = Game.get_player_turn()
 
     
-    while active_player.get_can_play():
-        
-        
-        Graph.draw_board(Game)
+        if AI and active_player.get_color()==Color.RED:
+                ### Partie IA####
+                moves=[None,None,None]
+                begin=time.time()
+                try :
+                    profiler = cProfile.Profile()
+                    profiler.enable()
 
-        
-        rugbyman_or_ball_or_bool=Game.what_is_in_pos(Graph)
+                    minimax.minimax(Game,2,True,-float("inf"),float("inf"),Game.get_player_turn(),moves,Graph)
+                    profiler.disable()
 
-        if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
 
-            possible_move = Game.available_move_position(rugbyman_or_ball_or_bool)
+                    profiler.disable()
 
-            if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
+                    # Save stats to a string
+                    stats_stream = StringIO()
+                    stats = pstats.Stats(profiler, stream=stats_stream)
+                    stats.sort_stats('cumulative')
+                    stats.print_stats()
+
+
+
+
+
+                    # Print the raw content of the profiling statistics
+                    print(stats_stream.getvalue())
+                    
+
+                except TimeoutError:
+                    print("Temps trop long")
+                end=time.time()
+                print("Temps de calcul de l'IA : ",end-begin)
+
+                Graph.draw_board(Game)
                 
-                Graph.highlight_move_FElIX( possible_move)
-                rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
-                                                                    Game,
-                                                                    possible_move,
-                                                                    Graph)
+                if moves[2]!=None:
+                    Game.get_ball().set_pos(moves[2])
+                
+                for move in moves[:2]:
+                    if move!=False:
+                        actions.move_rugbyman([move[1],move[2]],move[0],Game.get_ball(),move[3])
+                Graph.draw_board(Game)
+                active_player.set_can_play(False)
+                Game.refresh_players_rugbymen_stats()
+                Game.change_player_turn()
+                continue
+
+
+                ### ####
+
+        
         while active_player.get_can_play():
+            
+            
             Graph.draw_board(Game)
 
             
@@ -123,45 +107,62 @@ while not Game.is_game_over():
                     Graph.highlight_move_FElIX( possible_move)
                     rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
                                                                         Game,
-                                                                        possible_move)
+                                                                        possible_move,
+                                                                        Graph)
+            while active_player.get_can_play():
+                Graph.draw_board(Game)
+
                 
-                #If the player hasnt chosen his two rugbyman yet
-                elif active_player.get_n_rugbymen()<2:
-                    Graph.highlight_move_FElIX(possible_move)
+                rugbyman_or_ball_or_bool=Game.what_is_in_pos(Graph)
+
+                if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
+
+                    possible_move = Game.available_move_position(rugbyman_or_ball_or_bool)
+
+                    if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
+                        
+                        Graph.highlight_move_FElIX( possible_move)
+                        rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
+                                                                            Game,
+                                                                            possible_move)
                     
-                    #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
-                    #Note that the move itself is made in the function
-                    rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
-                                                                        Game,
-                                                                        possible_move)
-                    
+                    #If the player hasnt chosen his two rugbyman yet
+                    elif active_player.get_n_rugbymen()<2:
+                        Graph.highlight_move_FElIX(possible_move)
+                        
+                        #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
+                        #Note that the move itself is made in the function
+                        rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
+                                                                            Game,
+                                                                            possible_move)
+                        
 
-                    #We add the rugbyman to the list of chosen rugbyman if the move is made
-                    if rugbyman_or_ball_or_bool !=False :
-                        active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
+                        #We add the rugbyman to the list of chosen rugbyman if the move is made
+                        if rugbyman_or_ball_or_bool !=False :
+                            active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
 
-            elif (rugbyman_or_ball_or_bool ==Game.get_ball()):
-                available_pass=actions.available_pass(Game)
-                if len(available_pass)>0:
-                    Graph.highlight_pass( available_pass)
-                    actions.make_pass(Game,Graph,available_pass)
+                elif (rugbyman_or_ball_or_bool ==Game.get_ball()):
+                    available_pass=actions.available_pass(Game)
+                    if len(available_pass)>0:
+                        Graph.highlight_pass( available_pass)
+                        actions.make_pass(Game,Graph,available_pass)
 
-            elif (rugbyman_or_ball_or_bool == True):
-                #If the player has resized the screen
-                break
+                elif (rugbyman_or_ball_or_bool == True):
+                    #If the player has resized the screen
+                    break
 
-            Game.is_rugbyman_on_ball()
-            active_player.actualize_can_play()
-            Graph.draw_board(Game)
-            #Redraw cards does not suffice
+                Game.is_rugbyman_on_ball()
+                active_player.actualize_can_play()
+                Graph.draw_board(Game)
+                #Redraw cards does not suffice
 
-        
+            
 
-    ### Partie reset quand le joueur a fini de jouer  ###
-    Game.refresh_players_rugbymen_stats()
-    Game.change_player_turn()
+        ### Partie reset quand le joueur a fini de jouer  ###
+        Game.refresh_players_rugbymen_stats()
+        Game.change_player_turn()
 
-    print("Fin du jeu")
+        print("Fin du jeu")
 
 ##### MENU
 import sys
@@ -555,7 +556,6 @@ def main_menu(Graph, Game):
                             text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
         SCREEN.blit(MENU_TEXT, MENU_RECT)
-
         for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
             button.update(SCREEN)
