@@ -566,7 +566,7 @@ def main_menu(Graph, Game):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    main(Graph, Game)
+                    main2(Graph, Game)
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     options()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
@@ -576,4 +576,5 @@ def main_menu(Graph, Game):
         pygame.display.update()
 
 #####
+print("Lancement du jeu")
 main_menu(Graph, Game)
