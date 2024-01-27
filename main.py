@@ -6,23 +6,29 @@ import bot
 import pygame
 
 
-
+import main_menu
 import minimax
+
+kahmate_graphics = front.Graphic()
+kahmate_game = game.Game(kahmate_graphics)
+kahmate_actions = actions.Action(kahmate_game,kahmate_graphics)
+kahmate_minimax_actions=actions.ActionMiniMax(kahmate_game,kahmate_graphics)
+kahmate_minimax = minimax.Minimax(kahmate_game,
+                                kahmate_game.get_player_red(),
+                                kahmate_actions,
+                                kahmate_minimax_actions,
+                                kahmate_graphics)
+
+
+kahmate_graphics.display_ball(kahmate_game.get_ball())
+
+kahmate_menu=main_menu.MainMenu(kahmate_game,kahmate_graphics)
+
+
 
 
 def main2():
-    kahmate_graphics = front.Graphic()
-    kahmate_game = game.Game(kahmate_graphics)
-    kahmate_actions = actions.Action(kahmate_game,kahmate_graphics)
-    kahmate_minimax_actions=actions.ActionMiniMax(kahmate_game,kahmate_graphics)
-    kahmate_minimax = minimax.Minimax(kahmate_game,
-                                    kahmate_game.get_player_red(),
-                                    kahmate_actions,
-                                    kahmate_minimax_actions,
-                                    kahmate_graphics)
-
-
-    kahmate_graphics.display_ball(kahmate_game.get_ball())
+    
     AI=False    
 
     while not kahmate_game.is_game_over():
@@ -114,14 +120,16 @@ def main2():
         kahmate_game.refresh_players_rugbymen_stats()
         kahmate_game.change_player_turn()
 
-main2()
-##### MENU
+if kahmate_menu.main_menu():
+    main2()
+"""
 import sys
 from main_menu_button import Button
 
 BG = pygame.image.load("assets/Background.png")
-
-SCREEN = Graph.screen
+kahmate_graph=front.Graphic()
+kahmate_game=game.Game(kahmate_graph)
+SCREEN = kahmate_graph.screen
 pygame.display.set_caption("Menu")
 
 center_center_pos = (BG.get_size()[0]/2,BG.get_size()[1]/2-30)
@@ -528,4 +536,6 @@ def main_menu(Graph, Game):
 
 #####
 print("Lancement du jeu")
-main_menu(Graph, Game)
+main_menu(kahmate_graph, kahmate_game)
+
+"""
