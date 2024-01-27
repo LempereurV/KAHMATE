@@ -1,176 +1,135 @@
 import front
-import players
 from color import Color
-import rugbymen
 import game
 import actions 
 import bot
 import pygame
 
+
+import main_menu
 import minimax
-import time
-import cProfile
-import matplotlib.pyplot as plt
-import pstats
-### Initializations ###
-from io import StringIO
 
-#The Graph 
-Graph = front.Graphique()
-Game=game.Game(Graph)
-Graph.display_ball(Game.get_ball())
-front.pygame.display.flip()
-print("Initialisation terminée")
+kahmate_graphics = front.Graphic()
+kahmate_game = game.Game(kahmate_graphics)
+kahmate_actions = actions.Action(kahmate_game,kahmate_graphics)
+kahmate_minimax_actions=actions.ActionMiniMax(kahmate_game,kahmate_graphics)
+kahmate_minimax = minimax.Minimax(kahmate_game,
+                                kahmate_game.get_player_red(),
+                                kahmate_actions,
+                                kahmate_minimax_actions,
+                                kahmate_graphics)
 
-#This the main loop of the game, the function is_game_over of game is verifying each turn if one rugbyman is in the adversary camp
 
-def main(Graph, Game):
-    while not Game.is_game_over():
-        print(Game.tour_balle())
-        print(bot.compute_reward(Game))
-        active_player = Game.get_player_turn()
+kahmate_graphics.display_ball(kahmate_game.get_ball())
 
-   
-def main2(Graph, Game):
-    AI=False 
-    while not Game.is_game_over():
+kahmate_menu=main_menu.MainMenu(kahmate_game,kahmate_graphics)
+
+
+
+
+def main2():
+    
+    AI=False    
+
+    while not kahmate_game.is_game_over():
         #We record the time it takes
 
-        active_player = Game.get_player_turn()
+        active_player = kahmate_game.get_player_turn()
 
-    
+        print("Tour du joueur "+str(active_player.get_color()))
         if AI and active_player.get_color()==Color.RED:
                 ### Partie IA####
+                print("IA")
                 moves=[None,None,None]
-                begin=time.time()
-                try :
-                    profiler = cProfile.Profile()
-                    profiler.enable()
-
-                    minimax.minimax(Game,2,True,-float("inf"),float("inf"),Game.get_player_turn(),moves,Graph)
-                    profiler.disable()
-
-
-                    profiler.disable()
-
-                    # Save stats to a string
-                    stats_stream = StringIO()
-                    stats = pstats.Stats(profiler, stream=stats_stream)
-                    stats.sort_stats('cumulative')
-                    stats.print_stats()
-
-
-
-
-
-                    # Print the raw content of the profiling statistics
-                    print(stats_stream.getvalue())
+            
                     
+                kahmate_minimax.minimax(kahmate_minimax.get_depth(),-float("inf"),float("inf"),moves)
+            
 
-                except TimeoutError:
-                    print("Temps trop long")
-                end=time.time()
-                print("Temps de calcul de l'IA : ",end-begin)
-
-                Graph.draw_board(Game)
+                kahmate_graphics.draw_board(kahmate_game)
                 
                 if moves[2]!=None:
-                    Game.get_ball().set_pos(moves[2])
+                    kahmate_game.get_ball().set_pos(moves[2])
                 
                 for move in moves[:2]:
                     if move!=False:
-                        actions.move_rugbyman([move[1],move[2]],move[0],Game.get_ball(),move[3])
-                Graph.draw_board(Game)
+                        kahmate_actions.move_rugbyman([move[1],move[2]],move[0],move[3])
+                kahmate_graphics.draw_board(kahmate_game)
                 active_player.set_can_play(False)
-                Game.refresh_players_rugbymen_stats()
-                Game.change_player_turn()
+                kahmate_game.refresh_players_rugbymen_stats()
+                kahmate_game.change_player_turn()
                 continue
 
 
-                ### ####
+                    ### ####
 
-        
+
         while active_player.get_can_play():
-            
-            
-            Graph.draw_board(Game)
+            kahmate_graphics.draw_board(kahmate_game)
 
+            # rugbyman_or_ball_or_bool can take 4 different values :
+            # - a rugbyman
+            # - the ball
+            # - True if the player has resized the screen
+            # - False if the player has clicked outside the board
             
-            rugbyman_or_ball_or_bool=Game.what_is_in_pos(Graph)
+            rugbyman_or_ball_or_bool=kahmate_game.what_is_in_pos(kahmate_graphics)
+
+
 
             if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
 
-                possible_move = Game.available_move_position(rugbyman_or_ball_or_bool)
+                possible_move = kahmate_game.available_move_position(rugbyman_or_ball_or_bool)
 
                 if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
                     
-                    Graph.highlight_move_FElIX( possible_move)
-                    rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
-                                                                        Game,
-                                                                        possible_move,
-                                                                        Graph)
-            while active_player.get_can_play():
-                Graph.draw_board(Game)
-
+                    kahmate_graphics.highlight_move( possible_move)
+                    rugbyman_or_ball_or_bool=kahmate_actions.action_rugbyman(rugbyman_or_ball_or_bool,possible_move)
                 
-                rugbyman_or_ball_or_bool=Game.what_is_in_pos(Graph)
-
-                if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
-
-                    possible_move = Game.available_move_position(rugbyman_or_ball_or_bool)
-
-                    if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
-                        
-                        Graph.highlight_move_FElIX( possible_move)
-                        rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
-                                                                            Game,
-                                                                            possible_move)
+                #If the player hasnt chosen his two rugbyman yet
+                elif active_player.get_n_rugbymen()<2:
+                    kahmate_graphics.highlight_move(possible_move)
                     
-                    #If the player hasnt chosen his two rugbyman yet
-                    elif active_player.get_n_rugbymen()<2:
-                        Graph.highlight_move_FElIX(possible_move)
-                        
-                        #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
-                        #Note that the move itself is made in the function
-                        rugbyman_or_ball_or_bool=actions.action_rugbyman(Graph,rugbyman_or_ball_or_bool,
-                                                                            Game,
-                                                                            possible_move)
-                        
+                    #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
+                    #Note that the move itself is made in the function
+                    rugbyman_or_ball_or_bool=kahmate_actions.action_rugbyman(rugbyman_or_ball_or_bool,possible_move)
+                    
 
-                        #We add the rugbyman to the list of chosen rugbyman if the move is made
-                        if rugbyman_or_ball_or_bool !=False :
-                            active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
+                    #We add the rugbyman to the list of chosen rugbyman if the move is made
+                    if rugbyman_or_ball_or_bool !=False :
+                        active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
 
-                elif (rugbyman_or_ball_or_bool ==Game.get_ball()):
-                    available_pass=actions.available_pass(Game)
-                    if len(available_pass)>0:
-                        Graph.highlight_pass( available_pass)
-                        actions.make_pass(Game,Graph,available_pass)
+            elif (rugbyman_or_ball_or_bool ==kahmate_game.get_ball()):
+                available_pass=kahmate_actions.available_pass()
+                if len(available_pass)>0:
+                    kahmate_graphics.highlight_pass( available_pass)
+                    kahmate_actions.make_pass(available_pass)
 
-                elif (rugbyman_or_ball_or_bool == True):
-                    #If the player has resized the screen
-                    break
+            elif (rugbyman_or_ball_or_bool == True):
+                #If the player has resized the screen
+                break
 
-                Game.is_rugbyman_on_ball()
-                active_player.actualize_can_play()
-                Graph.draw_board(Game)
-                #Redraw cards does not suffice
+            kahmate_game.is_rugbyman_on_ball()
+            active_player.actualize_can_play()
+            kahmate_graphics.draw_board(kahmate_game)
+            #Redraw cards does not suffice
 
             
 
         ### Partie reset quand le joueur a fini de jouer  ###
-        Game.refresh_players_rugbymen_stats()
-        Game.change_player_turn()
+        kahmate_game.refresh_players_rugbymen_stats()
+        kahmate_game.change_player_turn()
 
-        print("Fin du jeu")
-
-##### MENU
+if kahmate_menu.main_menu():
+    main2()
+"""
 import sys
 from main_menu_button import Button
 
 BG = pygame.image.load("assets/Background.png")
-
-SCREEN = Graph.screen
+kahmate_graph=front.Graphic()
+kahmate_game=game.Game(kahmate_graph)
+SCREEN = kahmate_graph.screen
 pygame.display.set_caption("Menu")
 
 center_center_pos = (BG.get_size()[0]/2,BG.get_size()[1]/2-30)
@@ -604,4 +563,6 @@ def main_menu(Graph, Game):
 
 #####
 print("Lancement du jeu")
-main_menu(Graph, Game)
+main_menu(kahmate_graph, kahmate_game)
+
+"""

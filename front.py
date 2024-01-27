@@ -1,11 +1,8 @@
 from typing import Any
 import pygame
 import sys
-import game
 import rugbymen
-import actions
 import color
-import random
 from constants import *
 import cards 
 
@@ -27,28 +24,8 @@ screen = pygame.display.set_mode(size)
 # surf = pygame.surface.Surface(size)
 
 
-def create_hitbox(screen):
 
-    """
-        
-    """
-    #La hitbox contient chaque case du terrain, ainsi que les bords du terrain (les bords sont des cases de tailles identiques au damier classique)
-    #Chaque hitbox est divisé par 4 pour avoir une hitbox plus petite (permet de  cliquer sur le ballon )
-    full_hitbox = []
-    for j in range((Constants.number_of_rows+2)):
-        for i in range((Constants.number_of_columns+2)):
-            full_hitbox.append(pygame.Rect((Constants.edge_width_normalized + i * Constants.square_width_normalized)*screen.get_width(), 
-                                        (Constants.edge_height_normalized + j * Constants.square_height_normalized)*screen.get_height(),
-                                        Constants.square_width_normalized*screen.get_width(), 
-                                        Constants.square_height_normalized*screen.get_height()))
-    return full_hitbox
-        
-
-
-
-
-
-class Graphique:
+class Graphic:
     def __init__(self):
         # Initialisation de Pygame
         pygame.init()
@@ -85,19 +62,10 @@ class Graphique:
         # Affichage de l'image dans la fenêtre
         self.screen.blit(self.board, (0, 0))
 
-
     def draw_board_init(self,list_rugbyman):
         if len(list_rugbyman)>0:
             for rugbyman in list_rugbyman:
                 self.display_rugbyman(rugbyman)
-        
-    ### A supprrimer###
-
-    def draw_last_row(self):
-        for i in range (len(self.hitbox)):
-            if i//(Constants.number_of_columns+2)==Constants.number_of_rows+1:
-                pygame.draw.rect(self.screen, (255, 255, 255), self.hitbox[i], 0)
-        pygame.display.flip()
 
     def is_board_being_resized(self,event):
         if event.type == pygame.VIDEORESIZE:
@@ -190,7 +158,6 @@ class Graphique:
         pygame.time.delay(100)
         pygame.time.delay(100)   
 
-
     def highlight_pass(self, passes):
         s = pygame.Surface(self.hitbox[0].size)  # the size of your rect
         s.set_alpha(100)  # alpha level
@@ -199,8 +166,7 @@ class Graphique:
             screen.blit(s, self.hitbox[pass_[0]*(Constants.number_of_columns+2) + pass_[1]].topleft)
         pygame.display.flip()
 
-
-    def highlight_move_FElIX(self, list_move):
+    def highlight_move(self, list_move):
         for move in list_move:
             if move[3]:
                 self.highlight_move_annexe(move,(200, 200, 200))
@@ -214,19 +180,19 @@ class Graphique:
         s.fill(color)
         screen.blit(s, self.hitbox[move[0] * (Constants.number_of_columns+2) + move[1]].topleft)     
 
-    def draw_board(self, G):
+    def draw_board(self, game):
         self.screen.blit(self.board, (0, 0))
-        for rugbyman in game.Game.rugbymen(G):
+        for rugbyman in game.rugbymen():
                 if rugbyman.get_KO() > 0:
                         self.display_rugbyman(rugbyman)
 
         #The double loop allows to draw the rugbyman not ko on top
-        for rugbyman in game.Game.rugbymen(G):
+        for rugbyman in game.rugbymen():
                 if rugbyman.get_KO() == 0:
                     self.display_rugbyman(rugbyman)
 
                 
-        self.display_ball(game.Game.get_ball(G))
+        self.display_ball(game.get_ball())
         pygame.display.flip()
 
     def refresh(self):
@@ -260,47 +226,7 @@ class Graphique:
                     cond = True
         return None
 
-    # Affiche un point rouge pour 5s quand on clique quelque part
-    def display_point(self):
-        pygame.draw.circle(self.screen, (255, 0, 0), pygame.mouse.get_pos(), 2)
-        pygame.display.flip()
-        pygame.time.wait(100)
-        self.screen.blit(self.plateau, (0, 0))
-        pygame.display.flip()
 
-    # Affiche un joueur au centre de la hitbox
-    def affiche_joueur(self, n_hit, path, coords):
-        joueur = pygame.image.load(path)
-        joueur = pygame.transform.scale(joueur, (46.8, 46.5))
-        self.screen.blit(joueur, coords[n_hit])
-        pygame.display.flip()
-
-    # Met en surbrillance les cases où le joueur peut se déplacer
-    def highlight_move(self, list_move):
-        for i in range(len(list_move)):
-            pygame.draw.circle(
-                self.screen,
-                (20, 255, 167),
-                (
-                    (
-                        92 + 46.8 / 2 + list_move[i][0] * 46.8,
-                        62 + 46.5 / 2 + list_move[i][1] * 46.5,
-                    )
-                ),
-                10,
-            )
-        pygame.display.flip()
-
-    def old_highlight_move_FElIX(self, list_move, hitbox):
-        s = pygame.Surface(hitbox[0].size)  # the size of your rect
-        s.set_alpha(128)  # alpha level
-        s.fill((150, 150, 150))
-        for move in list_move:
-            screen.blit(
-                s, hitbox[move[0] * 11 + move[1]].topleft
-            )  # (0,0) are the top-left coordinates
-            # pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[move[0]*11+move[1]] )
-        pygame.display.flip()
 
     def create_dropdown_menu(self, options, menu_pos, menu_size):
         self.menu_options = options
@@ -438,7 +364,6 @@ class Graphique:
                     pygame.display.flip()
                     clock.tick(5)
 
-
     def test_initialisation_board(self, game):
         coords = []
         for j in range(8):
@@ -527,7 +452,6 @@ class Graphique:
             blue_tokens_group.draw(screen)
             clock.tick(60)
 
-    # Boucle principale
     def main_loop(self, game):
         # Players tokens sprites initialisation
         coords = []
@@ -589,7 +513,6 @@ class Graphique:
             new_hitbox = pygame.Rect(27 + i * 108, 150, 100, 180)
             new_hitboxes.append(new_hitbox)
         Cards_hitbox = new_hitboxes
-
 
 # Fonction qui renvoit la position de l'image correspondant au rugbyman (surement à merge avec path_to_player_type)
 def path_convertor(Rugbyman):
