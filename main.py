@@ -537,6 +537,33 @@ def options_7():
 
         pygame.display.update()
 
+def play():
+    while True:
+        #upper_left = [center_center_pos[0]-100, center_center_pos[1]
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        SCREEN.blit(BG, (0, 0))
+
+        OPTIONS_BACK = Button(image=None, pos=center_down_pos, 
+                            text_input="BACK", font=get_font(50), base_color="Black", hovering_color="Green")
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(SCREEN)
+
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu(Graph, Game)
+                if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
+                    options_6()
+                if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
+                    options()
+
+        pygame.display.update()
+
 def main_menu(Graph, Game):
     while True:
         SCREEN.blit(BG, (0, 0))
@@ -566,7 +593,7 @@ def main_menu(Graph, Game):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    main2(Graph, Game)
+                    play()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     options()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
