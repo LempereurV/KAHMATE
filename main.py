@@ -2,6 +2,7 @@ import front
 from color import Color
 import game
 import actions 
+import bot
 import pygame
 
 
@@ -59,7 +60,7 @@ while not kahmate_game.is_game_over():
             continue
 
 
-            ### ####
+                ### ####
 
 
     while active_player.get_can_play():
@@ -75,7 +76,7 @@ while not kahmate_game.is_game_over():
 
 
 
-        if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
+            if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
 
             possible_move = kahmate_game.available_move_position(rugbyman_or_ball_or_bool)
 
@@ -118,7 +119,7 @@ while not kahmate_game.is_game_over():
     kahmate_game.refresh_players_rugbymen_stats()
     kahmate_game.change_player_turn()
 
-    print("Fin du jeu")
+        print("Fin du jeu")
 
 ##### MENU
 import sys
@@ -530,3 +531,7 @@ def main_menu(Graph, Game):
                     sys.exit()
 
         pygame.display.update()
+
+#####
+print("Lancement du jeu")
+main_menu(Graph, Game)

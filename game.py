@@ -15,7 +15,7 @@ class Game:
     """
     The Game class is the most "macroscopic" class of the code, it provides a general link between every class 
     """
-    def __init__(self,graphique):
+    def __init__(self,Graphique):
         """
         The Game class is the most "macroscopic" class of the code, it provides a general link between every class
         """
