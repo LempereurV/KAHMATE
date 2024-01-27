@@ -10,7 +10,6 @@ import tools
 
 
 import actions
-import time 
 
 class Game:
     """

@@ -1,23 +1,13 @@
 import front
-import players
 from color import Color
-import rugbymen
 import game
 import actions 
-import bot
 import pygame
 
 
 
 import minimax
-import time
-import cProfile
-import matplotlib.pyplot as plt
-import pstats
-### Initializations ###
-from io import StringIO
 
-import pandas as pd
 
 
 kahmate_graphics = front.Graphic()
@@ -37,7 +27,7 @@ kahmate_graphics.display_ball(kahmate_game.get_ball())
 
 
 
-AI=True    
+AI=False    
 
 while not kahmate_game.is_game_over():
     #We record the time it takes

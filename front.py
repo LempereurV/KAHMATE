@@ -1,11 +1,8 @@
 from typing import Any
 import pygame
 import sys
-import game
 import rugbymen
-import actions
 import color
-import random
 from constants import *
 import cards 
 

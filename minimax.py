@@ -1,7 +1,3 @@
-import game 
-import actions as actions_for_game 
-import time 
-import random 
 from color import Color
 
 class Minimax :
