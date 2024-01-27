@@ -7,20 +7,20 @@ from constants import *
 import cards 
 
 # Initialisation de Pygame
-pygame.init()
-clock = pygame.time.Clock()
+#pygame.init()
+#clock = pygame.time.Clock()
 
 
 # Chargement de l'image, chemin relatif
-image_path = "Images/plateau.jpg"
-image = pygame.image.load(image_path)
+
+#image = pygame.image.load(image_path)
 # Définition de la taille de la fenêtre
-size = image.get_size()
+#size = image.get_size()
 
 
 
 # Création de la fenêtre
-screen = pygame.display.set_mode(size)
+#screen = pygame.display.set_mode(size)
 # surf = pygame.surface.Surface(size)
 
 
@@ -31,9 +31,8 @@ class Graphic:
         pygame.init()
         
         
-        width=1000
         # Chargement de l'image, chemin relatif
-        image_path = "Images/plateau.jpg"
+        image_path = Constants.image_path
         self.board = pygame.image.load(image_path)
 
         
@@ -54,18 +53,22 @@ class Graphic:
 
         self.board = pygame.transform.scale(self.board, (width, height))
 
+        
+
 
 
         # Création de la hitbox
         self.hitbox = create_hitbox(self.screen)
 
-        # Affichage de l'image dans la fenêtre
-        self.screen.blit(self.board, (0, 0))
+    def refresh(self):
+        pygame.display.flip()
 
     def draw_board_init(self,list_rugbyman):
+        self.screen.blit(self.board, (0, 0))
         if len(list_rugbyman)>0:
             for rugbyman in list_rugbyman:
                 self.display_rugbyman(rugbyman)
+        pygame.display.flip()
 
     def is_board_being_resized(self,event):
         if event.type == pygame.VIDEORESIZE:
@@ -76,6 +79,11 @@ class Graphic:
             self.hitbox = create_hitbox(self.screen)
             return True
         return False
+
+
+    def set_new_hitbox(self):
+        self.hitbox = create_hitbox(self.screen)
+        self.board = pygame.transform.scale(self.board, self.screen.get_size())
 
     def get_hitbox_on_click(self):
         cond=False
@@ -178,7 +186,7 @@ class Graphic:
         s = pygame.Surface(self.hitbox[0].size)  # the size of your rect
         s.set_alpha(125)  # alpha level
         s.fill(color)
-        screen.blit(s, self.hitbox[move[0] * (Constants.number_of_columns+2) + move[1]].topleft)     
+        self.screen.blit(s, self.hitbox[move[0] * (Constants.number_of_columns+2) + move[1]].topleft)     
 
     def draw_board(self, game):
         self.screen.blit(self.board, (0, 0))
@@ -551,6 +559,7 @@ def path_convertor(Rugbyman):
 def create_hitbox(screen):
 
     """
+    Create hitbox relative to the screen size
         
     """
     #La hitbox contient chaque case du terrain, ainsi que les bords du terrain (les bords sont des cases de tailles identiques au damier classique)

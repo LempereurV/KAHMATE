@@ -17,3 +17,5 @@ class Constants:
     back_pass_scope = 2
 
     cards_ratio_height_width = 208/137
+
+    image_path = "Images/plateau.jpg"

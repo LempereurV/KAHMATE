@@ -2,14 +2,20 @@
 import sys
 from main_menu_button import Button
 import pygame 
-
-
+import game
+import actions 
+from color import Color
+import minimax
+import front 
 class MainMenu:
-    def __init__(self,game,graphic) :
-        self.game = game
+    def __init__(self,graphic) :
         self.graphic = graphic
 
+        width = graphic.board.get_width()
+        height = graphic.board.get_height()
+
         self.BG = pygame.image.load("assets/Background.png")
+        self.BG = pygame.transform.scale(self.BG, (width, height))
         self.screen = graphic.screen
         pygame.display.set_caption("Menu")
 
@@ -24,6 +30,20 @@ class MainMenu:
 
     def get_font(self,size): # Returns Press-Start-2P in the desired size
         return pygame.font.Font("assets/font.ttf", size)
+
+    def resize_BG_and_buttons(self,event):
+        if event.type == pygame.VIDEORESIZE:
+            size = event.size
+            self.screen = pygame.display.set_mode(size, pygame.RESIZABLE)
+            self.BG = pygame.transform.scale(self.BG, size)
+
+            self.center_center_pos = (self.BG.get_size()[0]/2,self.BG.get_size()[1]/2-30)
+            self.center_down_pos = (self.BG.get_size()[0]/2,self.BG.get_size()[1]/10*9)
+            self.left_center_pos = (self.BG.get_size()[0]/4+50,self.BG.get_size()[1]/2)
+            self.right_center_pos = (self.BG.get_size()[0]/4*3,self.BG.get_size()[1]/2-20)
+            self.right_center_upper_pos = (self.BG.get_size()[0]/4*3,self.BG.get_size()[1]/4*1)
+            self.right_center_lower_pos = (self.BG.get_size()[0]/4*3,self.BG.get_size()[1]/4*2.5)
+            self.center_up_pos = (self.BG.get_size()[0]/2,self.BG.get_size()[1]/10*2)
 
         
     def options(self):
@@ -58,6 +78,9 @@ class MainMenu:
             OPTIONS_RIGHT.update(self.screen)
 
             for event in pygame.event.get():
+                if event.type == pygame.VIDEORESIZE:
+                    self.resize_BG_and_buttons(event)
+                
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -115,6 +138,9 @@ class MainMenu:
             OPTIONS_RIGHT.update(self.screen)
 
             for event in pygame.event.get():
+                if event.type == pygame.VIDEORESIZE:
+                    self.resize_BG_and_buttons(event)
+            
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -165,6 +191,8 @@ class MainMenu:
             OPTIONS_RIGHT.update(self.screen)
 
             for event in pygame.event.get():
+                if event.type == pygame.VIDEORESIZE:
+                    self.resize_BG_and_buttons(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -216,6 +244,8 @@ class MainMenu:
             OPTIONS_RIGHT.update(self.screen)
 
             for event in pygame.event.get():
+                if event.type == pygame.VIDEORESIZE:
+                    self.resize_BG_and_buttons(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -258,6 +288,8 @@ class MainMenu:
             OPTIONS_RIGHT.update(self.screen)
 
             for event in pygame.event.get():
+                if event.type == pygame.VIDEORESIZE:
+                    self.resize_BG_and_buttons(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -315,6 +347,8 @@ class MainMenu:
             OPTIONS_RIGHT.update(self.screen)
 
             for event in pygame.event.get():
+                if event.type == pygame.VIDEORESIZE:
+                    self.resize_BG_and_buttons(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -365,6 +399,8 @@ class MainMenu:
             OPTIONS_RIGHT.update(self.screen)
 
             for event in pygame.event.get():
+                if event.type == pygame.VIDEORESIZE:
+                    self.resize_BG_and_buttons(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -402,13 +438,14 @@ class MainMenu:
                 button.update(self.screen)
             
             for event in pygame.event.get():
+                if event.type == pygame.VIDEORESIZE:
+                    self.resize_BG_and_buttons(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        return True 
-                        self.main2() #### AATTTENTION##
+                        self.launch_game()
                     if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                         self.options()
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
@@ -416,5 +453,103 @@ class MainMenu:
                         sys.exit()
 
             pygame.display.update()
+
+    def launch_game(self):
+        kahmate_graphics = self.graphic
+        kahmate_graphics.set_new_hitbox()
+
+        kahmate_game=game.Game(kahmate_graphics)
+        kahmate_actions=actions.Action(kahmate_game,kahmate_graphics)
+        kahmate_minimax_actions=actions.ActionMiniMax(kahmate_game,kahmate_graphics)
+        kahmate_minimax=minimax.Minimax(kahmate_game,kahmate_game.get_player_red(),
+                                        kahmate_actions,kahmate_minimax_actions,kahmate_graphics)
+        AI=False    
+
+        while not kahmate_game.is_game_over():
+
+            active_player = kahmate_game.get_player_turn()
+
+            print("Tour du joueur "+str(active_player.get_color()))
+            if AI and active_player.get_color()==Color.RED:
+                    ### Partie IA####
+                    print("IA")
+                    moves=[None,None,None]
+                
+                        
+                    kahmate_minimax.minimax(kahmate_minimax.get_depth(),-float("inf"),float("inf"),moves)
+                
+
+                    kahmate_graphics.draw_board(kahmate_game)
+                    
+                    if moves[2]!=None:
+                        kahmate_game.get_ball().set_pos(moves[2])
+                    
+                    for move in moves[:2]:
+                        if move!=False:
+                            kahmate_actions.move_rugbyman([move[1],move[2]],move[0],move[3])
+                    kahmate_graphics.draw_board(kahmate_game)
+                    active_player.set_can_play(False)
+                    kahmate_game.refresh_players_rugbymen_stats()
+                    kahmate_game.change_player_turn()
+                    continue
+
+
+
+
+            while active_player.get_can_play():
+                kahmate_graphics.draw_board(kahmate_game)
+
+                # rugbyman_or_ball_or_bool can take 4 different values :
+                # - a rugbyman
+                # - the ball
+                # - True if the player has resized the screen
+                # - False if the player has clicked outside the board
+                
+                rugbyman_or_ball_or_bool=kahmate_game.what_is_in_pos(kahmate_graphics)
+
+
+
+                if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
+
+                    possible_move = kahmate_game.available_move_position(rugbyman_or_ball_or_bool)
+
+                    if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
+                        
+                        kahmate_graphics.highlight_move( possible_move)
+                        rugbyman_or_ball_or_bool=kahmate_actions.action_rugbyman(rugbyman_or_ball_or_bool,possible_move)
+                    
+                    #If the player hasnt chosen his two rugbyman yet
+                    elif active_player.get_n_rugbymen()<2:
+                        kahmate_graphics.highlight_move(possible_move)
+                        
+                        #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
+                        #Note that the move itself is made in the function
+                        rugbyman_or_ball_or_bool=kahmate_actions.action_rugbyman(rugbyman_or_ball_or_bool,possible_move)
+                        
+
+                        #We add the rugbyman to the list of chosen rugbyman if the move is made
+                        if rugbyman_or_ball_or_bool !=False :
+                            active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
+
+                elif (rugbyman_or_ball_or_bool ==kahmate_game.get_ball()):
+                    available_pass=kahmate_actions.available_pass()
+                    if len(available_pass)>0:
+                        kahmate_graphics.highlight_pass( available_pass)
+                        kahmate_actions.make_pass(available_pass)
+
+                elif (rugbyman_or_ball_or_bool == True):
+                    #If the player has resized the screen
+                    break
+
+                kahmate_game.is_rugbyman_on_ball()
+                active_player.actualize_can_play()
+                kahmate_graphics.draw_board(kahmate_game)
+                #Redraw cards does not suffice
+
+                
+
+            ### Partie reset quand le joueur a fini de jouer  ###
+            kahmate_game.refresh_players_rugbymen_stats()
+            kahmate_game.change_player_turn()
 
     

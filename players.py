@@ -1,18 +1,15 @@
 import rugbymen
-import actions
 import cards
-import players 
-import game
-import color
+import tools
 
 class Player:
     def __init__(self, color,Game,turn_color,Graphique):
         
         # Placement order of the rugbylen (mostly for the initialisation but can be usefull later)
-        self._placement_order= actions.placement_orders(color)
+        self._placement_order= tools.placement_orders(color)
 
         # List of all the rugbymen of the player
-        self._rugbymen = actions.positions_rugbymen_player(self._placement_order, Graphique)
+        self._rugbymen = tools.positions_rugbymen_player(self._placement_order, Graphique)
 
         # List of all the rugbymen chosen by the player for his turn 
         self._chosen_rugbymen = []
