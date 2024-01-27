@@ -18,16 +18,6 @@ class ActionName(enum.Enum):
     SCORE = "score"
 
 
-def placement_orders(color):
-    R = {
-        "First Normal Rugbyman": rugbymen.Rugbyman(color),
-        "Second Normal Rugbyman": rugbymen.Rugbyman(color),
-        "Strong Rugbyman": rugbymen.StrongRugbyman(color),
-        "Hard Rugbyman": rugbymen.HardRugbyman(color),
-        "Smart Rugbyman": rugbymen.SmartRugbyman(color),
-        "Fast Rugbyman": rugbymen.FastRugbyman(color),
-    }
-    return R
 
 def placement_orders(color):
     """
@@ -284,7 +274,89 @@ class Action:
                     else :
                         print("You can't move to this position")
                         
+    def attacker_win_charge(self,rugbyman_attacker,rugbyman_defender,possible_moves):
+        #Defender is KO
+        rugbyman_defender.set_KO()
 
+        #He loses the ball and attacker retreives it
+        rugbyman_defender.set_possesion(False)
+        self.game.get_ball().set_pos(rugbyman_defender.get_pos()) #A bit useless here since the ball was already in the defender position
+        rugbyman_attacker.set_possesion(True)
+
+        #Rugbyman attacker is on defender position we then actualize his position and move left
+        rugbyman_attacker.set_pos(rugbyman_defender.get_pos())
+        for move in possible_moves:
+            if move[:2]==rugbyman_defender.get_pos():
+                rugbyman_attacker.set_move_left(move[2])
+        
+        #We re-compute the list of possible moves for the attacker and make him move
+        self.graphique.draw_board(self.game)
+        possible_moves=self.game.available_move_position(rugbyman_attacker)
+        self.graphique.highlight_move(possible_moves)
+        #This function forces the rugbyman to move
+        self.move_rugbyman_after_succesfull_charging(rugbyman_attacker,possible_moves)
+                
+    def defender_win_charge(self,rugbyman_attacker,rugbyman_defender,possible_moves):
+        #If the defender wins the charge
+        rugbyman_attacker.set_KO()
+        
+        #We then have to move the now lost ball to a new position 
+        if rugbyman_attacker.get_color()==Color.RED:
+            self.red_defender_win_charge(rugbyman_attacker,rugbyman_defender)
+        else:
+            self.blue_defender_win_charge(rugbyman_attacker,rugbyman_defender)
+            
+        rugbyman_attacker.set_possesion(False)
+        
+        #If the rugbyman doing the charging was far from the the defender we have to replace it like he made 
+        #the move one square by one square
+        if tools.norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>1:
+            self.attacker_far_from_defender(rugbyman_attacker,rugbyman_defender,possible_moves)
+        return rugbyman_attacker 
+
+    def attacker_far_from_defender(self,rugbyman_attacker,rugbyman_defender,possible_moves):
+        min_norm=100
+        #we iterate over the possible moves of the attacker (moves where he could have been if he took the time to move 
+        # his rugbyman one square by one square)
+        for move in possible_moves:
+            
+            #The relocation has to be close to the defender
+            if tools.norm(move[:2],rugbyman_defender.get_pos())==1:
+                #The closest square is the natural choice
+                if tools.norm(move[:2],rugbyman_attacker.get_pos())<min_norm:
+
+                    min_norm=tools.norm([move[0],move[1]],rugbyman_attacker.get_pos())
+                    new_attacker_pos=[move[0],move[1]]
+                    new_attacker_cost=move[2]
+        if min_norm<100:
+            rugbyman_attacker.set_pos(new_attacker_pos)
+            rugbyman_attacker.set_move_left(new_attacker_cost)
+        if rugbyman_attacker.get_possesion():
+            self.game.get_ball().set_pos(new_attacker_pos)
+
+
+    def red_defender_win_charge(self,rugbyman_attacker,rugbyman_defender):
+        if rugbyman_attacker.get_pos_y()>1:
+                #The first normal position (happens 90% of the time) is just putting the ball behind the attacker
+                self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x(),rugbyman_attacker.get_pos_y()-1])
+        else:
+            
+            #If the attacker is on the edge of the board we put the ball on the side
+            if rugbyman_attacker.get_pos_x()>1:
+                self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x()-1,rugbyman_attacker.get_pos_y()])
+            else:
+                self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x()+1,rugbyman_attacker.get_pos_y()])
+
+    def blue_defender_win_charge(self,rugbyman_attacker,rugbyman_defender):
+        #Same but here the "behind" blue is towards the right 
+        if rugbyman_attacker.get_pos_y()<Constants.number_of_columns :
+            self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x(),rugbyman_attacker.get_pos_y()-1])
+        else:
+            if rugbyman_attacker.get_pos_x()>1:
+                self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x()-1,rugbyman_attacker.get_pos_y()])
+            else:
+                self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x()+1,rugbyman_attacker.get_pos_y()])
+        
         
     def charging(self,rugbyman_attacker,rugbyman_defender,possible_moves):
         """
@@ -317,74 +389,10 @@ class Action:
 
             #If the attacker wins the charge
             if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
-                #Defender is KO
-                rugbyman_defender.set_KO()
-
-                #He loses the ball and attacker retreives it
-                rugbyman_defender.set_possesion(False)
-                self.game.get_ball().set_pos(rugbyman_defender.get_pos()) #A bit useless here since the ball was already in the defender position
-                rugbyman_attacker.set_possesion(True)
-
-                #Rugbyman attacker is on defender position we then actualize his position and move left
-                rugbyman_attacker.set_pos(rugbyman_defender.get_pos())
-                for move in possible_moves:
-                    if move[:2]==rugbyman_defender.get_pos():
-                        rugbyman_attacker.set_move_left(move[2])
+                self.attacker_win_charge(rugbyman_attacker,rugbyman_defender,possible_moves)          
+            else :
+                self.defender_win_charge(rugbyman_attacker,rugbyman_defender,possible_moves)
                 
-                #We re-compute the list of possible moves for the attacker and make him move
-                self.graphique.draw_board(self.game)
-                possible_moves=self.game.available_move_position(rugbyman_attacker)
-                self.graphique.highlight_move_FElIX(possible_moves)
-                #This function forces the rugbyman to move
-                self.move_rugbyman_after_succesfull_charging(rugbyman_attacker,possible_moves)
-                
-            else : 
-                #If the defender wins the charge
-                rugbyman_attacker.set_KO()
-                
-                #We then have to move the now lost ball to a new position 
-                if rugbyman_attacker.get_color()==Color.RED:
-                    if rugbyman_attacker.get_pos_y()>1:
-                        #The first normal position (happens 90% of the time) is just putting the ball behind the attacker
-                        self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x(),rugbyman_attacker.get_pos_y()-1])
-                    else:
-                        
-                        #If the attacker is on the edge of the board we put the ball on the side
-                        if rugbyman_attacker.get_pos_x()>1:
-                            self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x()-1,rugbyman_attacker.get_pos_y()])
-                        else:
-                            self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x()+1,rugbyman_attacker.get_pos_y()])
-                else:
-                    #Same but here the "behind" blue is towards the right 
-                    if rugbyman_attacker.get_pos_y()<Constants.number_of_columns :
-                        self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x(),rugbyman_attacker.get_pos_y()-1])
-                    else:
-                        if rugbyman_attacker.get_pos_x()>1:
-                            self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x()-1,rugbyman_attacker.get_pos_y()])
-                        else:
-                            self.game.get_ball().set_pos([rugbyman_attacker.get_pos_x()+1,rugbyman_attacker.get_pos_y()])
-                rugbyman_attacker.set_possesion(False)
-                
-                #If the rugbyman doing the charging was far from the the defender we have to replace it like he made 
-                #the move one square by one square
-                if tools.norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>1:
-                    min_norm=100
-                    #we iterate over the possible moves of the attacker (moves where he could have been if he took the time to move 
-                    # his rugbyman one square by one square)
-                    for move in possible_moves:
-                        
-                        #The relocation has to be close to the defender
-                        if tools.norm(move[:2],rugbyman_defender.get_pos())==1:
-                            #The closest square is the natural choice
-                            if tools.norm(move[:2],rugbyman_attacker.get_pos())<min_norm:
-
-                                min_norm=tools.norm([move[0],move[1]],rugbyman_attacker.get_pos())
-                                new_attacker_pos=[move[0],move[1]]
-                                new_attacker_cost=move[2]
-                    if min_norm<100:
-                        rugbyman_attacker.set_pos(new_attacker_pos)
-                        rugbyman_attacker.set_move_left(new_attacker_cost)
-            return rugbyman_attacker 
         else:
             print("You don't have enough move points left to charge this rugbyman")
             return False
@@ -420,61 +428,64 @@ class Action:
             pos,cond=self.graphique.get_hitbox_on_click()
 
         if player.get_color()==Color.RED:
-            print("Red player Chooses his cards")
-
-            while is_card_returned: #the following should be reconstructed better 
-
-
-                while pos[1]>=(Constants.number_of_columns+2)//2 or pos[0]<2 or pos[0]>Constants.number_of_rows-1: 
-                    print("Please Click on a card")
-
-                    pos,cond=self.graphique.get_hitbox_on_click()
-        
-                    while pos==False :
-                        self.graphique.draw_cards(player)
-                        pos,cond=self.graphique.get_hitbox_on_click()
-
-                if pos[0]<(Constants.number_of_rows+2)//2:
-                    card_number=pos[1]//2+1
-
-                else :
-                    card_number=pos[1]//2+4
-
-                if card_number in active_cards:
-                    player.choose_card(cards.convert_int_to_card(card_number))
-                    is_card_returned=False
-                else :
-                    print("You can't choose this card")
-                    pos,cond=self.graphique.get_hitbox_on_click()
+            return self.red_choose_card(player,is_card_returned,pos,active_cards)
 
         if player.get_color()==Color.BLUE:
+            return self.blue_choose_card(player,is_card_returned,pos,active_cards)
+    
+    def red_choose_card(self,player,is_card_returned,pos,active_cards):
+        print("Red player Chooses his cards")
 
-            print("Blue player Chooses his cards")
+        while is_card_returned: #the following should be reconstructed better 
 
-            while is_card_returned:
-                while pos[1]<=(Constants.number_of_columns+2)//2 or pos[0]<2 or pos[0]>Constants.number_of_rows-1: 
-                    print("Please Click on a card")
+            while pos[1]>=(Constants.number_of_columns+2)//2 or pos[0]<2 or pos[0]>Constants.number_of_rows-1: 
+                print("Please Click on a card")
+
+                pos,cond=self.graphique.get_hitbox_on_click()
+    
+                while pos==False :
+                    self.graphique.draw_cards(player)
                     pos,cond=self.graphique.get_hitbox_on_click()
-                    while pos==False :
-                        self.graphique.draw_cards(player)
-                        pos,cond=self.graphique.get_hitbox_on_click()
-                if pos[0]<(Constants.number_of_rows+2)//2:
-                    card_number=(pos[1]+1)//2-3
-                else :
-                    card_number=(pos[1]+1)//2
-                if card_number in active_cards:
-                    player.choose_card(cards.convert_int_to_card(card_number))
-                    is_card_returned=False
-                else :
-                    print("You can't choose this card")
-                    pos,cond=self.graphique.get_hitbox_on_click()
-                    while pos==False :
-                        self.graphique.draw_cards(player)
-                        pos,cond=self.graphique.get_hitbox_on_click()
 
+            if pos[0]<(Constants.number_of_rows+2)//2:
+                card_number=pos[1]//2+1
+
+            else :
+                card_number=pos[1]//2+4
+
+            if card_number in active_cards:
+                player.choose_card(cards.convert_int_to_card(card_number))
+                is_card_returned=False
+            else :
+                print("You can't choose this card")
+                pos,cond=self.graphique.get_hitbox_on_click()
         return card_number
     
-    
+    def blue_choose_card(self,player,is_card_returned,pos,active_cards):
+        print("Blue player Chooses his cards")
+
+        while is_card_returned:
+            while pos[1]<=(Constants.number_of_columns+2)//2 or pos[0]<2 or pos[0]>Constants.number_of_rows-1: 
+                print("Please Click on a card")
+                pos,cond=self.graphique.get_hitbox_on_click()
+                while pos==False :
+                    self.graphique.draw_cards(player)
+                    pos,cond=self.graphique.get_hitbox_on_click()
+            if pos[0]<(Constants.number_of_rows+2)//2:
+                card_number=(pos[1]+1)//2-3
+            else :
+                card_number=(pos[1]+1)//2
+            if card_number in active_cards:
+                player.choose_card(cards.convert_int_to_card(card_number))
+                is_card_returned=False
+            else :
+                print("You can't choose this card")
+                pos,cond=self.graphique.get_hitbox_on_click()
+                while pos==False :
+                    self.graphique.draw_cards(player)
+                    pos,cond=self.graphique.get_hitbox_on_click()
+        return card_number
+
 
     def tackling(self,rugbyman_attacker, rugbyman_defender,possible_moves):
         
@@ -496,67 +507,51 @@ class Action:
                 c_attacker=c_blue
                 c_defender=c_red
 
-
+            #If the attacker wins the tackle
             if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
-                rugbyman_defender.set_KO()
-                rugbyman_defender.set_possesion(False)
-
-                if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
-                    self.game.get_ball().set_pos(rugbyman_attacker.get_pos())
-                
-                if rugbyman_defender.get_color()==Color.RED:
-                        if rugbyman_defender.get_pos_y()>0:
-                            self.game.get_ball().set_pos([rugbyman_defender.get_pos_x(),rugbyman_defender.get_pos_y()-1])
-                        else:
-                            if rugbyman_defender.get_pos_x()>0:
-                                self.game.get_ball().set_pos([rugbyman_defender.get_pos_x()-1,rugbyman_defender.get_pos_y()])
-                            else:
-                                self.game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
-                else:
-                    if rugbyman_defender.get_pos_y()<Constants.number_of_columns :
-                        self.game.get_ball().set_pos([rugbyman_defender.get_pos_x(),rugbyman_defender.get_pos_y()+1])
-                    else:
-                        if rugbyman_defender.get_pos_x()>0:
-                            self.game.get_ball().set_pos([rugbyman_defender.get_pos_x()-1,rugbyman_defender.get_pos_y()])
-                        else:
-                            self.game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
-                rugbyman_attacker.set_possesion(False)
+                self.attacker_wins_tackle(rugbyman_attacker,rugbyman_defender,c_attacker,c_defender)
             else :
                 rugbyman_attacker.set_KO()
             
             #If the rugbyman doing the tackling was far from the the defender
             if tools.norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>1:
-                min_norm=100
-                for moves in possible_moves:
-                    if tools.norm([moves[0],moves[1]],rugbyman_defender.get_pos())==1:
-                        if (tools.norm([moves[0],moves[1]],rugbyman_attacker.get_pos())<min_norm
-                            and moves[3]): #moves[3] ensure that the square is free
-                        
-                            min_norm=tools.norm([moves[0],moves[1]],rugbyman_attacker.get_pos())
-                            new_attacker_pos=[moves[0],moves[1]]
-                            new_attacker_cost=moves[2]
-                if min_norm<100: #why not ???
-                    rugbyman_attacker.set_pos(new_attacker_pos)
-                    rugbyman_attacker.set_move_left(new_attacker_cost)
+                self.attacker_far_from_defender(rugbyman_attacker,rugbyman_defender,possible_moves)
 
-                if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
-                    print("Perfect tackle, the attacker keeps the ball ")
-                    self.game.get_ball().set_pos(new_attacker_pos)
-                    self.game.get_ball().set_carrier(rugbyman_attacker)
-                    rugbyman_attacker.set_possesion(True)
-            
-            else :
-                if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
-                    print("Perfect tackle, the attacker keeps the ball ")
-                    self.game.get_ball().set_pos(rugbyman_attacker.get_pos())
-                    self.game.get_ball().set_carrier(rugbyman_attacker)
-                    rugbyman_attacker.set_possesion(True)
+
 
             return rugbyman_attacker 
         else :
             print("You can only tackle the rugbyman with the ball")
             return False
-    
+
+    def attacker_wins_tackle(self,rugbyman_attacker,rugbyman_defender,c_attacker,c_defender):   
+        rugbyman_defender.set_KO()
+        rugbyman_defender.set_possesion(False)
+        
+        if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus()+1:
+            print("Perfect tackle, the attacker keeps the ball ")
+            self.game.get_ball().set_pos(rugbyman_attacker.get_pos())
+            rugbyman_attacker.set_possesion(True)
+
+        else :
+            if rugbyman_defender.get_color()==Color.RED:
+                    if rugbyman_defender.get_pos_y()>0:
+                        self.game.get_ball().set_pos([rugbyman_defender.get_pos_x(),rugbyman_defender.get_pos_y()-1])
+                    else:
+                        if rugbyman_defender.get_pos_x()>0:
+                            self.game.get_ball().set_pos([rugbyman_defender.get_pos_x()-1,rugbyman_defender.get_pos_y()])
+                        else:
+                            self.game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
+            else:
+                if rugbyman_defender.get_pos_y()<Constants.number_of_columns :
+                    self.game.get_ball().set_pos([rugbyman_defender.get_pos_x(),rugbyman_defender.get_pos_y()+1])
+                else:
+                    if rugbyman_defender.get_pos_x()>0:
+                        self.game.get_ball().set_pos([rugbyman_defender.get_pos_x()-1,rugbyman_defender.get_pos_y()])
+                    else:
+                        self.game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
+            rugbyman_attacker.set_possesion(False)
+
 
     def action_rugbyman(self,rugbyman,possible_moves):
         """
@@ -666,6 +661,8 @@ class Action:
 
     def make_pass(self,possible_passes):
         pos,cond=self.graphique.get_hitbox_on_click()
+        catched_cond=False
+
 
         if pos in possible_passes:
             #former_owner is the rugbyman who had the ball before the pass
@@ -674,65 +671,77 @@ class Action:
             #If the pass is backward (meaning it can be catched)
             if (former_owner.get_color() is Color.RED
                 and pos[1] < former_owner.get_pos_y()):
-
-                #For each rugbyman of the opposing team we have to check if they can catch the ball
-                min=100
-                for rugbyman in self.game.get_player_blue().get_rugbymen():
-                    #We check if the rugbyman is in the right position to catch the ball
-                    if (rugbyman.get_pos_y() <= former_owner.get_pos_y() 
-                        and rugbyman.get_pos_y() >= pos[1]
-                        and rugbyman.get_KO()==0):
-
-                        #Receiver and adversary are both above the thrower or both under 
-                        #This condition this necessary since the norm alone isnt enough
-                        if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
-
-                            #We check if the rugbyman is closer to the ball than the former owner
-                            if (tools.norm(rugbyman.get_pos(),former_owner.get_pos())<tools.norm(former_owner.get_pos(),pos)
-                                and min>tools.norm(rugbyman.get_pos(),former_owner.get_pos())):   
-                                rugbyman_closer=rugbyman
-                                min=tools.norm(rugbyman.get_pos(),former_owner.get_pos())
-                if min<100:
-                    rugbyman_closer.set_possesion(True)
-                    former_owner.set_possesion(False)
-                    self.game.get_ball().set_carrier(rugbyman_closer)
-                    self.game.get_ball().set_pos(rugbyman_closer.get_pos())
-                    return True
+                catched_cond=self.red_backward_pass_catch(pos,former_owner)
                             
             #Same with the blue the only difference is that the receiver has to be above the thrower
             if (former_owner.get_color() is Color.BLUE
                 and pos[1] > former_owner.get_pos_y()):
-                min=100
-                for rugbyman in self.game.get_player_red().get_rugbymen():
-                    if (rugbyman.get_pos_y() >= former_owner.get_pos_y() 
-                        and rugbyman.get_pos_y() <= pos[1]
-                        and rugbyman.get_KO()==0):
-                        #ensure there on the same side of the passing position set
-                        if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
-                            
-                            if (tools.norm(rugbyman.get_pos(),former_owner.get_pos())<tools.norm(former_owner.get_pos(),pos)
-                                and min>tools.norm(rugbyman.get_pos(),former_owner.get_pos())):   
-                                rugbyman_closer=rugbyman
-                                min=tools.norm(rugbyman.get_pos(),former_owner.get_pos())
-                if min<100:
-                    rugbyman_closer.set_possesion(True)
-                    former_owner.set_possesion(False)
-                    self.game.get_ball().set_carrier(rugbyman_closer)
-                    self.game.get_ball().set_pos(rugbyman_closer.get_pos())
-                    return True
+                catched_cond=self.blue_backward_pass_catch(pos,former_owner)
+        
+            if catched_cond==True:
+                return catched_cond
             
             self.game.is_rugbyman_on_ball().set_possesion(False)
             self.game.get_ball().set_pos(pos)
 
             if self.game.is_rugbyman_on_ball()!=False:
                 self.game.is_rugbyman_on_ball().set_possesion(True)
+    
+    def red_backward_pass_catch(self,pos,former_owner):
+        #For each rugbyman of the opposing team we have to check if they can catch the ball
+        min=100
+        for rugbyman in self.game.get_player_blue().get_rugbymen():
+            #We check if the rugbyman is in the right position to catch the ball
+            if (rugbyman.get_pos_y() <= former_owner.get_pos_y() 
+                and rugbyman.get_pos_y() >= pos[1]
+                and rugbyman.get_KO()==0):
+
+                #Receiver and adversary are both above the thrower or both under 
+                #This condition this necessary since the norm alone isnt enough
+                if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
+
+                    #We check if the rugbyman is closer to the ball than the former owner
+                    if (tools.norm(rugbyman.get_pos(),former_owner.get_pos())<tools.norm(former_owner.get_pos(),pos)
+                        and min>tools.norm(rugbyman.get_pos(),former_owner.get_pos())):   
+                        rugbyman_closer=rugbyman
+                        min=tools.norm(rugbyman.get_pos(),former_owner.get_pos())
+        if min<100:
+            rugbyman_closer.set_possesion(True)
+            former_owner.set_possesion(False)
+            self.game.get_ball().set_carrier(rugbyman_closer)
+            self.game.get_ball().set_pos(rugbyman_closer.get_pos())
+            return True
+
+    def blue_backward_pass_catch(self,pos,former_owner):
+        min=100
+        for rugbyman in self.game.get_player_red().get_rugbymen():
+            if (rugbyman.get_pos_y() >= former_owner.get_pos_y() 
+                and rugbyman.get_pos_y() <= pos[1]
+                and rugbyman.get_KO()==0):
+                #ensure there on the same side of the passing position set
+                if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
+                    
+                    if (tools.norm(rugbyman.get_pos(),former_owner.get_pos())<tools.norm(former_owner.get_pos(),pos)
+                        and min>tools.norm(rugbyman.get_pos(),former_owner.get_pos())):   
+                        rugbyman_closer=rugbyman
+                        min=tools.norm(rugbyman.get_pos(),former_owner.get_pos())
+        if min<100:
+            rugbyman_closer.set_possesion(True)
+            former_owner.set_possesion(False)
+            self.game.get_ball().set_carrier(rugbyman_closer)
+            self.game.get_ball().set_pos(rugbyman_closer.get_pos())
+            return True
+
+
+
+
 
 class ActionMiniMax(Action):
     def __init__(self, game, graphique):
         super().__init__(game, graphique)
 
-    def undo_move_rugbyman( self,former_rugbyman_pos,former_ball_pos,rugbyman,ball,cost):
-            
+    def undo_move_rugbyman( self,former_rugbyman_pos,former_ball_pos,rugbyman,cost):
+            ball=self.game.get_ball()
             rugbyman.set_pos(former_rugbyman_pos)
             rugbyman.set_move_left(cost)
             
@@ -761,7 +770,7 @@ class ActionMiniMax(Action):
 
             #For each rugbyman of the opposing team we have to check if they can catch the ball
             min=100
-            for rugbyman in Game.get_player_blue().get_rugbymen():
+            for rugbyman in self.game.get_player_blue().get_rugbymen():
                 #We check if the rugbyman is in the right position to catch the ball
                 if (rugbyman.get_pos_y() < former_owner.get_pos_y() 
                     and rugbyman.get_pos_y() >= pos[1]
@@ -779,7 +788,7 @@ class ActionMiniMax(Action):
         if (former_owner.get_color() is Color.BLUE
             and pos[1] > former_owner.get_pos_y()):
             min=100
-            for rugbyman in Game.get_player_red().get_rugbymen():
+            for rugbyman in self.game.get_player_red().get_rugbymen():
                 if (rugbyman.get_pos_y() > former_owner.get_pos_y() 
                     and rugbyman.get_pos_y() <= pos[1]
                     and rugbyman.get_KO()==0):
@@ -803,7 +812,7 @@ class ActionMiniMax(Action):
         
         self.game.get_ball().set_pos(former_ball_pos)
         former_owner.set_possesion(True)
-        Game.get_ball().set_carrier(former_owner)    
+        self.game.get_ball().set_carrier(former_owner)    
 
     def  action_rugbyman_AI(self,rugbyman_attacker,rugbyman_defender,possible_moves):
         if self.game.is_rugbyman_on_ball()==rugbyman_attacker:
@@ -872,9 +881,9 @@ class ActionMiniMax(Action):
         if self.game.is_rugbyman_on_ball()==rugbyman_defender:
             
             print("Blue Player has to choose his card")
-            c_blue=choose_cards(self.graphique,self.game.get_player_blue())
+            c_blue=self.choose_cards(self.game.get_player_blue())
             
-            c_red=choose_cards_AI(self.game.get_player_red())
+            c_red=self.choose_cards_AI(self.game.get_player_red())
 
             if rugbyman_attacker.get_color()==Color.RED:
                 c_attacker=c_red
@@ -1101,7 +1110,7 @@ class ActionBot(Action):
                 #We re-compute the list of possible moves for the attacker and make him move
                 self.graphique.draw_board(Game)
                 possible_moves=self.game.available_move_position(rugbyman_attacker)
-                self.graphique.highlight_move_FElIX(possible_moves)
+                self.graphique.highlight_move(possible_moves)
                 #This function forces the rugbyman to move
                 self.move_rugbyman_after_succesfull_charging(rugbyman_attacker,self.game.get_ball(),possible_moves)
                 

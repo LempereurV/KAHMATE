@@ -6,7 +6,7 @@ import ball
 from constants import *
 import numpy as np
 import constants
-
+import tools
 
 
 import actions
@@ -268,7 +268,7 @@ class Game:
                 if rugbyman.get_possesion():
                         reward+=10
                 #It is better for the rugbymen to be generally close to the ball 
-                reward+=-actions.norm(rugbyman.get_pos(),self.get_ball().get_pos())*10
+                reward+=-tools.norm(rugbyman.get_pos(),self.get_ball().get_pos())*10
 
         if player.get_color()==color.Color.BLUE:
             for rugbyman in player.get_rugbymen():
@@ -288,7 +288,7 @@ class Game:
         for rugbyman in player.get_rugbymen():
             if rugbyman.get_move_points()==rugbyman.get_moves_left():
                 R=[[rugbyman]+self.available_move_position(rugbyman)]+R
-        return sorted(R,key =lambda x:actions.norm(x[0].get_pos(),self.get_ball().get_pos()))
+        return sorted(R,key =lambda x:tools.norm(x[0].get_pos(),self.get_ball().get_pos()))
 
     def other_player(self,player):
         """

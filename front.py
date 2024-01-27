@@ -169,7 +169,7 @@ class Graphic:
             screen.blit(s, self.hitbox[pass_[0]*(Constants.number_of_columns+2) + pass_[1]].topleft)
         pygame.display.flip()
 
-    def highlight_move_FElIX(self, list_move):
+    def highlight_move(self, list_move):
         for move in list_move:
             if move[3]:
                 self.highlight_move_annexe(move,(200, 200, 200))
@@ -183,19 +183,19 @@ class Graphic:
         s.fill(color)
         screen.blit(s, self.hitbox[move[0] * (Constants.number_of_columns+2) + move[1]].topleft)     
 
-    def draw_board(self, G):
+    def draw_board(self, game):
         self.screen.blit(self.board, (0, 0))
-        for rugbyman in game.Game.rugbymen(G):
+        for rugbyman in game.rugbymen():
                 if rugbyman.get_KO() > 0:
                         self.display_rugbyman(rugbyman)
 
         #The double loop allows to draw the rugbyman not ko on top
-        for rugbyman in game.Game.rugbymen(G):
+        for rugbyman in game.rugbymen():
                 if rugbyman.get_KO() == 0:
                     self.display_rugbyman(rugbyman)
 
                 
-        self.display_ball(game.Game.get_ball(G))
+        self.display_ball(game.get_ball())
         pygame.display.flip()
 
     def refresh(self):
@@ -229,62 +229,7 @@ class Graphic:
                     cond = True
         return None
 
-    # Affiche un point rouge pour 5s quand on clique quelque part
-    def display_point(self):
-        pygame.draw.circle(self.screen, (255, 0, 0), pygame.mouse.get_pos(), 2)
-        pygame.display.flip()
-        pygame.time.wait(100)
-        self.screen.blit(self.plateau, (0, 0))
-        pygame.display.flip()
 
-    # Affiche un joueur au centre de la hitbox
-    def affiche_joueur(self, n_hit, path, coords):
-        joueur = pygame.image.load(path)
-        joueur = pygame.transform.scale(joueur, (46.8, 46.5))
-        self.screen.blit(joueur, coords[n_hit])
-        pygame.display.flip()
-
-    def highlight_move(self, list_move):
-        """
-        Takes a list of moves in argument that should have the following strcuture:
-
-        list_move = [(x1,y1),(x2,y2),...,(xn,yn)]
-
-        and highlight the corresponding cases on the board in transparent gray
-        """
-
-        for i in range(len(list_move)):
-            pygame.draw.circle(
-                self.screen,
-                (20, 255, 167),
-                (
-                    (
-                        92 + 46.8 / 2 + list_move[i][0] * 46.8,
-                        62 + 46.5 / 2 + list_move[i][1] * 46.5,
-                    )
-                ),
-                10,
-            )
-        pygame.display.flip()
-
-    def old_highlight_move_FElIX(self, list_move, hitbox):
-        """
-        Takes a list of moves in argument that should have the following strcuture:
-
-        list_move = [(x1,y1),(x2,y2),...,(xn,yn)]
-
-        and highlight the corresponding hitbox cases on the board in transparent gray
-        """
-
-        s = pygame.Surface(hitbox[0].size)  # the size of your rect
-        s.set_alpha(128)  # alpha level
-        s.fill((150, 150, 150))
-        for move in list_move:
-            screen.blit(
-                s, hitbox[move[0] * 11 + move[1]].topleft
-            )  # (0,0) are the top-left coordinates
-            # pygame.draw.rect(screen,pygame.Color(128, 128, 128, 1),hitbox[move[0]*11+move[1]] )
-        pygame.display.flip()
 
     def create_dropdown_menu(self, options, menu_pos, menu_size):
         self.menu_options = options
