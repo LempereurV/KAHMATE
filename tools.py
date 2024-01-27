@@ -2,6 +2,7 @@ import rugbymen
 from constants import Constants
 from color import Color
 import front 
+import pygame
 
 def norm(pos1,pos2):
     return abs(pos1[0]-pos2[0])+abs(pos1[1]-pos2[1])
@@ -135,3 +136,57 @@ def positions_rugbymen_player(placement_order, graphic):
         front.pygame.display.flip()
         i += 1
     return R
+
+
+
+def path_convertor(rugbyman):
+    if rugbyman.get_KO()>0:
+        if rugbyman.get_color() == Color.RED:
+            return "Images/Plaquage_rouge.png"
+        if rugbyman.get_color() == Color.BLUE:
+            return "Images/Plaquage_bleu.png"
+    else :
+        if rugbyman.get_spec() == rugbymen.Spec.NORMAL:
+            if rugbyman.get_color() == Color.RED:
+                return "Images/Ordinaire_rouge.png"
+            if rugbyman.get_color() == Color.BLUE:
+                return "Images/Ordinaire_bleu.png"
+        if rugbyman.get_spec() == rugbymen.Spec.STRONG:
+            if rugbyman.get_color() == Color.RED:
+                return "Images/Costaud_rouge.png"
+            if rugbyman.get_color() == Color.BLUE:
+                return "Images/Costaud_bleu.png"
+        if rugbyman.get_spec() == rugbymen.Spec.HARD:
+            if rugbyman.get_color() == Color.RED:
+                return "Images/Dur_rouge.png"
+            if rugbyman.get_color() == Color.BLUE:
+                return "Images/Dur_bleu.png"
+        if rugbyman.get_spec() == rugbymen.Spec.SMART:
+            if rugbyman.get_color() == Color.RED:
+                return "Images/Fute_rouge.png"
+            if rugbyman.get_color() == Color.BLUE:
+                return "Images/Fute_bleu.png"
+        if rugbyman.get_spec() == rugbymen.Spec.FAST:
+            if rugbyman.get_color() == Color.RED:
+                return "Images/Rapide_rouge.png"
+            if rugbyman.get_color() == Color.BLUE:
+                return "Images/Rapide_bleu.png"
+    
+
+def create_hitbox(screen):
+
+    """
+    Create hitbox relative to the screen size
+        
+    """
+    #La hitbox contient chaque case du terrain, ainsi que les bords du terrain (les bords sont des cases de tailles identiques au damier classique)
+    #Chaque hitbox est divisé par 4 pour avoir une hitbox plus petite (permet de  cliquer sur le ballon )
+    full_hitbox = []
+    for j in range((Constants.number_of_rows+2)):
+        for i in range((Constants.number_of_columns+2)):
+            full_hitbox.append(pygame.Rect((Constants.edge_width_normalized + i * Constants.square_width_normalized)*screen.get_width(), 
+                                        (Constants.edge_height_normalized + j * Constants.square_height_normalized)*screen.get_height(),
+                                        Constants.square_width_normalized*screen.get_width(), 
+                                        Constants.square_height_normalized*screen.get_height()))
+    return full_hitbox
+        

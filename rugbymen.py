@@ -33,6 +33,9 @@ class Rugbyman:
     def get_move_points(self):
         return self.move_points
 
+    def get_spec(self):
+        return self.spec
+    
     def get_color(self):
         return self.color
     

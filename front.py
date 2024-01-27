@@ -1,27 +1,10 @@
 from typing import Any
 import pygame
 import sys
-import rugbymen
+import tools
 import color
 from constants import *
 import cards 
-
-# Initialisation de Pygame
-#pygame.init()
-#clock = pygame.time.Clock()
-
-
-# Chargement de l'image, chemin relatif
-
-#image = pygame.image.load(image_path)
-# Définition de la taille de la fenêtre
-#size = image.get_size()
-
-
-
-# Création de la fenêtre
-#screen = pygame.display.set_mode(size)
-# surf = pygame.surface.Surface(size)
 
 
 
@@ -58,7 +41,7 @@ class Graphic:
 
 
         # Création de la hitbox
-        self.hitbox = create_hitbox(self.screen)
+        self.hitbox = tools.create_hitbox(self.screen)
 
     def refresh(self):
         pygame.display.flip()
@@ -76,13 +59,13 @@ class Graphic:
             size = event.size
             self.screen = pygame.display.set_mode(size, pygame.RESIZABLE)
             self.board = pygame.transform.scale(self.board, size)
-            self.hitbox = create_hitbox(self.screen)
+            self.hitbox = tools.create_hitbox(self.screen)
             return True
         return False
 
 
     def set_new_hitbox(self):
-        self.hitbox = create_hitbox(self.screen)
+        self.hitbox = tools.create_hitbox(self.screen)
         self.board = pygame.transform.scale(self.board, self.screen.get_size())
 
     def get_hitbox_on_click(self):
@@ -140,7 +123,8 @@ class Graphic:
         pygame.display.flip()
 
     def display_rugbyman(self, rugbyman):
-        path=path_convertor(rugbyman)
+        path=tools.path_convertor(rugbyman)
+        print(path)
         pos=rugbyman.get_pos()
         player = pygame.image.load(path)
         player = pygame.transform.scale(player,(self.hitbox[0].width,self.hitbox[0].height))
@@ -522,54 +506,4 @@ class Graphic:
             new_hitboxes.append(new_hitbox)
         Cards_hitbox = new_hitboxes
 
-# Fonction qui renvoit la position de l'image correspondant au rugbyman (surement à merge avec path_to_player_type)
-def path_convertor(Rugbyman):
-    if Rugbyman.get_KO()>0:
-        if Rugbyman.get_color() == color.Color.RED:
-            return "Images/Plaquage_rouge.png"
-        if Rugbyman.get_color() == color.Color.BLUE:
-            return "Images/Plaquage_bleu.png"
-    else :
-        if Rugbyman.spec == rugbymen.Spec.NORMAL:
-            if Rugbyman.color == color.Color.RED:
-                return "Images/Ordinaire_rouge.png"
-            if Rugbyman.color == color.Color.BLUE:
-                return "Images/Ordinaire_bleu.png"
-        if Rugbyman.spec == rugbymen.Spec.STRONG:
-            if Rugbyman.color == color.Color.RED:
-                return "Images/Costaud_rouge.png"
-            if Rugbyman.color == color.Color.BLUE:
-                return "Images/Costaud_bleu.png"
-        if Rugbyman.spec == rugbymen.Spec.HARD:
-            if Rugbyman.color == color.Color.RED:
-                return "Images/Dur_rouge.png"
-            if Rugbyman.color == color.Color.BLUE:
-                return "Images/Dur_bleu.png"
-        if Rugbyman.spec == rugbymen.Spec.SMART:
-            if Rugbyman.color == color.Color.RED:
-                return "Images/Fute_rouge.png"
-            if Rugbyman.color == color.Color.BLUE:
-                return "Images/Fute_bleu.png"
-        if Rugbyman.spec == rugbymen.Spec.FAST:
-            if Rugbyman.color == color.Color.RED:
-                return "Images/Rapide_rouge.png"
-            if Rugbyman.color == color.Color.BLUE:
-                return "Images/Rapide_bleu.png"
 
-def create_hitbox(screen):
-
-    """
-    Create hitbox relative to the screen size
-        
-    """
-    #La hitbox contient chaque case du terrain, ainsi que les bords du terrain (les bords sont des cases de tailles identiques au damier classique)
-    #Chaque hitbox est divisé par 4 pour avoir une hitbox plus petite (permet de  cliquer sur le ballon )
-    full_hitbox = []
-    for j in range((Constants.number_of_rows+2)):
-        for i in range((Constants.number_of_columns+2)):
-            full_hitbox.append(pygame.Rect((Constants.edge_width_normalized + i * Constants.square_width_normalized)*screen.get_width(), 
-                                        (Constants.edge_height_normalized + j * Constants.square_height_normalized)*screen.get_height(),
-                                        Constants.square_width_normalized*screen.get_width(), 
-                                        Constants.square_height_normalized*screen.get_height()))
-    return full_hitbox
-        
