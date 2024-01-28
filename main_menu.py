@@ -1,3 +1,4 @@
+### Class used for the main menu, from which the game is launched ###
 
 import sys
 from main_menu_button import Button
@@ -14,125 +15,130 @@ class MainMenu:
         width = graphic.board.get_width()
         height = graphic.board.get_height()
 
-        self.BG = pygame.image.load("assets/Background.png")
-        self.BG = pygame.transform.scale(self.BG, (width, height))
+        self.background = pygame.image.load("assets/Background.png")
+        self.background = pygame.transform.scale(self.background, (width, height))
         self.screen = graphic.screen
         pygame.display.set_caption("Menu")
 
-        self.center_center_pos = (self.BG.get_size()[0]/2,self.BG.get_size()[1]/2-30)
-        self.center_down_pos = (self.BG.get_size()[0]/2,self.BG.get_size()[1]/10*9)
-        self.left_center_pos = (self.BG.get_size()[0]/4+50,self.BG.get_size()[1]/2)
-        self.right_center_pos = (self.BG.get_size()[0]/4*3,self.BG.get_size()[1]/2-20)
-        self.right_center_upper_pos = (self.BG.get_size()[0]/4*3,self.BG.get_size()[1]/4*1)
-        self.right_center_lower_pos = (self.BG.get_size()[0]/4*3,self.BG.get_size()[1]/4*2.5)
-        self.center_up_pos = (self.BG.get_size()[0]/2,self.BG.get_size()[1]/10*2)
+        # Used to position the buttons and images
+        self.center_center_pos = (self.background.get_size()[0]/2,self.background.get_size()[1]/2-30)
+        self.center_down_pos = (self.background.get_size()[0]/2,self.background.get_size()[1]/10*9)
+        self.left_center_pos = (self.background.get_size()[0]/4+50,self.background.get_size()[1]/2)
+        self.right_center_pos = (self.background.get_size()[0]/4*3,self.background.get_size()[1]/2-20)
+        self.right_center_upper_pos = (self.background.get_size()[0]/4*3,self.background.get_size()[1]/4*1)
+        self.right_center_lower_pos = (self.background.get_size()[0]/4*3,self.background.get_size()[1]/4*2.5)
+        self.center_up_pos = (self.background.get_size()[0]/2,self.background.get_size()[1]/10*2)
 
 
     def get_font(self,size): # Returns Press-Start-2P in the desired size
         return pygame.font.Font("assets/font.ttf", size)
 
-    def resize_BG_and_buttons(self,event):
+    def resize_BG_and_buttons(self,event): # Resize the background and the buttons when the window is resized
         if event.type == pygame.VIDEORESIZE:
             size = event.size
             self.screen = pygame.display.set_mode(size, pygame.RESIZABLE)
-            self.BG = pygame.transform.scale(self.BG, size)
+            self.background = pygame.transform.scale(self.background, size)
 
-            self.center_center_pos = (self.BG.get_size()[0]/2,self.BG.get_size()[1]/2-30)
-            self.center_down_pos = (self.BG.get_size()[0]/2,self.BG.get_size()[1]/10*9)
-            self.left_center_pos = (self.BG.get_size()[0]/4+50,self.BG.get_size()[1]/2)
-            self.right_center_pos = (self.BG.get_size()[0]/4*3,self.BG.get_size()[1]/2-20)
-            self.right_center_upper_pos = (self.BG.get_size()[0]/4*3,self.BG.get_size()[1]/4*1)
-            self.right_center_lower_pos = (self.BG.get_size()[0]/4*3,self.BG.get_size()[1]/4*2.5)
-            self.center_up_pos = (self.BG.get_size()[0]/2,self.BG.get_size()[1]/10*2)
+            self.center_center_pos = (self.background.get_size()[0]/2,self.background.get_size()[1]/2-30)
+            self.center_down_pos = (self.background.get_size()[0]/2,self.background.get_size()[1]/10*9)
+            self.left_center_pos = (self.background.get_size()[0]/4+50,self.background.get_size()[1]/2)
+            self.right_center_pos = (self.background.get_size()[0]/4*3,self.background.get_size()[1]/2-20)
+            self.right_center_upper_pos = (self.background.get_size()[0]/4*3,self.background.get_size()[1]/4*1)
+            self.right_center_lower_pos = (self.background.get_size()[0]/4*3,self.background.get_size()[1]/4*2.5)
+            self.center_up_pos = (self.background.get_size()[0]/2,self.background.get_size()[1]/10*2)
 
         
-    def play(self):
+    def play(self): # Display the gamemode selection menu
         while True:
+            # Used to position the buttons
             upper_left = (self.center_center_pos[0]-150, self.center_center_pos[1]-100)
             lower_right = (self.center_center_pos[0]+150, self.center_center_pos[1]+100)
             upper_right = (self.center_center_pos[0]+150, self.center_center_pos[1]-100)
             lower_left = (self.center_center_pos[0]-150, self.center_center_pos[1]+100)
-            OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
 
-            self.screen.blit(self.BG, (0, 0))
+            mouse_pos = pygame.mouse.get_pos()
 
-            PLAY_1 = Button(image=None, pos=upper_left,
+            self.screen.blit(self.background, (0, 0))
+
+            # Create the buttons for the different gamemodes and the back button
+            play_no_ai = Button(image=None, pos=upper_left,
                                 text_input="NO AI", font=self.get_font(50), base_color="Black", hovering_color="Green")
-            PLAY_1.changeColor(OPTIONS_MOUSE_POS)
+            play_no_ai.changeColor(mouse_pos)
 
-            PLAY_2 = Button(image=None, pos=upper_right, 
+            play_ai_deterministic = Button(image=None, pos=upper_right, 
                                 text_input="AI DETERMINISTIC", font=self.get_font(50), base_color="Black", hovering_color="Green")
-            PLAY_2.changeColor(OPTIONS_MOUSE_POS)
+            play_ai_deterministic.changeColor(mouse_pos)
 
-            PLAY_3 = Button(image=None, pos=lower_left, 
+            play_ai_minmax = Button(image=None, pos=lower_left, 
                                 text_input="AI MINMAX", font=self.get_font(50), base_color="Black", hovering_color="Green")
-            PLAY_3.changeColor(OPTIONS_MOUSE_POS)
+            play_ai_minmax.changeColor(mouse_pos)
 
-            PLAY_4 = Button(image=None, pos=lower_right, 
+            play_ai_Q_learning = Button(image=None, pos=lower_right, 
                                 text_input="AI Q-LEARNING", font=self.get_font(50), base_color="Black", hovering_color="Green")
-            PLAY_4.changeColor(OPTIONS_MOUSE_POS)
+            play_ai_Q_learning.changeColor(mouse_pos)
 
-            OPTIONS_BACK = Button(image=None, pos=self.center_down_pos, 
+            go_back = Button(image=None, pos=self.center_down_pos, 
                                 text_input="BACK", font=self.get_font(50), base_color="Black", hovering_color="Green")
-            OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+            go_back.changeColor(mouse_pos)
 
-            OPTIONS_BACK.update(self.screen)
-            PLAY_1.update(self.screen)
-            PLAY_2.update(self.screen)
-            PLAY_3.update(self.screen)
-            PLAY_4.update(self.screen)
+            go_back.update(self.screen)
+            play_no_ai.update(self.screen)
+            play_ai_deterministic.update(self.screen)
+            play_ai_minmax.update(self.screen)
+            play_ai_Q_learning.update(self.screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    if go_back.checkForInput(mouse_pos):
                         self.main_menu()
-                    if PLAY_1.checkForInput(OPTIONS_MOUSE_POS):
+                    if play_no_ai.checkForInput(mouse_pos):
                         self.launch_game()
-                    if PLAY_2.checkForInput(OPTIONS_MOUSE_POS):
+                    if play_ai_deterministic.checkForInput(mouse_pos):
                         #AI DETERMINISTIC
                         True
-                    if PLAY_3.checkForInput(OPTIONS_MOUSE_POS):
+                    if play_ai_minmax.checkForInput(mouse_pos):
                         #AI MINMAX
                         True
-                    if PLAY_4.checkForInput(OPTIONS_MOUSE_POS):
+                    if play_ai_Q_learning.checkForInput(mouse_pos):
                         #AI Q-LEARNING
                         True
 
             pygame.display.update()
     
-    def options(self):
+    def rules_1(self):  # Display the first page of rules
         while True:
-            OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
 
-            self.screen.blit(self.BG, (0, 0))
+            self.screen.blit(self.background, (0, 0))
 
+            # Diplays the page number
             page = Button(image=None, pos=(self.center_down_pos[0],self.center_down_pos[1]+30), 
                                 text_input="1 of 7", font=self.get_font(30), base_color="Black", hovering_color="Black")
             
             page.update(self.screen)
             
 
-            OPTIONS_TEXT_1 = pygame.image.load("assets/regle.png")
-            OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=self.center_center_pos)
+            image_1 = pygame.image.load("assets/regle.png")
+            rect_1 = image_1.get_rect(center=self.center_center_pos)
             
-            self.screen.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+            self.screen.blit(image_1, rect_1)
 
-
-            OPTIONS_BACK = Button(image=None, pos=self.center_down_pos, 
+            # create the buttons for the arrows and the back button
+            go_back = Button(image=None, pos=self.center_down_pos, 
                                 text_input="BACK", font=self.get_font(50), base_color="Black", hovering_color="Green")
             left_arrow = pygame.image.load("assets/arrow_left.png")
             left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
-            OPTIONS_LEFT = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            arrow_left = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
             right_arrow = pygame.image.load("assets/arrow_right.png")
             right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
-            OPTIONS_RIGHT = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
-            OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-            OPTIONS_BACK.update(self.screen)
-            OPTIONS_LEFT.update(self.screen)
-            OPTIONS_RIGHT.update(self.screen)
+            arrow_right = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            go_back.changeColor(mouse_pos)
+            go_back.update(self.screen)
+            arrow_left.update(self.screen)
+            arrow_right.update(self.screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.VIDEORESIZE:
@@ -142,57 +148,58 @@ class MainMenu:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    if go_back.checkForInput(mouse_pos):
                        self.main_menu()
-                    if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_7()
-                    if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_2()
+                    if arrow_left.checkForInput(mouse_pos):
+                        self.rules_7()
+                    if arrow_right.checkForInput(mouse_pos):
+                        self.rules_2()
 
             pygame.display.update()
 
-    def options_2(self):
+    def rules_2(self): # Display the second page of rules
+        # for more information about the rules, see the rules_1 function
         while True:
-            OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
 
-            self.screen.blit(self.BG, (0, 0))
+            self.screen.blit(self.background, (0, 0))
 
             page = Button(image=None, pos=(self.center_down_pos[0],self.center_down_pos[1]+30), 
                                 text_input="2 of 7", font=self.get_font(30), base_color="Black", hovering_color="Black")
             
             page.update(self.screen)
 
-            OPTIONS_TEXT_1 = pygame.image.load("assets/deplacer_1.png")
-            OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=(self.left_center_pos[0],self.left_center_pos[1]-30))
+            image_1 = pygame.image.load("assets/deplacer_1.png")
+            rect_1 = image_1.get_rect(center=(self.left_center_pos[0],self.left_center_pos[1]-30))
             
-            self.screen.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+            self.screen.blit(image_1, rect_1)
 
-            OPTIONS_TEXT_2 = pygame.image.load("assets/deplacer_2.png")
-            OPTIONS_TEXT_2 = pygame.transform.scale(OPTIONS_TEXT_2, (OPTIONS_TEXT_2.get_size()[0]/2,OPTIONS_TEXT_2.get_size()[1]/2))
+            image_2 = pygame.image.load("assets/deplacer_2.png")
+            image_2 = pygame.transform.scale(image_2, (image_2.get_size()[0]/2,image_2.get_size()[1]/2))
             
-            OPTIONS_RECT_2 = OPTIONS_TEXT_2.get_rect(center=self.right_center_upper_pos)
+            rect_2 = image_2.get_rect(center=self.right_center_upper_pos)
             
-            self.screen.blit(OPTIONS_TEXT_2, OPTIONS_RECT_2)
+            self.screen.blit(image_2, rect_2)
 
-            OPTIONS_TEXT_3 = pygame.image.load("assets/deplacer_3.png")
-            OPTIONS_TEXT_3 = pygame.transform.scale(OPTIONS_TEXT_3, (OPTIONS_TEXT_3.get_size()[0]/2,OPTIONS_TEXT_3.get_size()[1]/2))
+            image_3 = pygame.image.load("assets/deplacer_3.png")
+            image_3 = pygame.transform.scale(image_3, (image_3.get_size()[0]/2,image_3.get_size()[1]/2))
             
-            OPTIONS_RECT_3 = OPTIONS_TEXT_3.get_rect(center=self.right_center_lower_pos)
+            rect_3 = image_3.get_rect(center=self.right_center_lower_pos)
             
-            self.screen.blit(OPTIONS_TEXT_3, OPTIONS_RECT_3)
+            self.screen.blit(image_3, rect_3)
 
-            OPTIONS_BACK = Button(image=None, pos=self.center_down_pos, 
+            go_back = Button(image=None, pos=self.center_down_pos, 
                                 text_input="BACK", font=self.get_font(50), base_color="Black", hovering_color="Green")
             left_arrow = pygame.image.load("assets/arrow_left.png")
             left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
-            OPTIONS_LEFT = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            arrow_left = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
             right_arrow = pygame.image.load("assets/arrow_right.png")
             right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
-            OPTIONS_RIGHT = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
-            OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-            OPTIONS_BACK.update(self.screen)
-            OPTIONS_LEFT.update(self.screen)
-            OPTIONS_RIGHT.update(self.screen)
+            arrow_right = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            go_back.changeColor(mouse_pos)
+            go_back.update(self.screen)
+            arrow_left.update(self.screen)
+            arrow_right.update(self.screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.VIDEORESIZE:
@@ -202,50 +209,51 @@ class MainMenu:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    if go_back.checkForInput(mouse_pos):
                         self.main_menu()
-                    if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options()
-                    if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_3()
+                    if arrow_left.checkForInput(mouse_pos):
+                        self.rules_1()
+                    if arrow_right.checkForInput(mouse_pos):
+                        self.rules_3()
 
             pygame.display.update()
 
-    def options_3(self):
+    def rules_3(self): # Display the third page of rules
+        # for more information about the rules, see the rules_1 function
         while True:
-            OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
 
-            self.screen.blit(self.BG, (0, 0))
+            self.screen.blit(self.background, (0, 0))
 
             page = Button(image=None, pos=(self.center_down_pos[0],self.center_down_pos[1]+30), 
                                 text_input="3 of 7", font=self.get_font(30), base_color="Black", hovering_color="Black")
             
             page.update(self.screen)
 
-            OPTIONS_TEXT_1 = pygame.image.load("assets/forcer_1.png")
-            OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=(self.left_center_pos[0],self.left_center_pos[1]-30))
+            image_1 = pygame.image.load("assets/forcer_1.png")
+            rect_1 = image_1.get_rect(center=(self.left_center_pos[0],self.left_center_pos[1]-30))
             
-            self.screen.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+            self.screen.blit(image_1, rect_1)
 
-            OPTIONS_TEXT_2 = pygame.image.load("assets/forcer_2.png")
-            OPTIONS_TEXT_2 = pygame.transform.scale(OPTIONS_TEXT_2, (OPTIONS_TEXT_2.get_size()[0]/2,OPTIONS_TEXT_2.get_size()[1]/2))
+            image_2 = pygame.image.load("assets/forcer_2.png")
+            image_2 = pygame.transform.scale(image_2, (image_2.get_size()[0]/2,image_2.get_size()[1]/2))
             
-            OPTIONS_RECT_2 = OPTIONS_TEXT_2.get_rect(center=self.right_center_pos)
+            rect_2 = image_2.get_rect(center=self.right_center_pos)
             
-            self.screen.blit(OPTIONS_TEXT_2, OPTIONS_RECT_2)
+            self.screen.blit(image_2, rect_2)
 
-            OPTIONS_BACK = Button(image=None, pos=self.center_down_pos, 
+            go_back = Button(image=None, pos=self.center_down_pos, 
                                 text_input="BACK", font=self.get_font(50), base_color="Black", hovering_color="Green")
             left_arrow = pygame.image.load("assets/arrow_left.png")
             left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
-            OPTIONS_LEFT = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            arrow_left = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
             right_arrow = pygame.image.load("assets/arrow_right.png")
             right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
-            OPTIONS_RIGHT = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
-            OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-            OPTIONS_BACK.update(self.screen)
-            OPTIONS_LEFT.update(self.screen)
-            OPTIONS_RIGHT.update(self.screen)
+            arrow_right = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            go_back.changeColor(mouse_pos)
+            go_back.update(self.screen)
+            arrow_left.update(self.screen)
+            arrow_right.update(self.screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.VIDEORESIZE:
@@ -254,51 +262,52 @@ class MainMenu:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    if go_back.checkForInput(mouse_pos):
                         self.main_menu()
-                    if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_2()
-                    if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_4()
+                    if arrow_left.checkForInput(mouse_pos):
+                        self.rules_2()
+                    if arrow_right.checkForInput(mouse_pos):
+                        self.rules_4()
 
             pygame.display.update()
 
-    def options_4(self):
+    def rules_4(self): # Display the fourth page of rules
+        # for more information about the rules, see the rules_1 function
         while True:
-            OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
 
-            self.screen.blit(self.BG, (0, 0))
+            self.screen.blit(self.background, (0, 0))
             
             page = Button(image=None, pos=(self.center_down_pos[0],self.center_down_pos[1]+30), 
                                 text_input="4 of 7", font=self.get_font(30), base_color="Black", hovering_color="Black")
             
             page.update(self.screen)
 
-            OPTIONS_TEXT_1 = pygame.image.load("assets/passer_1.png")
-            OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=(self.left_center_pos[0],self.left_center_pos[1]-30))
+            image_1 = pygame.image.load("assets/passer_1.png")
+            rect_1 = image_1.get_rect(center=(self.left_center_pos[0],self.left_center_pos[1]-30))
             
-            self.screen.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+            self.screen.blit(image_1, rect_1)
 
-            OPTIONS_TEXT_2 = pygame.image.load("assets/passer_2.png")
-            OPTIONS_TEXT_2 = pygame.transform.scale(OPTIONS_TEXT_2, (OPTIONS_TEXT_2.get_size()[0]/2,OPTIONS_TEXT_2.get_size()[1]/2))
+            image_2 = pygame.image.load("assets/passer_2.png")
+            image_2 = pygame.transform.scale(image_2, (image_2.get_size()[0]/2,image_2.get_size()[1]/2))
             
-            OPTIONS_RECT_2 = OPTIONS_TEXT_2.get_rect(center=self.right_center_pos)
+            rect_2 = image_2.get_rect(center=self.right_center_pos)
 
-            self.screen.blit(OPTIONS_TEXT_2, OPTIONS_RECT_2)
+            self.screen.blit(image_2, rect_2)
 
 
-            OPTIONS_BACK = Button(image=None, pos=self.center_down_pos, 
+            go_back = Button(image=None, pos=self.center_down_pos, 
                                 text_input="BACK", font=self.get_font(50), base_color="Black", hovering_color="Green")
             left_arrow = pygame.image.load("assets/arrow_left.png")
             left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
-            OPTIONS_LEFT = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            arrow_left = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
             right_arrow = pygame.image.load("assets/arrow_right.png")
             right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
-            OPTIONS_RIGHT = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
-            OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-            OPTIONS_BACK.update(self.screen)
-            OPTIONS_LEFT.update(self.screen)
-            OPTIONS_RIGHT.update(self.screen)
+            arrow_right = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            go_back.changeColor(mouse_pos)
+            go_back.update(self.screen)
+            arrow_left.update(self.screen)
+            arrow_right.update(self.screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.VIDEORESIZE:
@@ -307,42 +316,43 @@ class MainMenu:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    if go_back.checkForInput(mouse_pos):
                         self.main_menu()
-                    if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_3()
-                    if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_5()
+                    if arrow_left.checkForInput(mouse_pos):
+                        self.rules_3()
+                    if arrow_right.checkForInput(mouse_pos):
+                        self.rules_5()
 
             pygame.display.update()
 
-    def options_5(self):
+    def rules_5(self): # Display the fifth page of rules
+        # for more information about the rules, see the rules_1 function
         while True:
-            OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
 
-            self.screen.blit(self.BG, (0, 0))
+            self.screen.blit(self.background, (0, 0))
 
-            OPTIONS_TEXT_1 = pygame.image.load("assets/interseption_1.png")
-            OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=self.center_center_pos)
-            self.screen.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+            image_1 = pygame.image.load("assets/interseption_1.png")
+            rect_1 = image_1.get_rect(center=self.center_center_pos)
+            self.screen.blit(image_1, rect_1)
 
             page = Button(image=None, pos=(self.center_down_pos[0],self.center_down_pos[1]+30), 
                                 text_input="5 of 7", font=self.get_font(30), base_color="Black", hovering_color="Black")
             
             page.update(self.screen)
 
-            OPTIONS_BACK = Button(image=None, pos=self.center_down_pos, 
+            go_back = Button(image=None, pos=self.center_down_pos, 
                                 text_input="BACK", font=self.get_font(50), base_color="Black", hovering_color="Green")
             left_arrow = pygame.image.load("assets/arrow_left.png")
             left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
-            OPTIONS_LEFT = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            arrow_left = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
             right_arrow = pygame.image.load("assets/arrow_right.png")
             right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
-            OPTIONS_RIGHT = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
-            OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-            OPTIONS_BACK.update(self.screen)
-            OPTIONS_LEFT.update(self.screen)
-            OPTIONS_RIGHT.update(self.screen)
+            arrow_right = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            go_back.changeColor(mouse_pos)
+            go_back.update(self.screen)
+            arrow_left.update(self.screen)
+            arrow_right.update(self.screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.VIDEORESIZE:
@@ -351,57 +361,58 @@ class MainMenu:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    if go_back.checkForInput(mouse_pos):
                         self.main_menu()
-                    if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_4()
-                    if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_6()
+                    if arrow_left.checkForInput(mouse_pos):
+                        self.rules_4()
+                    if arrow_right.checkForInput(mouse_pos):
+                        self.rules_6()
 
             pygame.display.update()
 
-    def options_6(self):
+    def rules_6(self): # Display the sixth page of rules
+        # for more information about the rules, see the rules_1 function
         while True:
-            OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
 
-            self.screen.blit(self.BG, (0, 0))
+            self.screen.blit(self.background, (0, 0))
 
             page = Button(image=None, pos=(self.center_down_pos[0],self.center_down_pos[1]+30), 
                                 text_input="6 of 7", font=self.get_font(30), base_color="Black", hovering_color="Black")
             
             page.update(self.screen)
 
-            OPTIONS_TEXT_1 = pygame.image.load("assets/plaquer_1.png")
-            OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=(self.left_center_pos[0],self.left_center_pos[1]-30))
+            image_1 = pygame.image.load("assets/plaquer_1.png")
+            rect_1 = image_1.get_rect(center=(self.left_center_pos[0],self.left_center_pos[1]-30))
             
-            self.screen.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+            self.screen.blit(image_1, rect_1)
 
-            OPTIONS_TEXT_2 = pygame.image.load("assets/plaquer_2.png")
-            OPTIONS_TEXT_2 = pygame.transform.scale(OPTIONS_TEXT_2, (OPTIONS_TEXT_2.get_size()[0]/2,OPTIONS_TEXT_2.get_size()[1]/2))
+            image_2 = pygame.image.load("assets/plaquer_2.png")
+            image_2 = pygame.transform.scale(image_2, (image_2.get_size()[0]/2,image_2.get_size()[1]/2))
             
-            OPTIONS_RECT_2 = OPTIONS_TEXT_2.get_rect(center=self.right_center_upper_pos)
+            rect_2 = image_2.get_rect(center=self.right_center_upper_pos)
             
-            self.screen.blit(OPTIONS_TEXT_2, OPTIONS_RECT_2)
+            self.screen.blit(image_2, rect_2)
 
-            OPTIONS_TEXT_3 = pygame.image.load("assets/plaquer_3.png")
-            OPTIONS_TEXT_3 = pygame.transform.scale(OPTIONS_TEXT_3, (OPTIONS_TEXT_3.get_size()[0]/2,OPTIONS_TEXT_3.get_size()[1]/2))
+            image_3 = pygame.image.load("assets/plaquer_3.png")
+            image_3 = pygame.transform.scale(image_3, (image_3.get_size()[0]/2,image_3.get_size()[1]/2))
             
-            OPTIONS_RECT_3 = OPTIONS_TEXT_3.get_rect(center=self.right_center_lower_pos)
+            rect_3 = image_3.get_rect(center=self.right_center_lower_pos)
             
-            self.screen.blit(OPTIONS_TEXT_3, OPTIONS_RECT_3)
+            self.screen.blit(image_3, rect_3)
 
-            OPTIONS_BACK = Button(image=None, pos=self.center_down_pos, 
+            go_back = Button(image=None, pos=self.center_down_pos, 
                                 text_input="BACK", font=self.get_font(50), base_color="Black", hovering_color="Green")
             left_arrow = pygame.image.load("assets/arrow_left.png")
             left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
-            OPTIONS_LEFT = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            arrow_left = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
             right_arrow = pygame.image.load("assets/arrow_right.png")
             right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
-            OPTIONS_RIGHT = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
-            OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-            OPTIONS_BACK.update(self.screen)
-            OPTIONS_LEFT.update(self.screen)
-            OPTIONS_RIGHT.update(self.screen)
+            arrow_right = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            go_back.changeColor(mouse_pos)
+            go_back.update(self.screen)
+            arrow_left.update(self.screen)
+            arrow_right.update(self.screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.VIDEORESIZE:
@@ -410,50 +421,51 @@ class MainMenu:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    if go_back.checkForInput(mouse_pos):
                         self.main_menu()
-                    if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_5()
-                    if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_7()
+                    if arrow_left.checkForInput(mouse_pos):
+                        self.rules_5()
+                    if arrow_right.checkForInput(mouse_pos):
+                        self.rules_7()
 
             pygame.display.update()
 
-    def options_7(self):
+    def rules_7(self): # Display the seventh page of rules
+        # for more information about the rules, see the rules_1 function
         while True:
-            OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
 
-            self.screen.blit(self.BG, (0, 0))
+            self.screen.blit(self.background, (0, 0))
 
             page = Button(image=None, pos=(self.center_down_pos[0],self.center_down_pos[1]+30), 
                                 text_input="7 of 7", font=self.get_font(30), base_color="Black", hovering_color="Black")
             
             page.update(self.screen)
 
-            OPTIONS_TEXT_1 = pygame.image.load("assets/pied_1.png")
-            OPTIONS_RECT_1 = OPTIONS_TEXT_1.get_rect(center=(self.left_center_pos[0],self.left_center_pos[1]-30))
+            image_1 = pygame.image.load("assets/pied_1.png")
+            rect_1 = image_1.get_rect(center=(self.left_center_pos[0],self.left_center_pos[1]-30))
             
-            self.screen.blit(OPTIONS_TEXT_1, OPTIONS_RECT_1)
+            self.screen.blit(image_1, rect_1)
 
-            OPTIONS_TEXT_2 = pygame.image.load("assets/pied_2.png")
-            OPTIONS_TEXT_2 = pygame.transform.scale(OPTIONS_TEXT_2, (OPTIONS_TEXT_2.get_size()[0]/2,OPTIONS_TEXT_2.get_size()[1]/2))
+            image_2 = pygame.image.load("assets/pied_2.png")
+            image_2 = pygame.transform.scale(image_2, (image_2.get_size()[0]/2,image_2.get_size()[1]/2))
             
-            OPTIONS_RECT_2 = OPTIONS_TEXT_2.get_rect(center=self.right_center_pos)
+            rect_2 = image_2.get_rect(center=self.right_center_pos)
             
-            self.screen.blit(OPTIONS_TEXT_2, OPTIONS_RECT_2)
+            self.screen.blit(image_2, rect_2)
 
-            OPTIONS_BACK = Button(image=None, pos=self.center_down_pos, 
+            go_back = Button(image=None, pos=self.center_down_pos, 
                                 text_input="BACK", font=self.get_font(50), base_color="Black", hovering_color="Green")
             left_arrow = pygame.image.load("assets/arrow_left.png")
             left_arrow = pygame.transform.scale(left_arrow, (left_arrow.get_size()[0]/10,left_arrow.get_size()[1]/10))
-            OPTIONS_LEFT = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            arrow_left = Button(image=left_arrow, pos=(self.center_down_pos[0]-100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
             right_arrow = pygame.image.load("assets/arrow_right.png")
             right_arrow = pygame.transform.scale(right_arrow, (right_arrow.get_size()[0]/10, right_arrow.get_size()[1]/10))
-            OPTIONS_RIGHT = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
-            OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-            OPTIONS_BACK.update(self.screen)
-            OPTIONS_LEFT.update(self.screen)
-            OPTIONS_RIGHT.update(self.screen)
+            arrow_right = Button(image=right_arrow, pos=(self.center_down_pos[0]+100, self.center_down_pos[1] - 7),text_input="", font=self.get_font(50), base_color="Black", hovering_color="Green") 
+            go_back.changeColor(mouse_pos)
+            go_back.update(self.screen)
+            arrow_left.update(self.screen)
+            arrow_right.update(self.screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.VIDEORESIZE:
@@ -462,36 +474,36 @@ class MainMenu:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    if go_back.checkForInput(mouse_pos):
                         self.main_menu()
-                    if OPTIONS_LEFT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options_6()
-                    if OPTIONS_RIGHT.checkForInput(OPTIONS_MOUSE_POS):
-                        self.options()
+                    if arrow_left.checkForInput(mouse_pos):
+                        self.rules_6()
+                    if arrow_right.checkForInput(mouse_pos):
+                        self.rules_1()
 
             pygame.display.update()
 
-    def main_menu(self):
+    def main_menu(self): # Display the main menu
         while True:
-            self.screen.blit(self.BG, (0, 0))
+            self.screen.blit(self.background, (0, 0))
 
-            MENU_MOUSE_POS = pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
 
-            MENU_TEXT = pygame.image.load("assets/logo.png") #get_font(100).render("KAHMATE", True, "#000000")
-            MENU_TEXT = pygame.transform.scale(MENU_TEXT, (MENU_TEXT.get_size()[0]/2,MENU_TEXT.get_size()[1]/2))
+            logo_image = pygame.image.load("assets/logo.png") #get_font(100).render("KAHMATE", True, "#000000")
+            logo_image = pygame.transform.scale(logo_image, (logo_image.get_size()[0]/2,logo_image.get_size()[1]/2))
             
-            MENU_RECT = MENU_TEXT.get_rect(center=(self.BG.get_size()[0]/2, self.BG.get_size()[1]/8*1))
+            logo_rect = logo_image.get_rect(center=(self.background.get_size()[0]/2, self.background.get_size()[1]/8*1))
 
-            PLAY_BUTTON = Button(image=pygame.image.load("assets/rect.png"), pos=(self.BG.get_size()[0]/2, self.BG.get_size()[1]/8*3), 
+            play_button = Button(image=pygame.image.load("assets/rect.png"), pos=(self.background.get_size()[0]/2, self.background.get_size()[1]/8*3), 
                                 text_input="PLAY", font=self.get_font(75), base_color="#d7fcd4", hovering_color="White")
-            OPTIONS_BUTTON = Button(image=pygame.image.load("assets/rect.png"), pos=(self.BG.get_size()[0]/2, self.BG.get_size()[1]/8*5), 
+            rules_button = Button(image=pygame.image.load("assets/rect.png"), pos=(self.background.get_size()[0]/2, self.background.get_size()[1]/8*5), 
                                 text_input="RULES", font=self.get_font(75), base_color="#d7fcd4", hovering_color="White")
-            QUIT_BUTTON = Button(image=pygame.image.load("assets/rect.png"), pos=(self.BG.get_size()[0]/2, self.BG.get_size()[1]/8*7), 
+            quit_button = Button(image=pygame.image.load("assets/rect.png"), pos=(self.background.get_size()[0]/2, self.background.get_size()[1]/8*7), 
                                 text_input="QUIT", font=self.get_font(75), base_color="#d7fcd4", hovering_color="White")
 
-            self.screen.blit(MENU_TEXT, MENU_RECT)
-            for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
-                button.changeColor(MENU_MOUSE_POS)
+            self.screen.blit(logo_image, logo_rect)
+            for button in [play_button, rules_button, quit_button]:
+                button.changeColor(mouse_pos)
                 button.update(self.screen)
             
             for event in pygame.event.get():
@@ -501,17 +513,17 @@ class MainMenu:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    if play_button.checkForInput(mouse_pos):
                         self.play()
-                    if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        self.options()
-                    if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    if rules_button.checkForInput(mouse_pos):
+                        self.rules_1()
+                    if quit_button.checkForInput(mouse_pos):
                         pygame.quit()
                         sys.exit()
 
             pygame.display.update()
 
-    def launch_game(self):
+    def launch_game(self): # Launch the game
         kahmate_graphics = self.graphic
         kahmate_graphics.set_new_hitbox()
 
