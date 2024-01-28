@@ -46,6 +46,60 @@ class MainMenu:
             self.center_up_pos = (self.BG.get_size()[0]/2,self.BG.get_size()[1]/10*2)
 
         
+    def play(self):
+        while True:
+            upper_left = (self.center_center_pos[0]-150, self.center_center_pos[1]-100)
+            lower_right = (self.center_center_pos[0]+150, self.center_center_pos[1]+100)
+            upper_right = (self.center_center_pos[0]+150, self.center_center_pos[1]-100)
+            lower_left = (self.center_center_pos[0]-150, self.center_center_pos[1]+100)
+            OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+            self.screen.blit(self.BG, (0, 0))
+
+            PLAY_1 = Button(image=None, pos=upper_left,
+                                text_input="NO AI", font=self.get_font(50), base_color="Black", hovering_color="Green")
+            PLAY_1.changeColor(OPTIONS_MOUSE_POS)
+
+            PLAY_2 = Button(image=None, pos=upper_right, 
+                                text_input="AI DETERMINISTIC", font=self.get_font(50), base_color="Black", hovering_color="Green")
+            PLAY_2.changeColor(OPTIONS_MOUSE_POS)
+
+            PLAY_3 = Button(image=None, pos=lower_left, 
+                                text_input="AI MINMAX", font=self.get_font(50), base_color="Black", hovering_color="Green")
+            PLAY_3.changeColor(OPTIONS_MOUSE_POS)
+
+            PLAY_4 = Button(image=None, pos=lower_right, 
+                                text_input="AI Q-LEARNING", font=self.get_font(50), base_color="Black", hovering_color="Green")
+            PLAY_4.changeColor(OPTIONS_MOUSE_POS)
+
+            OPTIONS_BACK = Button(image=None, pos=self.center_down_pos, 
+                                text_input="BACK", font=self.get_font(50), base_color="Black", hovering_color="Green")
+            OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+
+            OPTIONS_BACK.update(self.screen)
+            PLAY_1.update(self.screen)
+            PLAY_2.update(self.screen)
+            PLAY_3.update(self.screen)
+            PLAY_4.update(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                        self.main_menu()
+                    if PLAY_1.checkForInput(OPTIONS_MOUSE_POS):
+                        return True #NO AI
+                    if PLAY_2.checkForInput(OPTIONS_MOUSE_POS):
+                        return True #AI DETERMINISTIC
+                    if PLAY_3.checkForInput(OPTIONS_MOUSE_POS):
+                        return True    #AI MINMAX
+                    if PLAY_4.checkForInput(OPTIONS_MOUSE_POS):
+                        return True #AI Q-LEARNING
+
+            pygame.display.update()
+    
     def options(self):
         while True:
             OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
