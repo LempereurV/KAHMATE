@@ -1,9 +1,11 @@
+# File used to define the floating menu class, which was scrapped in favor of more intuitive features. The code is kept here for reference.
+
 import pygame
 from pygame.sprite import _Group
 import actions
 import button
 
-class FloatingMenu(pygame.sprite.Sprite):
+class FloatingMenu(pygame.sprite.Sprite): # Deprecated class, kept for reference
     # Class of floating menus, from which token actions can be selected
 
     def __init__(
@@ -106,9 +108,5 @@ class FloatingMenu(pygame.sprite.Sprite):
         for i in range(self.size_menu):
             if i == id_option:
                 return self.availability[i]
-        return None  # The id of the selected option does not correspond to the menu size (should never be triggered in normal use
-    
-class PauseMenu(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__(self)
+        return None  # The id of the selected option does not correspond to the menu size (should never be triggered in normal use)
 

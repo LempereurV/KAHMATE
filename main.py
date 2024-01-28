@@ -1,3 +1,5 @@
+# Execute this file to start the game
+
 import front
 import main_menu
 

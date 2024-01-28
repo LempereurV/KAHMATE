@@ -10,50 +10,40 @@ import cards
 
 class Graphic:
     def __init__(self):
-        # Initialisation de Pygame
+        # Initalise Pygame
         pygame.init()
         
-        
-        # Chargement de l'image, chemin relatif
+        # Load the image
         image_path = Constants.image_path
         self.board = pygame.image.load(image_path)
 
-        
-        # Définition de la taille de la fenêtre
+        # Define the size of the window
         width = int(self.board.get_width() * Constants.scale_factor)
         height = int(self.board.get_height() * Constants.scale_factor)
         
 
-        
-
-
-        # Création de la fenêtre
+        # Create the window
         #self.screen = pygame.display.set_mode(self.size)
         #self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN,pygame.RESIZABLE)
         
         
         self.screen = pygame.display.set_mode((width, height),pygame.RESIZABLE)
-
         self.board = pygame.transform.scale(self.board, (width, height))
 
-        
-
-
-
-        # Création de la hitbox
+        # Create the hitbox
         self.hitbox = tools.create_hitbox(self.screen)
 
-    def refresh(self):
+    def refresh(self): # Refresh the screen
         pygame.display.flip()
 
-    def draw_board_init(self,list_rugbyman):
+    def draw_board_init(self,list_rugbyman): # Display rugbymen on the board
         self.screen.blit(self.board, (0, 0))
         if len(list_rugbyman)>0:
             for rugbyman in list_rugbyman:
                 self.display_rugbyman(rugbyman)
         pygame.display.flip()
 
-    def is_board_being_resized(self,event):
+    def is_board_being_resized(self,event): # Check if the board is being resized
         if event.type == pygame.VIDEORESIZE:
             print("The window has been resized")
             size = event.size
@@ -64,11 +54,11 @@ class Graphic:
         return False
 
 
-    def set_new_hitbox(self):
+    def set_new_hitbox(self): # Set the new hitbox
         self.hitbox = tools.create_hitbox(self.screen)
         self.board = pygame.transform.scale(self.board, self.screen.get_size())
 
-    def get_hitbox_on_click(self):
+    def get_hitbox_on_click(self): # Get the hitbox on click
         cond=False
         while True:
             for event in pygame.event.get():
@@ -88,17 +78,16 @@ class Graphic:
                                 cond=True
                             return [i//(Constants.number_of_columns+2),i%(Constants.number_of_columns+2)],cond
 
-    def display_ball(self, ball):
+    def display_ball(self, ball): # Display the ball
         ball_graph = pygame.image.load("Images/Ballon.png")
         ball_graph = pygame.transform.scale(ball_graph, (self.hitbox[0].width/2, self.hitbox[0].height/2))
 
         self.screen.blit(ball_graph,self.hitbox[ball.get_pos_x()*(Constants.number_of_columns+2)+ball.get_pos_y()].center)
         pygame.display.flip()
         
-    def draw_cards(self, player):
+    def draw_cards(self, player): # Display the cards of a player (used for player interactions such as tackle)
         for i in range (6):
-
-            cond=False #Permet de savoir si la carte est dans le deck
+            cond=False # Used to check if the card is in the deck
             for card in player.get_deck():
                 if cards.convert_card_to_int(card)==i+1:
                     cond=True
@@ -122,7 +111,7 @@ class Graphic:
                     self.screen.blit(card_graph,self.hitbox[5*(Constants.number_of_columns+2)+(Constants.number_of_columns+2)//2+1+2*(i-3)].topleft)
         pygame.display.flip()
 
-    def display_rugbyman(self, rugbyman):
+    def display_rugbyman(self, rugbyman): # Display a rugbyman
         path=tools.path_convertor(rugbyman)
         print(path)
         pos=rugbyman.get_pos()
@@ -131,13 +120,13 @@ class Graphic:
         
         self.screen.blit(player, self.hitbox[pos[0]*(Constants.number_of_columns+2)+pos[1]].topleft)
 
-    def draw_case(self):
+    def draw_case(self): 
         for i in range (len(self.hitbox)):
             if i//(Constants.number_of_columns+2)==Constants.number_of_rows+1:
                 pygame.draw.rect(self.screen, (255, 255, 255), self.hitbox[i], 0)
         pygame.display.flip()
 
-    def highlight_button_after_click(self, Color):
+    def highlight_button_after_click(self, Color): 
         if Color==color.Color.RED:
             button = pygame.image.load("Images/Khamate_red_highlited.png")
             button = pygame.transform.scale(button,(4*self.hitbox[0].width,self.hitbox[0].height))
@@ -185,9 +174,6 @@ class Graphic:
 
                 
         self.display_ball(game.get_ball())
-        pygame.display.flip()
-
-    def refresh(self):
         pygame.display.flip()
 
     def display_back_decks(self):
@@ -261,23 +247,21 @@ class Graphic:
                     ),
                 )
 
-    # Rafraîchissement de la fenêtre
-    def refresh(self):
-        pygame.display.flip()
-
-    def test_menu(self, game):
+    def test_menu(self, game): 
+        # This function was formerly used to test floating menu. The feature was removed (see meny.py for more details) and this function is now deprecated.
         coords = []
         for j in range(8):
             for i in range(11):
                 coords.append((92 + i * 46.8, 62 + j * 46.5))
 
-        # Hitbox de chaque point
+        # Hitbox of each point
         hitbox = []
         for i in range(88):
             hitbox.append(pygame.Rect(coords[i][0], coords[i][1], 46.8, 46.5))
         hitbox.append(pygame.Rect(92 - 46.8, 62, 46.8, 46.5 * 8))
         hitbox.append(pygame.Rect(92 + 11 * 46.8, 62, 46.8, 46.5 * 8))
-        ### Initialisation des jetons ###
+
+        #Tokens initialisation
         red_playertoken = RugbymanToken("Images/Costaud_bleu.png")
         blue_playertoken = RugbymanToken("Images/Costaud_rouge.png")
         tokens_group = pygame.sprite.Group()
@@ -288,7 +272,7 @@ class Graphic:
             tokens.rect.center = hitbox[i].center
             i += 1
 
-        ### Initialisation menu ###
+        # Menu initialisation
         offscreen = (size[0] + 1, size[1] + 1)  # usefull to move the menu offscreen
         floating_menu = FloatingMenu(
             [
@@ -357,11 +341,12 @@ class Graphic:
                     clock.tick(5)
 
     def test_initialisation_board(self, game):
+        # This function was formerly used to test the board initialisation. The feature was removed (see meny.py for more details) and this function is now deprecated.
         coords = []
         for j in range(8):
             for i in range(11):
                 coords.append((92 + i * 46.8, 62 + j * 46.5))
-        # Hitbox de chaque point
+        # Hitbox of each point
         hitbox = []
         for i in range(88):
             hitbox.append(pygame.Rect(coords[i][0], coords[i][1], 46.8, 46.5))
@@ -408,9 +393,7 @@ class Graphic:
             token.rect.center = hitbox[i].center
             i += 11
 
-        test_menu = FloatingMenu(
-            ["Coucou", "Rugby", "Move", "Pass", "Francois"], (30, 40)
-        )
+        test_menu = FloatingMenu(["Move the player", "Pass the ball",  "Tackle an opponent", "Kick the ball", "Score"], (30, 40))
         flag_menu = 0
 
         while True:
@@ -444,14 +427,15 @@ class Graphic:
             blue_tokens_group.draw(screen)
             clock.tick(60)
 
-    def main_loop(self, game):
-        # Players tokens sprites initialisation
+    def main_loop(self, game):# Formerly used to test front.py methods. Now deprecated (see MainMenu.lauch_game() for more details about the game loop)
+    
+    # Players tokens sprites initialisation
         coords = []
         for j in range(8):
             for i in range(11):
                 coords.append((92 + i * 46.8, 62 + j * 46.5))
 
-    # Hitbox de chaque point
+    # Hitbox of each point
         hitbox = []
         for i in range(88):
             hitbox.append(pygame.Rect(coords[i][0], coords[i][1], 46.8, 46.5))
@@ -470,7 +454,7 @@ class Graphic:
             print(tokens.player_type.spec)
 
         test_menu = FloatingMenu(
-            ["Coucou", "Rugby", "Move", "Pass", "Francois"], (30, 40)
+            ["Move the player", "Pass the ball",  "Tackle an opponent", "Kick the ball", "Score"], (30, 40)
         )
         flag_menu = 0
 
