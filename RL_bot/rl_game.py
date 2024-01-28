@@ -36,7 +36,7 @@ def launch_game(graphic): # Launch the game
                 if action[0] != rugbyman_played:
                     play_from_RL(kahmate_game, action, kahmate_graphics)
                 rugbyman_played = action[0]
-                
+            print("Le bot a fini de jouer")
 
 
         else: #player turn

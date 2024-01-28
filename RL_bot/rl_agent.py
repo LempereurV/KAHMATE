@@ -1,11 +1,13 @@
 import sys
 sys.path.append('..')
+import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 import numpy as np
 from RL_bot.states import *
 from constants import Constants
 import game
 import tensorflow as tf
-
 
 class DQNAgent:
     def __init__(self, input_shape, color, model = None, epsilon=1.0):
@@ -76,7 +78,7 @@ class DQNAgent:
                 new_position_with_action = [rugbyman_actions[i][0] - 1, rugbyman_actions[i][1] - 1]
                 action = RL_action_from_game(rugbyman, new_position_with_action)
                 input_data = np.array([state, action])
-                q_value = self.model.predict(input_data.reshape(1, 2, 8, 13))[0][0]
+                q_value = self.model.predict(input_data.reshape(1, 2, 8, 13), verbose=None)[0][0]
                 if q_value >= max_q_value:
                     max_q_value = q_value
                     greedy_rugbyman = rugbyman
@@ -110,7 +112,7 @@ class DQNAgent:
             done = self.memory[index][5]
 
             input_data = [np.array([next_state, action]).reshape(1, 2, 8, 13) for action in next_state_actions]
-            next_state_rewards = np.array([self.model.predict(input)[0][0] for input in input_data])
+            next_state_rewards = np.array([self.model.predict(input, verbose=None)[0][0] for input in input_data])
             target = reward
             if not done:
                 target = reward + self.learning_rate * (self.gamma * np.amax(next_state_rewards) - target)

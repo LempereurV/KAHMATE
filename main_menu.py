@@ -1,5 +1,5 @@
 ### Class used for the main menu, from which the game is launched ###
-
+import sys
 from main_menu_button import Button
 import pygame 
 import game
@@ -7,7 +7,7 @@ import actions
 from color import Color
 import minimax
 import front
-import RL_bot.rl_game as rl_game
+
 
 
 
@@ -108,6 +108,7 @@ class MainMenu:
                         self.launch_game()
                         True
                     if play_ai_Q_learning.checkForInput(mouse_pos):
+                        import RL_bot.rl_game as rl_game
                         rl_game.launch_game(self.graphic)
                         True
 
