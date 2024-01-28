@@ -155,7 +155,7 @@ class Graphic:
         s.set_alpha(100)  # alpha level
         s.fill((255, 255, 0))
         for pass_ in passes:
-            screen.blit(s, self.hitbox[pass_[0]*(Constants.number_of_columns+2) + pass_[1]].topleft)
+            self.screen.blit(s, self.hitbox[pass_[0]*(Constants.number_of_columns+2) + pass_[1]].topleft)
         pygame.display.flip()
 
     def highlight_move(self, list_move):
