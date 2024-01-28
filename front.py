@@ -18,8 +18,8 @@ class Graphic:
         self.board = pygame.image.load(image_path)
 
         # Define the size of the window
-        width = int(self.board.get_width() * Constants.scale_factor)
-        height = int(self.board.get_height() * Constants.scale_factor)
+        self.width = int(self.board.get_width() * Constants.scale_factor)
+        self.height = int(self.board.get_height() * Constants.scale_factor)
         
 
         # Create the window
@@ -27,14 +27,22 @@ class Graphic:
         #self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN,pygame.RESIZABLE)
         
         
-        self.screen = pygame.display.set_mode((width, height),pygame.RESIZABLE)
-        self.board = pygame.transform.scale(self.board, (width, height))
+        self.screen = pygame.display.set_mode((self.width, self.height),pygame.RESIZABLE)
+        self.board = pygame.transform.scale(self.board, (self.width, self.height))
 
         # Create the hitbox
         self.hitbox = tools.create_hitbox(self.screen)
 
     def refresh(self): # Refresh the screen
         pygame.display.flip()
+
+
+    def freeze_resizable_window(self):
+        self.screen = pygame.display.set_mode(self.screen.get_size())
+
+    def unfreeze_resizable_window(self):
+        self.screen = pygame.display.set_mode(self.screen.get_size(),pygame.RESIZABLE)
+
 
     def draw_board_init(self,list_rugbyman): # Display rugbymen on the board
         self.screen.blit(self.board, (0, 0))

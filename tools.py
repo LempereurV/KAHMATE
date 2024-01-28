@@ -94,6 +94,8 @@ def positions_rugbymen_player(placement_order, graphic):
 
         # Fonction de la classe graphique qui renvoie une liste de la forme [i,j] avec i et j les colonnes et lignes de la case cliquée
         pos,_ = graphic.get_hitbox_on_click()
+        while pos==False:
+            pos,_ = graphic.get_hitbox_on_click()
 
 
         #graphic.draw_board_init(R[:i])
@@ -103,7 +105,10 @@ def positions_rugbymen_player(placement_order, graphic):
             cond_pos_already_taken = True
             while cond_pos_already_taken:
                 print("The position chosen is already taken, re choose the position")
-                pos,cond = graphic.get_hitbox_on_click()
+                pos,_ = graphic.get_hitbox_on_click()
+                while pos==False:
+                    pos,_ = graphic.get_hitbox_on_click()
+
                 if not pos in L_pos:
                     cond_pos_already_taken = False
 
@@ -114,6 +119,8 @@ def positions_rugbymen_player(placement_order, graphic):
             while cond_RED:
                 print("The position isn't correct, the red team is suppose to be on the left of the field")
                 pos,cond = graphic.get_hitbox_on_click()
+                while pos==False:
+                    pos,_ = graphic.get_hitbox_on_click()
                 if pos[1] < Constants.number_of_columns // 2+1 and pos[1]!=0:
                     cond_RED = False
 
@@ -124,6 +131,8 @@ def positions_rugbymen_player(placement_order, graphic):
             while cond_Blue:
                 print("The position isn't correct, the blue team is suppose to be on the right, re choose the position")
                 pos,cond = graphic.get_hitbox_on_click()
+                while pos==False:
+                    pos,_ = graphic.get_hitbox_on_click()
                 if pos[1] > Constants.number_of_columns // 2+1 and pos[1]!=Constants.number_of_columns+1:
                     cond_Blue = False
         

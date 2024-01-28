@@ -540,28 +540,6 @@ class MainMenu:
             active_player = kahmate_game.get_player_turn()
 
             print("Tour du joueur "+str(active_player.get_color()))
-            if AI and active_player.get_color()==Color.RED:
-                    ### Partie IA####
-                    print("IA")
-                    moves=[None,None,None]
-                
-                        
-                    kahmate_minimax.minimax(kahmate_minimax.get_depth(),-float("inf"),float("inf"),moves)
-                
-
-                    kahmate_graphics.draw_board(kahmate_game)
-                    
-                    if moves[2]!=None:
-                        kahmate_game.get_ball().set_pos(moves[2])
-                    
-                    for move in moves[:2]:
-                        if move!=False:
-                            kahmate_actions.move_rugbyman([move[1],move[2]],move[0],move[3])
-                    kahmate_graphics.draw_board(kahmate_game)
-                    active_player.set_can_play(False)
-                    kahmate_game.refresh_players_rugbymen_stats()
-                    kahmate_game.change_player_turn()
-                    continue
 
 
 
