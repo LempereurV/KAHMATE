@@ -90,13 +90,16 @@ class MainMenu:
                     if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                         self.main_menu()
                     if PLAY_1.checkForInput(OPTIONS_MOUSE_POS):
-                        return True #NO AI
+                        self.launch_game()
                     if PLAY_2.checkForInput(OPTIONS_MOUSE_POS):
-                        return True #AI DETERMINISTIC
+                        #AI DETERMINISTIC
+                        True
                     if PLAY_3.checkForInput(OPTIONS_MOUSE_POS):
-                        return True    #AI MINMAX
+                        #AI MINMAX
+                        True
                     if PLAY_4.checkForInput(OPTIONS_MOUSE_POS):
-                        return True #AI Q-LEARNING
+                        #AI Q-LEARNING
+                        True
 
             pygame.display.update()
     
@@ -499,7 +502,7 @@ class MainMenu:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        self.launch_game()
+                        self.play()
                     if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                         self.options()
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
