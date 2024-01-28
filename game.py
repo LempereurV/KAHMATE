@@ -15,7 +15,7 @@ class Game:
     """
     The Game class is the most "macroscopic" class of the code, it provides a general link between every class 
     """
-    def __init__(self,graphic):
+    def __init__(self,graphic,AI=False):
         """
         The Game class is the most "macroscopic" class of the code, it provides a general link between every class
         """
@@ -29,8 +29,9 @@ class Game:
         graphic.refresh()
         
          
-        self._player_red = players.Player(color.Color.RED,self,self._whose_turn,graphic) 
-        self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,graphic) 
+        self._player_red = players.Player(color.Color.RED,self,self._whose_turn,graphic)
+
+        self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,graphic,AI) 
 
         graphic.unfreeze_resizable_window()
         #A changer
@@ -271,16 +272,16 @@ class Game:
         if player.get_color()==color.Color.RED:
             for rugbyman in player.get_rugbymen():
                 if rugbyman.get_possesion():
-                        reward+=10
+                        reward+=100
                 #It is better for the rugbymen to be generally close to the ball 
                 reward+=-tools.norm(rugbyman.get_pos(),self.get_ball().get_pos())*10
 
         if player.get_color()==color.Color.BLUE:
             for rugbyman in player.get_rugbymen():
                 if rugbyman.get_possesion():
-                        reward-=10
+                        reward-=100
                 #It is better for the rugbymen to be generally close to the ball 
-                reward+=actions.norm(rugbyman.get_pos(),self.get_ball().get_pos())*10
+                reward+=tools.norm(rugbyman.get_pos(),self.get_ball().get_pos())*10
         
         return reward
 

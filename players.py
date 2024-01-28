@@ -3,13 +3,17 @@ import cards
 import tools
 
 class Player:
-    def __init__(self, color,Game,turn_color,Graphique):
+    def __init__(self, color,game,turn_color,graphics,AI=False):
         
         # Placement order of the rugbylen (mostly for the initialisation but can be usefull later)
         self._placement_order= tools.placement_orders(color)
 
         # List of all the rugbymen of the player
-        self._rugbymen = tools.positions_rugbymen_player(self._placement_order, Graphique)
+
+        if AI:
+            self._rugbymen = tools.positions_rugbymen_player_blue_AI(self._placement_order, graphics)
+        else:
+            self._rugbymen = tools.positions_rugbymen_player(self._placement_order, graphics)
 
         # List of all the rugbymen chosen by the player for his turn 
         self._chosen_rugbymen = []
