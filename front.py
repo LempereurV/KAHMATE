@@ -113,7 +113,6 @@ class Graphic:
 
     def display_rugbyman(self, rugbyman): # Display a rugbyman
         path=tools.path_convertor(rugbyman)
-        print(path)
         pos=rugbyman.get_pos()
         player = pygame.image.load(path)
         player = pygame.transform.scale(player,(self.hitbox[0].width,self.hitbox[0].height))

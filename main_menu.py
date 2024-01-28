@@ -1,13 +1,17 @@
 ### Class used for the main menu, from which the game is launched ###
 
-import sys
 from main_menu_button import Button
 import pygame 
 import game
 import actions 
 from color import Color
 import minimax
-import front 
+import front
+import RL_bot.rl_game as rl_game
+
+
+
+
 class MainMenu:
     def __init__(self,graphic) :
         self.graphic = graphic
@@ -101,9 +105,10 @@ class MainMenu:
                         True
                     if play_ai_minmax.checkForInput(mouse_pos):
                         #AI MINMAX
+                        self.launch_game()
                         True
                     if play_ai_Q_learning.checkForInput(mouse_pos):
-                        #AI Q-LEARNING
+                        rl_game.launch_game(self.graphic)
                         True
 
             pygame.display.update()
@@ -532,37 +537,12 @@ class MainMenu:
         kahmate_minimax_actions=actions.ActionMiniMax(kahmate_game,kahmate_graphics)
         kahmate_minimax=minimax.Minimax(kahmate_game,kahmate_game.get_player_red(),
                                         kahmate_actions,kahmate_minimax_actions,kahmate_graphics)
-        AI=False    
-
+        
         while not kahmate_game.is_game_over():
 
             active_player = kahmate_game.get_player_turn()
 
             print("Tour du joueur "+str(active_player.get_color()))
-            if AI and active_player.get_color()==Color.RED:
-                    ### Partie IA####
-                    print("IA")
-                    moves=[None,None,None]
-                
-                        
-                    kahmate_minimax.minimax(kahmate_minimax.get_depth(),-float("inf"),float("inf"),moves)
-                
-
-                    kahmate_graphics.draw_board(kahmate_game)
-                    
-                    if moves[2]!=None:
-                        kahmate_game.get_ball().set_pos(moves[2])
-                    
-                    for move in moves[:2]:
-                        if move!=False:
-                            kahmate_actions.move_rugbyman([move[1],move[2]],move[0],move[3])
-                    kahmate_graphics.draw_board(kahmate_game)
-                    active_player.set_can_play(False)
-                    kahmate_game.refresh_players_rugbymen_stats()
-                    kahmate_game.change_player_turn()
-                    continue
-
-
 
 
             while active_player.get_can_play():
