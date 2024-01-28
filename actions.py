@@ -761,6 +761,8 @@ class ActionMiniMax(Action):
         return card_number
 
 class ActionBot(Action):
+    def __init__(self, game, graphique):
+        super().__init__(game, graphique)
     
     def action_rugbyman_with_bot(self,rugbyman,possible_moves):
         pos,cond = self.graphique.get_hitbox_on_click()
@@ -769,13 +771,13 @@ class ActionBot(Action):
         if pos in possible_moves_without_scope_and_bool:
             i=possible_moves_without_scope_and_bool.index(pos)
             if possible_moves[i][3]:
-                return move_rugbyman(pos,rugbyman,self.game.get_ball(),possible_moves[i][2])
+                return self.move_rugbyman(pos,rugbyman,possible_moves[i][2])
             else :
                 
                 if self.game.is_rugbyman_on_ball()==rugbyman:
-                    return charging_bot(Graphique,Game,rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves)
+                    return self.charging_bot(rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves)
                 elif self.game.get_ball().get_pos()==pos:
-                    return tackling_bot(Graphique,Game,rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves) 
+                    return self.tackling_bot(rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves) 
                 else :
                     print("You can only tackle the rugbyman with the ball")  
                     return False
@@ -783,18 +785,18 @@ class ActionBot(Action):
             print("You can't move to this position")
             return False
     
-    def action_rugbyman_bot(pos, rugbyman, Game, Graphique):
-        possible_moves = Game.available_move_position(rugbyman)
+    def action_rugbyman_bot(self,pos, rugbyman):
+        possible_moves = self.game.available_move_position(rugbyman)
         possible_moves_without_scope_and_bool = [[k[0],k[1]] for k in possible_moves]
         if pos in possible_moves_without_scope_and_bool:
             i=possible_moves_without_scope_and_bool.index(pos)
             if possible_moves[i][3]:
-                return move_rugbyman(pos,rugbyman,Game.get_ball(),possible_moves[i][2])
+                return self.move_rugbyman(pos,rugbyman,possible_moves[i][2])
             else :
-                if Game.is_rugbyman_on_ball() == rugbyman:
-                    return charging_bot(Graphique,Game,rugbyman,Game.which_rugbyman_in_pos(pos),possible_moves)
-                elif Game.get_ball().get_pos() == pos:
-                    return tackling_bot(Graphique,Game,rugbyman,Game.which_rugbyman_in_pos(pos),possible_moves) 
+                if self.game.is_rugbyman_on_ball() == rugbyman:
+                    return self.charging_bot(rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves)
+                elif self.game.get_ball().get_pos() == pos:
+                    return self.tackling_bot(rugbyman,Game.which_rugbyman_in_pos(pos),possible_moves) 
                 else : 
                     return False
         else :
