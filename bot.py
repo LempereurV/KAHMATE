@@ -1,12 +1,82 @@
 import pygame
 import color
-import rugbymen
-import random
 import game
 import numpy as np
 import constants
 import color
 import actions
+
+
+def launch_game(graphic): # Launch the game
+    Game=game.Game(graphic)
+    graphic.display_ball(Game.get_ball())
+    graphic.pygame.display.flip()
+    while not Game.is_game_over():
+        active_player = Game.get_player_turn()
+        print("Joueur actif : ",active_player.get_color())
+        if active_player.get_color()==color.Color.RED:
+            compute_action(Game,graphic)
+            Game.change_player_turn()
+        active_player = Game.get_player_turn()
+        active_player.set_can_play(True)
+        while active_player.get_can_play():
+            print("Joueur actif : ",active_player.get_color())
+
+            graphic.draw_board(Game)            
+            rugbyman_or_ball_or_bool=Game.what_is_in_pos(graphic)
+
+
+            while active_player.get_can_play():
+                graphic.draw_board(Game)
+                
+                rugbyman_or_ball_or_bool=Game.what_is_in_pos(graphic)
+
+            if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
+
+                possible_move = Game.available_move_position(rugbyman_or_ball_or_bool)
+
+                if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
+                    
+                    graphic.highlight_move_FElIX( possible_move)
+                    rugbyman_or_ball_or_bool=actions.action_rugbyman_with_bot(graphic,rugbyman_or_ball_or_bool,
+                                                                        Game,
+                                                                        possible_move)
+                
+                #If the player hasnt chosen his two rugbyman yet
+                elif active_player.get_n_rugbymen()<2:
+                    graphic.highlight_move_FElIX(possible_move)
+                    
+                    #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
+                    #Note that the move itself is made in the function
+                    rugbyman_or_ball_or_bool=actions.action_rugbyman_with_bot(graphic,rugbyman_or_ball_or_bool,
+                                                                        Game,
+                                                                        possible_move)
+                    
+
+                    #We add the rugbyman to the list of chosen rugbyman if the move is made
+                    if rugbyman_or_ball_or_bool !=False :
+                        active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
+
+            elif (rugbyman_or_ball_or_bool ==Game.get_ball()):
+                available_pass=actions.available_pass(Game)
+                if len(available_pass)>0:
+                    graphic.highlight_pass( available_pass)
+                    actions.make_pass(Game,graphic,available_pass)
+
+            elif (rugbyman_or_ball_or_bool == True):
+                #If the player has resized the screen
+                break
+
+            Game.is_rugbyman_on_ball()
+            active_player.actualize_can_play()
+            graphic.draw_board(Game)
+            #Redraw cards does not suffice
+
+            ### Partie reset quand le joueur a fini de jouer  ###
+            Game.refresh_players_rugbymen_stats()
+            Game.change_player_turn()
+
+    print("Fin du jeu")
 
 #Pour l'instant, les ordis ne peuvent être que rouges
 
@@ -14,15 +84,7 @@ def easy_coords(list_of_lists):
     new_list = [sublist[:2] for sublist in list_of_lists]
     return new_list
 
-cards=[1,2,3,4,5,6]
 
-def draw_card_bot(cards):
-    a = random.choice(cards)
-    if len(cards) > 1:
-        cards.remove(a)
-    else:
-        cards = [1,2,3,4,5,6]
-    return a
 
 def compute_reward(game):
     R = np.zeros((constants.Constants.number_of_rows +1, constants.Constants.number_of_columns + 1))
@@ -107,41 +169,41 @@ def compute_action(game, Graph):
                         coords = np.where(R == Rugbymen[i].get_score())
                         [x,y] = [coords[0][0], coords[1][0]]
                         print([x,y])
-                        actions.action_rugbyman_bot([x,y], Rugbymen[i], game, Graph)
+                        actions.ActionBot.action_rugbyman_bot([x,y], Rugbymen[i], game, Graph)
                         nb_joueurs.append(Rugbymen[i])
                         #then we play the others available rugbymen in the highest reward zone
                         if i == 0:
                             coords = np.where(R == Rugbymen[1].get_score())
                             [x,y] = [coords[0][0], coords[1][0]]
                             print([x,y])
-                            actions.action_rugbyman_bot([x,y], Rugbymen[1], game, Graph)
+                            actions.ActionBot.action_rugbyman_bot([x,y], Rugbymen[1], game, Graph)
                             nb_joueurs.append(Rugbymen[1])
                         else:
                             coords = np.where(R == Rugbymen[0].get_score())
                             [x,y] = [coords[0][0], coords[1][0]]
                             print([x,y])
-                            actions.action_rugbyman_bot([x,y], Rugbymen[0], game, Graph)
+                            actions.ActionBot.action_rugbyman_bot([x,y], Rugbymen[0], game, Graph)
                             nb_joueurs.append(Rugbymen[0])
             else:
                 coords = np.where(R == Rugbymen[1].get_score())
                 [x,y] = [coords[0][0], coords[1][0]]
-                actions.action_rugbyman_bot([x,y], Poss, game, Graph)
+                actions.ActionBot.action_rugbyman_bot([x,y], Poss, game, Graph)
                 nb_joueurs.append(Poss)
                 if Poss == Rugbymen[0]:
                     coords = np.where(R == Rugbymen[1].get_score())
                     [x,y] = [coords[0][0], coords[1][0]]
-                    actions.action_rugbyman_bot([x,y], Rugbymen[1], game, Graph)
+                    actions.ActionBot.action_rugbyman_bot([x,y], Rugbymen[1], game, Graph)
                     nb_joueurs.append(Rugbymen[1])
                 else:
                     coords = np.where(R == Rugbymen[0].get_score())
                     [x,y] = [coords[0][0], coords[1][0]]
-                    actions.action_rugbyman_bot([x,y], Rugbymen[0], game, Graph)
+                    actions.ActionBot.action_rugbyman_bot([x,y], Rugbymen[0], game, Graph)
                     nb_joueurs.append(Rugbymen[0])
 
         if len(nb_joueurs)<2 and Poss not in nb_joueurs:
             coords = np.where(R == Poss.get_score())
             [x,y] = [coords[0][0], coords[1][0]]
-            actions.action_rugbyman_bot([x,y], Poss, game, Graph)
+            actions.ActionBot.action_rugbyman_bot([x,y], Poss, game, Graph)
             nb_joueurs.append(Poss)
     
 
@@ -151,7 +213,7 @@ def compute_action(game, Graph):
             ez_coords = easy_coords(game.available_move_position(Rugbyman))
             #these are the coordinates of the squares that are available to move to
             if np.any(np.all(ez_coords == np.array([x, y]), axis=1)) and Rugbyman.get_color() == color.Color.RED and Rugbyman.get_KO() == 0:                
-                actions.action_rugbyman_bot([x,y], Rugbyman, game, Graph)
+                actions.ActionBot.action_rugbyman_bot([x,y], Rugbyman, game, Graph)
                 nb_joueurs.append(Rugbyman)
                 Poss = Rugbyman
                 break
@@ -171,7 +233,7 @@ def compute_action(game, Graph):
         R = compute_reward(game)
         for i in range(2-len(nb_joueurs)):
             coords = np.where(R == Rugbymen[i].get_score())
-            actions.action_rugbyman_bot(coords, Rugbymen[i], game, Graph)
+            actions.ActionBot.action_rugbyman_bot(coords, Rugbymen[i], game, Graph)
             nb_joueurs.append(Rugbymen[i])
 
     if S == -1:#the enemy has the ball
@@ -182,7 +244,7 @@ def compute_action(game, Graph):
             ez_coords = easy_coords(game.available_move_position(Rugbyman))
             #these are the coordinates of the squares that are available to move to
             if np.any(np.all(ez_coords == np.array([x, y]), axis=1)) and Rugbyman.get_color() == color.Color.RED and Rugbyman.get_KO() == 0:                
-                actions.action_rugbyman_bot([x,y], Rugbyman, game, Graph)
+                actions.ActionBot.action_rugbyman_bot([x,y], Rugbyman, game, Graph)
                 nb_joueurs.append(Rugbyman)
                 if Rugbyman.get_KO() == 0:#If the rugby player has successfully tackled.
                     Poss = Rugbyman
@@ -206,12 +268,12 @@ def compute_action(game, Graph):
             Rugbymen.remove(Poss)
             ez_coords = easy_coords(game.available_move_position(Rugbymen[0]))
             #these are the coordinates of the squares that are available to move to by the best rugbyman
-            actions.action_rugbyman_bot(ez_coords, Rugbymen[0], game, Graph)
+            actions.ActionBot.action_rugbyman_bot(ez_coords, Rugbymen[0], game, Graph)
             nb_joueurs.append(Rugbymen[0])
         else:
             for i in range(2-len(nb_joueurs)):
                 coords = np.where(R == Rugbymen[i].get_score())
-                actions.action_rugbyman_bot(coords, Rugbymen[i], game, Graph)
+                actions.ActionBot.action_rugbyman_bot(coords, Rugbymen[i], game, Graph)
                 nb_joueurs.append(Rugbymen[i])
         
     print("bot's turn is over")

@@ -8,7 +8,7 @@ from color import Color
 import minimax
 import front
 import RL_bot.rl_game as rl_game
-
+import bot
 
 
 
@@ -102,6 +102,7 @@ class MainMenu:
                         self.launch_game()
                     if play_ai_deterministic.checkForInput(mouse_pos):
                         #AI DETERMINISTIC
+                        bot.launch_game(self.graphic)
                         True
                     if play_ai_minmax.checkForInput(mouse_pos):
                         #AI MINMAX
