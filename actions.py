@@ -548,6 +548,77 @@ class ActionMiniMax(Action):
     def __init__(self, game, graphique):
         super().__init__(game, graphique)
 
+    def action_rugbyman_AI_defending(self,rugbyman,possible_moves):
+        """
+        This function resolves an action that can be tackling, charging or simply moving depending on the situation 
+
+        Takes in arguments the rugbyman that is doing the action and the list of possible moves for this rugbyman
+
+        Returns the rugbyman if the action was succesfull, False otherwise
+        """
+
+        pos,cond = self.graphique.get_hitbox_on_click()
+        possible_moves_without_scope_and_bool=[[k[0],k[1]] for k in possible_moves]
+
+        if pos in possible_moves_without_scope_and_bool:
+            i=possible_moves_without_scope_and_bool.index(pos)
+            if possible_moves[i][3]:
+                return self.move_rugbyman(pos,rugbyman,possible_moves[i][2])
+            else :
+                
+                if self.game.is_rugbyman_on_ball()==rugbyman:
+                    return self.charging_AI_blue_defending(rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves)
+                elif self.game.get_ball().get_pos()==pos:
+                    return self.tackling_AI_defending(rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves) 
+                else :
+                    print("You can only tackle the rugbyman with the ball")  
+                    return False
+        else :
+            print("You can't move to this position")
+            return False
+    
+
+    def charging_AI_blue_defending(self,rugbyman_attacker,rugbyman_defender,possible_moves):
+        """
+        This function resolves the charging action between two rugbyman.
+
+        Takes in arguments the attacking rugbyman, the defending rugbyman and the list of possible moves for the attacker
+
+        Returns the attacking rugbyman if the charge was succesfull, False otherwise
+        """
+
+        #The condition is >=1 because once the attacker win, he has to be able to move past the defender 
+        
+        if rugbyman_attacker.get_moves_left()- tools.norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>=1:
+            print("Red Player has to choose his card")
+            c_red=self.choose_cards(self.game.get_player_red())
+            self.graphique.draw_board(self.game)
+
+            print("Blue Player has to choose his card")
+            c_blue=self.choose_cards_AI(self.game.get_player_blue())
+
+
+            print("Red chose :"+str(c_red))
+            print("Blue chose :"+str(c_blue))
+
+            if rugbyman_attacker.get_color()==Color.RED:
+                c_attacker=c_red
+                c_defender=c_blue
+            else:
+                c_attacker=c_blue
+                c_defender=c_red
+
+            #If the attacker wins the charge
+            if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
+                self.attacker_win_charge(rugbyman_attacker,rugbyman_defender,possible_moves)          
+            else :
+                self.defender_win_charge(rugbyman_attacker,rugbyman_defender,possible_moves)
+                
+        else:
+            print("You don't have enough move points left to charge this rugbyman")
+            return False
+
+
     def undo_move_rugbyman( self,former_rugbyman_pos,former_ball_pos,rugbyman,cost):
             ball=self.game.get_ball()
             rugbyman.set_pos(former_rugbyman_pos)
@@ -622,9 +693,46 @@ class ActionMiniMax(Action):
         former_owner.set_possesion(True)
         self.game.get_ball().set_carrier(former_owner)    
 
+    def tackling_AI_defending(self,rugbyman_attacker, rugbyman_defender,possible_moves):
+        
+        print("Players have to choose their cards")
+        if self.game.is_rugbyman_on_ball()==rugbyman_defender:
+            print("Red Player has to choose his card")
+            c_red=self.choose_cards(self.game.get_player_red())
+            print("Blue Player has to choose his card")
+            self.graphique.draw_board(self.game)
+            c_blue=self.choose_cards_AI(self.game.get_player_blue())
+
+            print("Red chose :"+str(c_red))
+            print("Blue chose :"+str(c_blue))
+
+            if rugbyman_attacker.get_color()==Color.RED:
+                c_attacker=c_red
+                c_defender=c_blue
+            else:
+                c_attacker=c_blue
+                c_defender=c_red
+
+            #If the attacker wins the tackle
+            if c_attacker+rugbyman_attacker.get_attack_bonus()>c_defender+rugbyman_defender.get_defense_bonus():
+                self.attacker_wins_tackle(rugbyman_attacker,rugbyman_defender,c_attacker,c_defender)
+            else :
+                rugbyman_attacker.set_KO()
+            
+            #If the rugbyman doing the tackling was far from the the defender
+            if tools.norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>1:
+                self.attacker_far_from_defender(rugbyman_attacker,rugbyman_defender,possible_moves)
+
+
+
+            return rugbyman_attacker 
+        else :
+            print("You can only tackle the rugbyman with the ball")
+            return False
+    
     def  action_rugbyman_AI(self,rugbyman_attacker,rugbyman_defender,possible_moves):
         if self.game.is_rugbyman_on_ball()==rugbyman_attacker:
-            return False # A changer 
+            return False # Not working yet
             return self.charging_AI(rugbyman_attacker,rugbyman_defender,possible_moves)
         elif self.game.get_ball().get_pos()==rugbyman_defender.get_pos():
             return self.tackling_AI(rugbyman_attacker,rugbyman_defender,possible_moves) 
@@ -688,11 +796,12 @@ class ActionMiniMax(Action):
 
         if self.game.is_rugbyman_on_ball()==rugbyman_defender:
             
-            print("Blue Player has to choose his card")
-            c_blue=self.choose_cards(self.game.get_player_blue())
+            print("Red Player has to choose his card")
+            c_blue=self.choose_cards_AI(self.game.get_player_blue())
             
-            c_red=self.choose_cards_AI(self.game.get_player_red())
+            c_red=self.choose_cards(self.game.get_player_red())
 
+            print(rugbyman_attacker.get_color())
             if rugbyman_attacker.get_color()==Color.RED:
                 c_attacker=c_red
                 c_defender=c_blue
@@ -725,6 +834,7 @@ class ActionMiniMax(Action):
                         else:
                             self.game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
                 rugbyman_attacker.set_possesion(False)
+            
             else :
                 rugbyman_attacker.set_KO()
             
@@ -749,9 +859,6 @@ class ActionMiniMax(Action):
                 self.game.get_ball().set_pos(rugbyman_attacker.get_pos())
                 self.game.get_ball().set_carrier(rugbyman_attacker)
                 rugbyman_attacker.set_possesion(True)
-            return True 
-        else :
-            rugbyman_attacker.set_KO()
         
     def choose_cards_AI(self,player):
         #We wait for the player to choose his cards
@@ -771,42 +878,33 @@ class ActionBot(Action):
         if pos in possible_moves_without_scope_and_bool:
             i=possible_moves_without_scope_and_bool.index(pos)
             if possible_moves[i][3]:
-                return Action.move_rugbyman(pos,rugbyman,self.game.get_ball(),possible_moves[i][2])
+                return move_rugbyman(pos,rugbyman,self.game.get_ball(),possible_moves[i][2])
             else :
                 
                 if self.game.is_rugbyman_on_ball()==rugbyman:
-                    return ActionBot.charging_bot(rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves)
+                    return charging_bot(Graphique,Game,rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves)
                 elif self.game.get_ball().get_pos()==pos:
-                    return ActionBot.tackling_bot(rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves) 
+                    return tackling_bot(Graphique,Game,rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves) 
                 else :
                     print("You can only tackle the rugbyman with the ball")  
                     return False
         else :
             print("You can't move to this position")
             return False
-        
-    cards=[1,2,3,4,5,6]
-
-    def draw_card_bot():
-        a = random.choice(cards)
-        if len(cards) > 1:
-            cards.remove(a)
-        else:
-            cards = [1,2,3,4,5,6]
-        return a
     
-    def action_rugbyman_bot(pos, rugbyman, Game):
-        possible_moves = Game.available_move_position(rugbyman)
+    def action_rugbyman_bot(self,pos, rugbyman):
+
+        possible_moves = self.game.available_move_position(rugbyman)
         possible_moves_without_scope_and_bool = [[k[0],k[1]] for k in possible_moves]
         if pos in possible_moves_without_scope_and_bool:
             i=possible_moves_without_scope_and_bool.index(pos)
             if possible_moves[i][3]:
-                return Action.move_rugbyman(pos,rugbyman,Game.get_ball(),possible_moves[i][2])
+                return self.move_rugbyman(pos,rugbyman,possible_moves[i][2])
             else :
-                if Game.is_rugbyman_on_ball() == rugbyman:
-                    return ActionBot.charging_bot(rugbyman,Game.which_rugbyman_in_pos(pos),possible_moves)
-                elif Game.get_ball().get_pos() == pos:
-                    return ActionBot.tackling_bot(rugbyman,Game.which_rugbyman_in_pos(pos),possible_moves) 
+                if self.game.is_rugbyman_on_ball() == rugbyman:
+                    return self.charging_bot(rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves)
+                elif self.game.get_ball().get_pos() == pos:
+                    return self.tackling_bot(rugbyman,self.game.which_rugbyman_in_pos(pos),possible_moves) 
                 else : 
                     return False
         else :
@@ -817,7 +915,7 @@ class ActionBot(Action):
         print("Players have to choose their cards")
         if self.game.is_rugbyman_on_ball()==rugbyman_defender:
             print("Red Player has to choose his card")
-            c_red=ActionBot.draw_card_bot()
+            c_red=self.draw_card_bot()
             print("Blue Player has to choose his card")
             self.graphique.draw_board(self.game)
             c_blue=self.choose_cards(self.graphique,self.game.get_player_blue())
@@ -897,10 +995,10 @@ class ActionBot(Action):
         #the condition is >=1 because once he is on him he has to be able to move
         if rugbyman_attacker.get_moves_left()- tools.norm(rugbyman_attacker.get_pos(),rugbyman_defender.get_pos())>=1:
             print("Red Player has to choose his card")
-            c_red=ActionBot.draw_card_bot()
+            c_red=self.draw_card_bot()
             self.graphique.draw_board(self.game)
             print("Blue Player has to choose his card")
-            c_blue=ActionBot.choose_cards(self.graphique,self.game.get_player_blue())
+            c_blue=self.choose_cards(self.graphique,self.game.get_player_blue())
 
             print("Red chose :"+str(c_red))
             print("Blue chose :"+str(c_blue))

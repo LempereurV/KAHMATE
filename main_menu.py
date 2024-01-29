@@ -103,13 +103,13 @@ class MainMenu:
                     if play_ai_deterministic.checkForInput(mouse_pos):
                         #AI DETERMINISTIC
                         bot.launch_game(self.graphic)
-                        True
                     if play_ai_minmax.checkForInput(mouse_pos):
                         #AI MINMAX
-                        self.launch_game()
-                        True
+                        self.launch_game_minimax()
                     if play_ai_Q_learning.checkForInput(mouse_pos):
+                        #Import here allows to avoid long import at each start
                         import RL_bot.rl_game as rl_game
+
                         rl_game.launch_game(self.graphic)
                         True
 
@@ -541,7 +541,6 @@ class MainMenu:
 
             active_player = kahmate_game.get_player_turn()
 
-            print("Tour du joueur "+str(active_player.get_color()))
 
 
 
@@ -606,18 +605,37 @@ class MainMenu:
         kahmate_graphics = self.graphic
         kahmate_graphics.set_new_hitbox()
 
-        kahmate_game=game.Game(kahmate_graphics)
+        kahmate_game=game.Game(kahmate_graphics,True)
         kahmate_actions=actions.Action(kahmate_game,kahmate_graphics)
         kahmate_minimax_actions=actions.ActionMiniMax(kahmate_game,kahmate_graphics)
-        kahmate_minimax=minimax.Minimax(kahmate_game,kahmate_game.get_player_red(),
+        kahmate_minimax=minimax.Minimax(kahmate_game,kahmate_game.get_player_blue(),
                                         kahmate_actions,kahmate_minimax_actions,kahmate_graphics)
         
         while not kahmate_game.is_game_over():
 
             active_player = kahmate_game.get_player_turn()
 
-            print("Tour du joueur "+str(active_player.get_color()))
 
+            if  active_player.get_color()==Color.BLUE:
+                ### Partie IA####
+                moves=[None,None,None]
+
+                kahmate_minimax.minimax(2,-float("inf"),float("inf"),moves)
+
+                
+                if moves[2]!=None:
+                    kahmate_game.get_ball().set_pos(moves[2])
+                
+                for move in moves[:2]:
+                    if move!=False:
+                        kahmate_actions.move_rugbyman([move[1],move[2]],move[0],move[3])
+                kahmate_graphics.draw_board(kahmate_game)
+                active_player.set_can_play(False)
+                kahmate_game.refresh_players_rugbymen_stats()
+                kahmate_game.change_player_turn()
+                continue
+                
+            
 
             while active_player.get_can_play():
                 kahmate_graphics.draw_board(kahmate_game)
@@ -639,7 +657,7 @@ class MainMenu:
                     if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
                         
                         kahmate_graphics.highlight_move( possible_move)
-                        rugbyman_or_ball_or_bool=kahmate_actions.action_rugbyman(rugbyman_or_ball_or_bool,possible_move)
+                        rugbyman_or_ball_or_bool=kahmate_minimax_actions.action_rugbyman_AI_defending(rugbyman_or_ball_or_bool,possible_move)
                     
                     #If the player hasnt chosen his two rugbyman yet
                     elif active_player.get_n_rugbymen()<2:
@@ -647,7 +665,7 @@ class MainMenu:
                         
                         #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
                         #Note that the move itself is made in the function
-                        rugbyman_or_ball_or_bool=kahmate_actions.action_rugbyman(rugbyman_or_ball_or_bool,possible_move)
+                        rugbyman_or_ball_or_bool=kahmate_minimax_actions.action_rugbyman_AI_defending(rugbyman_or_ball_or_bool,possible_move)
                         
 
                         #We add the rugbyman to the list of chosen rugbyman if the move is made

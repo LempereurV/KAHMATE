@@ -8,9 +8,9 @@ Pour pouvoir lancer le jeu correctement, il est nécessaire d'installer plusieur
 - **pygame**: attention, l'interface graphique ne s'ouvre pas à priori avec une distribution Linux
 
 ## Lancement de la partie
-Afin de lancer la partie, il suffit d'exécuter le fichier *main.py*. La hiérarchie des fichiers risque provoquer des erreurs d'exécution si on exécute directement un fichier qui n'est pas dans le dossier principal.
+Afin de lancer la partie, il suffit d'exécuter le fichier *main.py*. La hiérarchie des fichiers risque de provoquer des erreurs d'exécution si on exécute directement un fichier qui n'est pas dans le dossier principal.
 
-Si un joueur passe souhaite passer son tour ou déclaré qu'il a fini de joué pour celui-ci, il doit cliquer sur l'icone "KAHMATE" la plus proche de sa ligne d'essai. 
+Si un joueur souhaite passer son tour, il doit cliquer sur l'icone "KAHMATE" la plus proche de sa ligne d'essai (Le logo kahamate du bas pour les rouges du haut pour les bleus). 
 
 ## Fonctionnement du bot fonctionnant avec du Deep Reinforcement Learning
 Le joueur doit placer initialement les pions du bot et s'il l'attaque, il doit aussi choisir pour lui sa carte à piocher.
