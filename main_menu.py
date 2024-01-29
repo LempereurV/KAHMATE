@@ -619,12 +619,15 @@ class MainMenu:
             if  active_player.get_color()==Color.BLUE:
                 ### Partie IA####
                 moves=[None,None,None]
+                ball_pos=kahmate_game.get_ball().get_pos()
 
                 kahmate_minimax.minimax(2,-float("inf"),float("inf"),moves)
 
                 
                 if moves[2]!=None:
                     kahmate_game.get_ball().set_pos(moves[2])
+                else:
+                    kahmate_game.get_ball().set_pos(ball_pos)
                 
                 for move in moves[:2]:
                     if move!=False:

@@ -21,6 +21,7 @@ class Rugbyman:
         self.pos_x = 0
         self.posy = 0
         self.spec = Spec.NORMAL
+        self.score = 0
         self.possesion = False  # True if the player has the ball
         self.KO = 0  # 0 if the player is active
 
@@ -44,7 +45,12 @@ class Rugbyman:
     
     def get_KO(self):
         return self.KO
+    def get_score(self):
+        return self.score
     
+    def set_score(self, score):
+        self.score = score
+
     def move_points(self):
         return self.move_points
 

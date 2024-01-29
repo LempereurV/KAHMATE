@@ -8,15 +8,15 @@ from keras.models import load_model
 from RL_bot.states import State, play_from_RL
 from constants import Constants
 
+
+
 def launch_game(graphic): # Launch the game
     kahmate_graphics = graphic
     kahmate_graphics.set_new_hitbox()
 
-    kahmate_game=game.Game(kahmate_graphics)
+    kahmate_game=game.Game(kahmate_graphics,True)
     kahmate_actions=actions.Action(kahmate_game,kahmate_graphics)
-    kahmate_minimax_actions=actions.ActionMiniMax(kahmate_game,kahmate_graphics)
-    #kahmate_minimax=minimax.Minimax(kahmate_game,kahmate_game.get_player_red(),
-    #                                kahmate_actions,kahmate_minimax_actions,kahmate_graphics)
+    
     model = load_model('RL_bot/agent_blue.keras')
     agent = DQNAgent((2, 8, 13), Color.BLUE, model, epsilon = 0)
     state = State(Constants.number_of_rows, Constants.number_of_columns + 2)

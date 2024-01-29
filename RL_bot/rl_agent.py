@@ -9,6 +9,9 @@ from constants import Constants
 import game
 import tensorflow as tf
 
+
+
+
 class DQNAgent:
     def __init__(self, input_shape, color, model = None, epsilon=1.0):
         self.player = color
