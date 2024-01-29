@@ -1,12 +1,14 @@
 import enum
-#Ne pas deplacer
+
+# Ne pas deplacer
 
 
 def card_selected(deck, n_hit):
-    value=convert_card_to_int(deck.pop(n_hit))
+    value = convert_card_to_int(deck.pop(n_hit))
     if is_deck_empty(deck):
         deck = full_deck()
     return value
+
 
 class Card(enum.Enum):
     ONE = "1"
@@ -32,16 +34,9 @@ class Card(enum.Enum):
         raise ValueError("The card is not in the deck")
 
 
-
 def full_deck():
-    return [
-        Card.ONE,
-        Card.TWO,
-        Card.THREE,
-        Card.FOUR,
-        Card.FIVE,
-        Card.SIX
-    ]
+    return [Card.ONE, Card.TWO, Card.THREE, Card.FOUR, Card.FIVE, Card.SIX]
+
 
 def discard_card(card, deck):
     """
@@ -55,16 +50,16 @@ def discard_card(card, deck):
             return deck
     raise ValueError("The card is not in the deck")
 
+
 def is_deck_empty(deck):
     return len(deck) == 0
+
 
 def is_card_in_deck(card, deck):
     for i in range(len(deck)):
         if card == deck[i]:
             return True
     return False
-
-
 
 
 def convert_int_to_card(card):
@@ -82,6 +77,7 @@ def convert_int_to_card(card):
         return Card.SIX
     raise ValueError("The card is not in the deck")
 
+
 def convert_card_to_int(card):
     if card == Card.ONE:
         return 1
@@ -96,4 +92,3 @@ def convert_card_to_int(card):
     if card == Card.SIX:
         return 6
     raise ValueError("The card is not in the deck")
-

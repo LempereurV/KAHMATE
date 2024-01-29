@@ -2,7 +2,6 @@
 import enum
 
 
-
 class Spec(enum.Enum):
     STRONG = "strong"
     SMART = "smart"
@@ -36,18 +35,19 @@ class Rugbyman:
 
     def get_spec(self):
         return self.spec
-    
+
     def get_color(self):
         return self.color
-    
+
     def set_KO(self):
         self.KO = 2
-    
+
     def get_KO(self):
         return self.KO
+
     def get_score(self):
         return self.score
-    
+
     def set_score(self, score):
         self.score = score
 
@@ -56,10 +56,10 @@ class Rugbyman:
 
     def get_attack_bonus(self):
         return self.attack_bonus
-    
+
     def get_defense_bonus(self):
         return self.defense_bonus
-    
+
     def move_left(self):
         return self.moves_left
 
@@ -77,14 +77,14 @@ class Rugbyman:
 
     def set_pos_y(self, new_posy):  # utiliser une propriété
         self.posy = new_posy
-    
+
     def set_pos(self, pos):
         self.pos_x = pos[0]
         self.posy = pos[1]
 
     def set_possesion(self, boolean):
         self.possesion = boolean
-    
+
     def get_possesion(self):
         return self.possesion
 
@@ -95,18 +95,18 @@ class Rugbyman:
 
     def get_moves_left(self):
         return self.moves_left
-    
+
     def actualize_move_left(self, move_points):
         self.moves_left -= move_points
-    
+
     def set_move_left(self, move_points):
         self.moves_left = move_points
-    
+
     def has_ball(self):
         return self.possesion
-    
+
     def set_KO_0(self):
-        self.KO=0
+        self.KO = 0
 
 
 class StrongRugbyman(Rugbyman):

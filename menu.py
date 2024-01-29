@@ -3,9 +3,9 @@
 import pygame
 from pygame.sprite import _Group
 import actions
-import button
 
-class FloatingMenu(pygame.sprite.Sprite): # Deprecated class, kept for reference
+
+class FloatingMenu(pygame.sprite.Sprite):  # Deprecated class, kept for reference
     # Class of floating menus, from which token actions can be selected
 
     def __init__(
@@ -109,4 +109,3 @@ class FloatingMenu(pygame.sprite.Sprite): # Deprecated class, kept for reference
             if i == id_option:
                 return self.availability[i]
         return None  # The id of the selected option does not correspond to the menu size (should never be triggered in normal use)
-

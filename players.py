@@ -2,31 +2,34 @@ import rugbymen
 import cards
 import tools
 
+
 class Player:
-    def __init__(self, color,game,turn_color,graphics,AI=False):
-        
+    def __init__(self, color, game, turn_color, graphics, AI=False):
+
         # Placement order of the rugbylen (mostly for the initialisation but can be usefull later)
-        self._placement_order= tools.placement_orders(color)
+        self._placement_order = tools.placement_orders(color)
 
         # List of all the rugbymen of the player
 
         if AI:
-            self._rugbymen = tools.positions_rugbymen_player_blue_AI(self._placement_order, graphics)
+            self._rugbymen = tools.positions_rugbymen_player_blue_AI(
+                self._placement_order, graphics
+            )
         else:
-            self._rugbymen = tools.positions_rugbymen_player(self._placement_order, graphics)
+            self._rugbymen = tools.positions_rugbymen_player(
+                self._placement_order, graphics
+            )
 
-        # List of all the rugbymen chosen by the player for his turn 
+        # List of all the rugbymen chosen by the player for his turn
         self._chosen_rugbymen = []
 
-
-        self._deck=cards.full_deck()
+        self._deck = cards.full_deck()
 
         self._color = color
         if color == turn_color:
             self.can_play = True
         else:
             self.can_play = False
-
 
     def has_ball(self):
         """
@@ -39,7 +42,6 @@ class Player:
 
     def get_color(self):
         return self._color
-    
 
     def add_choosen_rugbymen(self, rugbyman):
         """
@@ -69,26 +71,26 @@ class Player:
 
     def get_can_play(self):
         return self.can_play
-    
+
     def set_can_play(self, boolean):
         self.can_play = boolean
 
     def actualize_can_play(self):
-        cond=False
-        if self.get_deck()==[]:
+        cond = False
+        if self.get_deck() == []:
             self.refresh_deck()
         if self.get_n_rugbymen() >= 2:
             move_points = 0
             for rugbyman in self.get_chosen_rugbymen():
-                if (rugbyman.get_KO()==0 
-                    and (rugbymen.Rugbyman.move_left(rugbyman)>0
-                         or rugbyman.has_ball())):
-                    cond=True
+                if rugbyman.get_KO() == 0 and (
+                    rugbymen.Rugbyman.move_left(rugbyman) > 0 or rugbyman.has_ball()
+                ):
+                    cond = True
                 move_points += rugbymen.Rugbyman.move_left(rugbyman)
             if not cond:
                 self.set_can_play(False)
-            else :
-                if move_points == 0 :
+            else:
+                if move_points == 0:
                     if self.has_ball():
                         print("You can only pass the ball")
                     else:
@@ -99,68 +101,63 @@ class Player:
 
     def get_chosen_rugbymen(self):
         return self._chosen_rugbymen
-    
+
     def get_n_rugbymen(self):
         return len(self._chosen_rugbymen)
 
     def get_rugbymen(self):
         return self._rugbymen
-    
-
 
     def show_rugbyman(self, i):
         return self._chosen_rugbymen[i]
-    
+
     def add_rugbyman(self, rugbyman):
         self._chosen_rugbymen.append(rugbyman)
-    
+
     def refresh_deck(self):
-        self._deck=cards.full_deck()
+        self._deck = cards.full_deck()
 
     def refresh_rugbymen_stats(self):
-        
-        if len(self.get_deck())==0 :
-            self._deck=cards.full_deck()
+
+        if len(self.get_deck()) == 0:
+            self._deck = cards.full_deck()
         for rugbyman in self.get_rugbymen():
             rugbymen.Rugbyman.refresh_stats(rugbyman)
-        self._chosen_rugbymen= []
+        self._chosen_rugbymen = []
         self.can_play = True
 
-
     def get_deck_int(self):
-        R=[]
+        R = []
         for card in self._deck:
             R.append(cards.convert_card_to_int(card))
         return R
-    
+
     def get_deck(self):
         return self._deck
-    
-    def choose_card(self,card):
+
+    def choose_card(self, card):
         if card in self.get_deck():
             self._deck.remove(card)
-            if len(self.get_deck())==0:
+            if len(self.get_deck()) == 0:
                 self.refresh_deck()
             return True
         else:
             return False
-    
 
     ###Fonctions nécessaires pour l'IA ###
-    
+
     def get_moves_left(self):
-        if len(self.get_chosen_rugbymen())<2:
+        if len(self.get_chosen_rugbymen()) < 2:
             return 1
         else:
             for rugbyman in self.get_chosen_rugbymen():
-                if rugbyman.get_moves_left()>0:
+                if rugbyman.get_moves_left() > 0:
                     return 1
             return 0
 
     def undo_chosen_rugbymen(self):
-        new_chosen_rugbymen=[]
+        new_chosen_rugbymen = []
         for rugbyman in self.get_chosen_rugbymen():
-            if not rugbyman.get_moves_left()==rugbyman.get_move_points():
+            if not rugbyman.get_moves_left() == rugbyman.get_move_points():
                 new_chosen_rugbymen.append(rugbyman)
-        self._chosen_rugbymen=new_chosen_rugbymen
-                
+        self._chosen_rugbymen = new_chosen_rugbymen
