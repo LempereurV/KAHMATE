@@ -6,7 +6,7 @@ import constants
 import color
 import actions
 
-
+"""
 def launch_game(graphic): # Launch the game
     kahmate_graphics = graphic
     kahmate_graphics.set_new_hitbox()
@@ -17,18 +17,15 @@ def launch_game(graphic): # Launch the game
     kahmate_graphics.draw_board(kahmate_game)
 
     while not kahmate_game.is_game_over():
+
         active_player = kahmate_game.get_player_turn()
         print("Joueur actif : ",active_player.get_color())
         if active_player.get_color()==color.Color.RED:
             compute_action(kahmate_game,graphic,kahmate_actions_bot)
             kahmate_game.change_player_turn()
-        active_player = kahmate_game.get_player_turn()
-        active_player.set_can_play(True)
-        while active_player.get_can_play():
-            print("Joueur actif : ",active_player.get_color())
-
-            graphic.draw_board(kahmate_game)            
-            rugbyman_or_ball_or_bool=kahmate_game.what_is_in_pos(graphic)
+        else :
+            active_player = kahmate_game.get_player_turn()
+            active_player.set_can_play(True)
 
 
             while active_player.get_can_play():
@@ -36,50 +33,131 @@ def launch_game(graphic): # Launch the game
                 
                 rugbyman_or_ball_or_bool=kahmate_game.what_is_in_pos(graphic)
 
-            if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
+                if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
 
-                possible_move = kahmate_game.available_move_position(rugbyman_or_ball_or_bool)
+                    possible_move = kahmate_game.available_move_position(rugbyman_or_ball_or_bool)
 
-                if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
+                    if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
+                        
+                        graphic.highlight_move_FElIX( possible_move)
+                        rugbyman_or_ball_or_bool=kahmate_actions_bot.action_rugbyman_with_bot(rugbyman_or_ball_or_bool,possible_move)
                     
-                    graphic.highlight_move_FElIX( possible_move)
-                    rugbyman_or_ball_or_bool=kahmate_actions_bot.action_rugbyman_with_bot(rugbyman_or_ball_or_bool,possible_move)
-                
-                #If the player hasnt chosen his two rugbyman yet
-                elif active_player.get_n_rugbymen()<2:
-                    graphic.highlight_move_FElIX(possible_move)
-                    
-                    #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
-                    #Note that the move itself is made in the function
-                    rugbyman_or_ball_or_bool=kahmate_actions_bot.action_rugbyman_with_bot(rugbyman_or_ball_or_bool,
-                                                                        possible_move)
-                    
+                    #If the player hasnt chosen his two rugbyman yet
+                    elif active_player.get_n_rugbymen()<2:
+                        graphic.highlight_move_FElIX(possible_move)
+                        
+                        #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
+                        #Note that the move itself is made in the function
+                        rugbyman_or_ball_or_bool=kahmate_actions_bot.action_rugbyman_with_bot(rugbyman_or_ball_or_bool,
+                                                                            possible_move)
+                        
 
-                    #We add the rugbyman to the list of chosen rugbyman if the move is made
-                    if rugbyman_or_ball_or_bool !=False :
-                        active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
+                        #We add the rugbyman to the list of chosen rugbyman if the move is made
+                        if rugbyman_or_ball_or_bool !=False :
+                            active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
 
-            elif (rugbyman_or_ball_or_bool ==Game.get_ball()):
-                available_pass=kahmate_actions_bot.available_pass(kahmate_game)
-                if len(available_pass)>0:
-                    kahmate_graphics.highlight_pass( available_pass)
-                    kahmate_actions_bot.make_pass(available_pass)
+                elif (rugbyman_or_ball_or_bool ==Game.get_ball()):
+                    available_pass=kahmate_actions_bot.available_pass(kahmate_game)
+                    if len(available_pass)>0:
+                        kahmate_graphics.highlight_pass( available_pass)
+                        kahmate_actions_bot.make_pass(available_pass)
 
-            elif (rugbyman_or_ball_or_bool == True):
-                #If the player has resized the screen
-                break
+                elif (rugbyman_or_ball_or_bool == True):
+                    #If the player has resized the screen
+                    break
 
             kahmate_game.is_rugbyman_on_ball()
             active_player.actualize_can_play()
             kahmate_graphics.draw_board(kahmate_game)
-            #Redraw cards does not suffice
+            
+
+        ### Partie reset quand le joueur a fini de jouer  ###
+        kahmate_game.refresh_players_rugbymen_stats()
+        kahmate_game.change_player_turn()
+
+    print("Fin du jeu")
+
+"""
+def launch_game(graphic):
+        
+        kahmate_graphics = graphic
+        kahmate_graphics.set_new_hitbox()
+
+        kahmate_game=game.Game(kahmate_graphics,True)
+        kahmate_actions_bot=actions.ActionBot(kahmate_game,kahmate_graphics)
+
+        
+        while not kahmate_game.is_game_over():
+
+            active_player = kahmate_game.get_player_turn()
+
+
+            if active_player.get_color()==color.Color.RED:
+                compute_action(kahmate_game,graphic,kahmate_actions_bot)
+                
+                kahmate_graphics.draw_board(kahmate_game)
+                active_player.set_can_play(False)
+                kahmate_game.refresh_players_rugbymen_stats()
+                kahmate_game.change_player_turn()
+                continue
+                
+            
+
+            while active_player.get_can_play():
+                kahmate_graphics.draw_board(kahmate_game)
+
+                # rugbyman_or_ball_or_bool can take 4 different values :
+                # - a rugbyman
+                # - the ball
+                # - True if the player has resized the screen
+                # - False if the player has clicked outside the board
+                
+                rugbyman_or_ball_or_bool=kahmate_game.what_is_in_pos(kahmate_graphics)
+
+
+
+                if (rugbyman_or_ball_or_bool in active_player.get_rugbymen()):
+
+                    possible_move = kahmate_game.available_move_position(rugbyman_or_ball_or_bool)
+
+                    if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
+                        
+                        kahmate_graphics.highlight_move( possible_move)
+                        rugbyman_or_ball_or_bool=kahmate_actions_bot.action_rugbyman(rugbyman_or_ball_or_bool,possible_move)
+                    
+                    #If the player hasnt chosen his two rugbyman yet
+                    elif active_player.get_n_rugbymen()<2:
+                        kahmate_graphics.highlight_move(possible_move)
+                        
+                        #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
+                        #Note that the move itself is made in the function
+                        rugbyman_or_ball_or_bool=kahmate_actions_bot.action_rugbyman(rugbyman_or_ball_or_bool,possible_move)
+                        
+
+                        #We add the rugbyman to the list of chosen rugbyman if the move is made
+                        if rugbyman_or_ball_or_bool !=False :
+                            active_player.add_choosen_rugbymen(rugbyman_or_ball_or_bool)
+
+                elif (rugbyman_or_ball_or_bool ==kahmate_game.get_ball()):
+                    available_pass=kahmate_actions_bot.available_pass()
+                    if len(available_pass)>0:
+                        kahmate_graphics.highlight_pass( available_pass)
+                        kahmate_actions_bot.make_pass(available_pass)
+
+                elif (rugbyman_or_ball_or_bool == True):
+                    #If the player has resized the screen
+                    break
+
+                kahmate_game.is_rugbyman_on_ball()
+                active_player.actualize_can_play()
+                kahmate_graphics.draw_board(kahmate_game)
+                #Redraw cards does not suffice
+
+                
 
             ### Partie reset quand le joueur a fini de jouer  ###
             kahmate_game.refresh_players_rugbymen_stats()
             kahmate_game.change_player_turn()
-
-    print("Fin du jeu")
-
 #Pour l'instant, les ordis ne peuvent être que rouges
 
 def easy_coords(list_of_lists):
@@ -135,6 +213,7 @@ def compute_action(game, graph,actions_bot):
     R = compute_reward(game)
     A = game.tour_joueurs()
     B = game.tour_balle()
+    
     #if red has the ball, we want to know if we can advance with it or if we have to pass it
     x,y = np.where(B == 1)
     if len(x) > 0 and len(y) > 0:

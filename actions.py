@@ -870,6 +870,7 @@ class ActionMiniMax(Action):
 class ActionBot(Action):
     def __init__(self, game, graphique):
         super().__init__(game, graphique)
+        self.cards=[1,2,3,4,5,6]
     
     def action_rugbyman_with_bot(self,rugbyman,possible_moves):
         pos,cond = self.graphique.get_hitbox_on_click()
@@ -1082,6 +1083,15 @@ class ActionBot(Action):
         else:
             print("You don't have enough move points left to charge this rugbyman")
             return False
+
+    def draw_card_bot(self):
+        """
+        This function is used by the bot to draw a card
+        """
+        if len(self.cards)==0:
+            self.cards=[1,2,3,4,5,6]
+        a=random.choice(self.cards)
+        self.cards.remove(a)
 
 class ActionRL(Action):
     def RL_tackling(self, rugbyman_attacker, rugbyman_defender,Possible_moves):
