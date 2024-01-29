@@ -834,6 +834,7 @@ class ActionMiniMax(Action):
                         else:
                             self.game.get_ball().set_pos([rugbyman_defender.get_pos_x()+1,rugbyman_defender.get_pos_y()])
                 rugbyman_attacker.set_possesion(False)
+            
             else :
                 rugbyman_attacker.set_KO()
             
@@ -858,9 +859,6 @@ class ActionMiniMax(Action):
                 self.game.get_ball().set_pos(rugbyman_attacker.get_pos())
                 self.game.get_ball().set_carrier(rugbyman_attacker)
                 rugbyman_attacker.set_possesion(True)
-            return True 
-        else :
-            rugbyman_attacker.set_KO()
         
     def choose_cards_AI(self,player):
         #We wait for the player to choose his cards

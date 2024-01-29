@@ -45,7 +45,7 @@ class Minimax :
                 
 
                 for j_1 in range(len(actions1)):
-                    if not actions1[j_1][-1] and depth==self.depth :
+                    if depth==self.depth and not actions1[j_1][-1] :
                     
                         rugbyman_defender=self.game.which_rugbyman_in_pos([actions1[j_1][0],actions1[j_1][1]])
                         
@@ -201,14 +201,16 @@ class Minimax :
                 moove_points2=rugbyman2.get_move_points()
 
                 for j_1 in range(len(actions1)):
-                    if not actions1[j_1][-1] and depth==self.depth :
+                    if depth==self.depth and not actions1[j_1][-1]  :
                     
                         rugbyman_defender=self.game.which_rugbyman_in_pos([actions1[j_1][0],actions1[j_1][1]])
 
                         #If the defender is in position of tackling he will do it no matter the outcome of the tackle
-                        cond=self.actions_minimax.action_rugbyman_AI(rugbyman1,rugbyman_defender,actions1)
+                        self.actions_minimax.action_rugbyman_AI(rugbyman1,rugbyman_defender,actions1)
 
                         #FROM THERE THE GENERAL FOR LOOP DOES NOT CONTINUE 
+                        mineval=float("inf")
+
                         possible_moves=self.game.every_possible_move(self.game.get_player_blue())
                         
                         for i_2_p in range(len(possible_moves)):
@@ -244,7 +246,7 @@ class Minimax :
                                     if eval<mineval:
                                         mineval=eval
                                         if depth==self.depth :
-                                            moves[0]=[rugbyman1]+actions1[j_1]
+                                            moves[0]=False 
                                             moves[1]=[rugbyman2]+actions2[j_2]
                                             moves[2]=None
                                 
