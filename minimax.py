@@ -209,27 +209,34 @@ class Minimax :
                         cond=self.actions_minimax.action_rugbyman_AI(rugbyman1,rugbyman_defender,actions1)
 
                         #FROM THERE THE GENERAL FOR LOOP DOES NOT CONTINUE 
-
-                        for i_2_p in range(i_1+1,3):
-                
+                        possible_moves=self.game.every_possible_move(self.game.get_player_blue())
+                        
+                        for i_2_p in range(len(possible_moves)):
+                            
                             rugbyman2=possible_moves[i_2_p][0]
+                            if rugbyman1==rugbyman2:
+                                continue
+                                
                             actions2=possible_moves[i_2_p][1:]
                             
                             former_pos_rugbyman_2=rugbyman2.get_pos()
                             moove_points2=rugbyman2.get_move_points()
 
+                            print(rugbyman2)
+
                             for j_2 in range (len(actions2)):
-                                if ( cond==False and not actions2[j_2][-1]  and not self.actions_minimax.action_rugbyman_AI(rugbyman2,rugbyman_defender,actions2)):
+                                if ( not actions2[j_2][-1]):
+                                    rugbyman_defender=self.game.which_rugbyman_in_pos([actions2[j_2][0],actions2[j_2][1]])
+                                    self.actions_minimax.action_rugbyman_AI(rugbyman2,rugbyman_defender,actions2)
 
                                     
-
+                                    #the game has already taken into account the actions of the ai
                                     moves[0]=False
                                     moves[1]=False
                                     moves[2]=None
                                     return 0
                                 else :
-                                    if [actions1[j_1][0],actions1[j_1][1]]==[actions2[j_2][0],actions2[j_2][1]]:
-                                        continue
+                                
                                     self.actions.move_rugbyman(actions2[j_2][:2],rugbyman2,actions2[j_2][2])
 
                                     eval=self.minimax(depth-1,alpha,beta,moves)
@@ -250,6 +257,7 @@ class Minimax :
                                     if beta<=alpha:
                                         self.actions_minimax.undo_move_rugbyman(former_pos_rugbyman_1,former_ball_pos_1,rugbyman1,moove_points1)
                                         return mineval 
+                        return mineval
                     self.actions.move_rugbyman(actions1[j_1][0:2],rugbyman1,actions1[j_1][2])
 
                     #The first rugbyman moves then throw the ball (if he can)

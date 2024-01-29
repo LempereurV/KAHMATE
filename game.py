@@ -292,7 +292,7 @@ class Game:
         R=[]
 
         for rugbyman in player.get_rugbymen():
-            if rugbyman.get_move_points()==rugbyman.get_moves_left():
+            if rugbyman.get_move_points()==rugbyman.get_moves_left() and rugbyman.get_KO()==0:
                 R=[[rugbyman]+self.available_move_position(rugbyman)]+R
         return sorted(R,key =lambda x:tools.norm(x[0].get_pos(),self.get_ball().get_pos()))
 

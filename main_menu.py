@@ -540,7 +540,6 @@ class MainMenu:
 
             active_player = kahmate_game.get_player_turn()
 
-            print("Tour du joueur "+str(active_player.get_color()))
 
 
 
@@ -615,7 +614,6 @@ class MainMenu:
 
             active_player = kahmate_game.get_player_turn()
 
-            print("Tour du joueur "+str(active_player.get_color()))
 
             if  active_player.get_color()==Color.BLUE:
                 ### Partie IA####
@@ -658,7 +656,7 @@ class MainMenu:
                     if rugbyman_or_ball_or_bool in active_player.get_chosen_rugbymen() :
                         
                         kahmate_graphics.highlight_move( possible_move)
-                        rugbyman_or_ball_or_bool=kahmate_actions.action_rugbyman(rugbyman_or_ball_or_bool,possible_move)
+                        rugbyman_or_ball_or_bool=kahmate_minimax_actions.action_rugbyman_AI_defending(rugbyman_or_ball_or_bool,possible_move)
                     
                     #If the player hasnt chosen his two rugbyman yet
                     elif active_player.get_n_rugbymen()<2:
@@ -666,7 +664,7 @@ class MainMenu:
                         
                         #move_rugbyman returns false if the move is not possible, and the rugbyman otherwise
                         #Note that the move itself is made in the function
-                        rugbyman_or_ball_or_bool=kahmate_actions.action_rugbyman(rugbyman_or_ball_or_bool,possible_move)
+                        rugbyman_or_ball_or_bool=kahmate_minimax_actions.action_rugbyman_AI_defending(rugbyman_or_ball_or_bool,possible_move)
                         
 
                         #We add the rugbyman to the list of chosen rugbyman if the move is made
