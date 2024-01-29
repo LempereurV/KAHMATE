@@ -872,7 +872,6 @@ class ActionBot(Action):
         super().__init__(game, graphique)
         self.cards=[1,2,3,4,5,6]
     
-
     def action_rugbyman_bot_defending(self,rugbyman,possible_moves):
         """
         This function resolves an action that can be tackling, charging or simply moving depending on the situation 
@@ -1209,6 +1208,60 @@ class ActionBot(Action):
             print("You can only tackle the rugbyman with the ball")
             return False
 
+    def make_pass_bot(self,pos):
+
+        #former_owner is the rugbyman who had the ball before the pass
+        former_owner=self.game.is_rugbyman_on_ball()
+        #print(former_owner)
+        #It is useless to send the ball to an adversary
+        if (self.game.which_rugbyman_in_pos(pos)!=False 
+            and self.game.which_rugbyman_in_pos(pos).get_color()!=former_owner.get_color()):
+            return False
+        
+        
+        
+        #If the pass is backward (meaning it can be catched)
+        if (former_owner.get_color() is Color.RED
+            and pos[1] < former_owner.get_pos_y()):
+
+            #For each rugbyman of the opposing team we have to check if they can catch the ball
+            min=100
+            for rugbyman in self.game.get_player_blue().get_rugbymen():
+                #We check if the rugbyman is in the right position to catch the ball
+                if (rugbyman.get_pos_y() < former_owner.get_pos_y() 
+                    and rugbyman.get_pos_y() >= pos[1]
+                    and rugbyman.get_KO()==0):
+
+                    #Receiver and adversary are both above the thrower or both under 
+                    #This condition this necessary since the norm alone isnt enough
+                    if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
+
+                        #We check if the rugbyman is closer to the ball than the former owner
+                        if (tools.norm(rugbyman.get_pos(),pos)<tools.norm(former_owner.get_pos(),pos)
+                            and min>tools.norm(rugbyman.get_pos(),former_owner.get_pos())):
+                            return False
+        #Same with the blue the only difference is that the receiver has to be above the thrower
+        if (former_owner.get_color() is Color.BLUE
+            and pos[1] > former_owner.get_pos_y()):
+            min=100
+            for rugbyman in self.game.get_player_red().get_rugbymen():
+                if (rugbyman.get_pos_y() > former_owner.get_pos_y() 
+                    and rugbyman.get_pos_y() <= pos[1]
+                    and rugbyman.get_KO()==0):
+                    #ensure there on the same side of the passing position set
+                    if (rugbyman.get_pos_x() -former_owner.get_pos_x())*(pos[0] -former_owner.get_pos_x())>=0:
+                        
+                        if (tools.norm(rugbyman.get_pos(),pos)<tools.norm(former_owner.get_pos(),pos)
+                            and min>tools.norm(rugbyman.get_pos(),former_owner.get_pos())):   
+                                return False
+        
+        
+        self.game.is_rugbyman_on_ball().set_possesion(False)
+        self.game.get_ball().set_pos(pos)
+
+        if self.game.is_rugbyman_on_ball()!=False:
+            self.game.is_rugbyman_on_ball().set_possesion(True)
+    
 class ActionRL(Action):
     def RL_tackling(self, rugbyman_attacker, rugbyman_defender,Possible_moves):
         """

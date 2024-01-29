@@ -170,12 +170,12 @@ def compute_action(game, graph,actions_bot):
         #This list is sorted in descending order of the highest possible reward for all rugbymen
         if Poss.get_KO() == 0:
             if Poss != Rugbymen[0] and Poss != Rugbymen[1]:#if the ballkeeper can't attain the highest rewards, we will try to pass it
-                Available_passes = actions_bot.available_pass_bot(Poss, game)
+                Available_passes = actions_bot.available_pass()
                 for i in range(len(Rugbymen)):
                     best_pos = Rugbymen[i].get_pos()
                     #get the coordinates of the rugbymen who can go to the highest reward zone using the Rugbymen list
                     if best_pos in Available_passes:
-                        actions_bot.make_pass_bot(game, Poss, Rugbymen[i])
+                        actions_bot.make_pass_bot(best_pos)
                         coords = np.where(R == Rugbymen[i].get_score())
                         [x,y] = [coords[0][0], coords[1][0]]
                         print([x,y])
