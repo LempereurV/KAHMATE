@@ -22,6 +22,8 @@ class Game:
 
         self._whose_turn = color.Color.RED
 
+ 
+        graphic.freeze_resizable_window()
 
         graphic.screen.blit(graphic.board, (0, 0))
         graphic.refresh()
@@ -30,7 +32,7 @@ class Game:
         self._player_red = players.Player(color.Color.RED,self,self._whose_turn,graphic) 
         self._player_blue = players.Player(color.Color.BLUE,self,self._whose_turn,graphic) 
 
-
+        graphic.unfreeze_resizable_window()
         #A changer
         self._ball = ball.Ball(random.randint(1, Constants.number_of_rows ))
  
